@@ -19,11 +19,6 @@ L’application devra également être refaite en Spring Boot dans une deuxième
 
 | Nom | Rôle | Technologie principale |
 |------|------|------------------------|
-| Saad Tr | Chef de projet | Jakarta EE (Servlets / JSP) |
-| [Nom 2] | Développeur backend | Hibernate / JPA |
-| [Nom 3] | Développeur frontend | JSP / CSS / JS |
-| [Nom 4] | Développeur base de données | MySQL |
-| [Nom 5] | Intégration et tests | Tomcat / Eclipse |
 
 ---
 
