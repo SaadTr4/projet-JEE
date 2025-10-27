@@ -1,6 +1,3 @@
--- Création de la base de données
-CREATE DATABASE IF NOT EXISTS entreprise;
-
 -- Table Departement
 CREATE TABLE departement (
       id SERIAL PRIMARY KEY,
