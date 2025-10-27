@@ -41,4 +41,19 @@ L’application devra également être refaite en Spring Boot dans une deuxième
 ### 1. Cloner le dépôt
 ```bash
 git clone https://github.com/SaadTr4/JEE-projet-groupe5.git
-cd JEE-projet-groupe5
+```
+
+## 2. Lancement de la base de données
+
+### 1️⃣ Démarrer le conteneur PostgreSQL
+Depuis la racine du projet :
+
+```bash
+docker compose -f docker/docker-compose.yml up -d
+```
+
+### 2️⃣ Accéder à la base de données PostgreSQL
+Ouvre un terminal et exécute :
+```bash
+docker exec -it projetjee-db psql -U cytech_user -d cytech_entreprise
+```
