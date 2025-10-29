@@ -1,59 +1,59 @@
--- Table Departement
-CREATE TABLE departement (
+-- Table Department
+CREATE TABLE department (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    description TEXT
+);
+
+-- Table Position
+CREATE TABLE position (
       id SERIAL PRIMARY KEY,
-      nom VARCHAR(100) NOT NULL,
+      name VARCHAR(100) NOT NULL,
       description TEXT
 );
 
--- Table Poste
-CREATE TABLE poste (
-       id SERIAL PRIMARY KEY,
-       nom VARCHAR(100) NOT NULL,
-       description TEXT
+-- Table Project
+CREATE TABLE project (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(100) NOT NULL,
+     description TEXT,
+     status VARCHAR(20) DEFAULT 'In progress'
 );
 
--- Table Projet
-CREATE TABLE projet (
-        id SERIAL PRIMARY KEY,
-        nom VARCHAR(100) NOT NULL,
-        description TEXT,
-        etat VARCHAR(20) DEFAULT 'En cours'
+-- Table User
+CREATE TABLE user_account (
+      employee_number VARCHAR(20) PRIMARY KEY,
+      last_name VARCHAR(50) NOT NULL,
+      first_name VARCHAR(50) NOT NULL,
+      email VARCHAR(100) UNIQUE NOT NULL,
+      phone VARCHAR(20),
+      image BYTEA,
+      address VARCHAR(255),
+      grade VARCHAR(20),
+      role VARCHAR(20),
+      department_id INT,
+      position_id INT,
+      FOREIGN KEY (department_id) REFERENCES department(id),
+      FOREIGN KEY (position_id) REFERENCES position(id)
 );
 
--- Table Utilisateur
-CREATE TABLE utilisateur (
-         matricule VARCHAR(20) PRIMARY KEY,
-         nom VARCHAR(50) NOT NULL,
-         prenom VARCHAR(50) NOT NULL,
-         email VARCHAR(100) UNIQUE NOT NULL,
-         telephone VARCHAR(20),
-         image BYTEA,
-         adresse VARCHAR(255),
-         grade VARCHAR(20),
-         role VARCHAR(20),
-         id_departement INT,
-         id_poste INT,
-         FOREIGN KEY (id_departement) REFERENCES departement(id),
-         FOREIGN KEY (id_poste) REFERENCES poste(id)
+-- N-N Relationship Table User-Project
+CREATE TABLE user_project (
+      employee_number VARCHAR(20),
+      project_id INT,
+      PRIMARY KEY (employee_number, project_id),
+      FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE,
+      FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
 
--- Table relation N-N Utilisateur-Projet
-CREATE TABLE utilisateur_projet (
-        matricule VARCHAR(20),
-        id_projet INT,
-        PRIMARY KEY (matricule, id_projet),
-        FOREIGN KEY (matricule) REFERENCES utilisateur(matricule) ON DELETE CASCADE,
-        FOREIGN KEY (id_projet) REFERENCES projet(id) ON DELETE CASCADE
-);
-
--- Table Fiche de Paie
-CREATE TABLE fiche_paie (
-        id SERIAL PRIMARY KEY,
-        matricule VARCHAR(20),
-        date DATE NOT NULL,
-        salaire_base DECIMAL(10,2),
-        primes DECIMAL(10,2),
-        deductions DECIMAL(10,2),
-        net_a_payer DECIMAL(10,2),
-        FOREIGN KEY (matricule) REFERENCES utilisateur(matricule) ON DELETE CASCADE
+-- Table Payslip
+CREATE TABLE payslip (
+     id SERIAL PRIMARY KEY,
+     employee_number VARCHAR(20),
+     date DATE NOT NULL,
+     base_salary DECIMAL(10,2),
+     bonuses DECIMAL(10,2),
+     deductions DECIMAL(10,2),
+     net_pay DECIMAL(10,2),
+     FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE
 );
