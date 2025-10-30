@@ -1,0 +1,17 @@
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: projetjee-db
+    restart: always
+    environment:
+      POSTGRES_DB: cytech_entreprise
+      POSTGRES_USER: cytech_user
+      POSTGRES_PASSWORD: CyT3ch2025!
+    ports:
+      - "5433:5432"
+    volumes:
+    - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    - jee-dev_postgres_data:/var/lib/postgresql/data
+
+volumes:
+    jee-dev_postgres_data:
