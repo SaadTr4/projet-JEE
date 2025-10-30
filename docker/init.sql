@@ -22,7 +22,7 @@ CREATE TABLE project (
 
 -- Table User
 CREATE TABLE user_account (
-      employee_number VARCHAR(20) PRIMARY KEY,
+      registration_number VARCHAR(20) PRIMARY KEY,
       last_name VARCHAR(50) NOT NULL,
       first_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
@@ -37,12 +37,12 @@ CREATE TABLE user_account (
       FOREIGN KEY (position_id) REFERENCES position(id)
 );
 
--- N-N Relationship Table User-Project
+-- N-N Relationship Table User-Project, can't use "user" as table name because it's a reserved word in SQL
 CREATE TABLE user_project (
-      employee_number VARCHAR(20),
+      registration_number VARCHAR(20),
       project_id INT,
-      PRIMARY KEY (employee_number, project_id),
-      FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE,
+      PRIMARY KEY (registration_number, project_id),
+      FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,
       FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
 

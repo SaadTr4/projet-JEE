@@ -23,37 +23,64 @@ L’application devra également être refaite en Spring Boot dans une deuxième
 ---
 
 ## Technologies utilisées
-| Composant | Outil / Technologie |
-|------------|---------------------|
-| Langage | Java 21 |
-| Framework Web | Jakarta EE (Servlets, JSP, JSTL) |
-| Serveur | Apache Tomcat 9 ou 10 |
-| Base de données | MySQL |
-| ORM | Hibernate (JPA) |
-| IDE | Eclipse IDE for Enterprise Developers |
-| Gestion de version | Git et GitHub |
-| Frontend | HTML, CSS, JavaScript |
+| Composant | Outil / Technologie                                     |
+|------------|---------------------------------------------------------|
+| Langage | Java 21                                                 |
+| Framework Web | Jakarta EE (Servlets, JSP, JSTL)                        |
+| Serveur | Apache Tomcat 10                                        |
+| Base de données | PostgreSQL                                              |
+| ORM | Hibernate (JPA)                                         |
+| IDE | Eclipse IDE for Enterprise Developers and IntelliJ IDEA |
+| Gestion de version | Git et GitHub                                           |
+| Frontend | HTML, CSS, JavaScript                                   |
 
 ---
 
 ## Installation et exécution du projet
 
-### 1. Cloner le dépôt
+## 1. Cloner le dépôt
 ```bash
 git clone https://github.com/SaadTr4/JEE-projet-groupe5.git
+cd JEE-projet-groupe5
 ```
 
-## 2. Lancement de la base de données
+## 2. Lancement de la base de données et des conteneurs Docker
 
-### 1️⃣ Démarrer le conteneur PostgreSQL
+### 1️⃣ Démarrer les conteneurs
 Depuis la racine du projet :
 
 ```bash
 docker compose -f docker/docker-compose.yml up -d
 ```
 
+
 ### 2️⃣ Accéder à la base de données PostgreSQL
-Ouvre un terminal et exécute :
+Depuis un terminal Docker :
 ```bash
 docker exec -it projetjee-db psql -U cytech_user -d cytech_entreprise
 ```
+Depuis un client externe : 
+```bash
+psql -h localhost -p 5433 -U cytech_user -d cytech_entreprise
+```
+
+
+### 3️⃣ Arrêter les conteneurs
+Pour arrêter le conteneur, exécute :
+```bash
+docker compose -f docker/docker-compose.yml down
+```
+
+### 4️⃣ Reconstruire la base de données 
+Pour supprimer toutes les données et reconstruire la base de données, exécute :
+```bash
+docker compose -f docker/docker-compose.yml down -v
+docker volume rm docker_jee-dev_postgres_data # utiliser cette commande pour supprimer le volume de données (non obligatoire)
+docker compose -f docker/docker-compose.yml up --build -d
+```
+
+## 3. Se connecter à pgAdmin
+Ouvre un navigateur et accède à : `http://localhost:8081`
+Utilise les identifiants suivants :
+- mail : admin@admin.com
+- mot de passe : admin
