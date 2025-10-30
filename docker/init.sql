@@ -17,7 +17,7 @@ CREATE TABLE project (
      id SERIAL PRIMARY KEY,
      name VARCHAR(100) NOT NULL,
      description TEXT,
-     status VARCHAR(20) DEFAULT 'In progress'
+     status VARCHAR(20) DEFAULT 'IN_PROGRESS'
 );
 
 -- Table User
