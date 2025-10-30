@@ -29,19 +29,21 @@ services:
     networks:
       - jee_network
 
-  tomcat:
-    image: tomcat:10.1.48-jdk21-temurin
-    container_name: projetjee-tomcat
-    restart: always
-    ports:
-      - "8080:8080"
-    volumes:
-      # Chemin vers le fichier WAR généré par le projet Maven
-      - ./../target/projet-JEE-1.0-SNAPSHOT.war:/usr/local/tomcat/webapps/ROOT.war
-    depends_on:
-      - db
-    networks:
-      - jee_network
+#  tomcat:
+#    image: tomcat:10.1.48-jdk21-temurin
+#    container_name: projetjee-tomcat
+#    restart: always
+#    ports:
+#      - "8080:8080"
+#    # Copier le WAR dans l'image au build plutôt que de le monter
+#    build:
+#      context: ..
+#      dockerfile: docker/Dockerfile
+#    depends_on:
+#      - db
+#    networks:
+#      - jee_network
+
 volumes:
     jee-dev_postgres_data:
 
