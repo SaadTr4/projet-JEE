@@ -43,9 +43,15 @@ L’application devra également être refaite en Spring Boot dans une deuxième
 
 git clone https://github.com/SaadTr4/JEE-projet-groupe5.git
 cd JEE-projet-groupe5
+```
 
-### 2. Créer l'image 
+### 2. Créer les conteneurs Docker et démarrer les services
 Dans le terminal de l'IDE
-
 ```bash
 docker compose -f docker/docker-compose.yml up -d
+```
+### 3. Se connecter à pgAdmin
+Ouvre un navigateur et accède à : `http://localhost:8081`
+Utilise les identifiants suivants :
+- mail : admin@admin.com
+- mot de passe : admin
