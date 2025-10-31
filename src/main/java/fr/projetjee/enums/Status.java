@@ -1,4 +1,4 @@
-package fr.projetjee.model;
+package fr.projetjee.enums;
 
 public enum Status {
     IN_PROGRESS,

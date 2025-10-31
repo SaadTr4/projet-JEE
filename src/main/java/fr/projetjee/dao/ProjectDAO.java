@@ -1,73 +1,174 @@
 package fr.projetjee.dao;
 
 import fr.projetjee.model.Project;
-import fr.projetjee.model.Status;
+import fr.projetjee.enums.Status;
+import fr.projetjee.model.User;
 import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
+import org.hibernate.Transaction;
+import org.hibernate.query.Query;
+import fr.projetjee.util.HibernateUtil;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class ProjectDAO {
 
-    private SessionFactory sessionFactory;
-
-    public ProjectDAO(){
-        sessionFactory = new Configuration().configure().buildSessionFactory();
-    }
-    public void saveProject(Project project) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
+    public Project save(Project project) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
             session.merge(project);
-            session.getTransaction().commit();
+            transaction.commit();
+            // System.out.println("Project sauvegardé: ID=" + project.getId() + ", Nom=" + project.getName());
+            return project;
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void deleteProject(Project project) {
-        try (Session session = sessionFactory.openSession()) {
-            session.beginTransaction();
-            session.remove(project);
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public Project getProjectById(Integer id) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.find(Project.class, id);
-        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("Erreur sauvegarde projet: " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
-    public Project getProjectByName(String name) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Project p WHERE p.name = :name", Project.class)
-                    .setParameter("name", name)
-                    .uniqueResult();
+    public boolean delete(Integer id) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            Project project = session.find(Project.class, id);
+            if (project != null) {
+                session.remove(project);
+                transaction.commit();
+                // System.out.println("Projet supprimé: ID=" + id);
+                return true;
+            }
+            transaction.commit();
+            return false;
         } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("Erreur suppression projet: " + e.getMessage());
             e.printStackTrace();
-            return null;
+            return false;
+        }
+    }
+    public void update(Project project){
+        save(project);
+    }
+
+    public Optional<Project> findById(Integer id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Project project = session.find(Project.class, id);
+            return Optional.ofNullable(project);
+        } catch (Exception e) {
+            System.err.println("Erreur trouver par ID projet: " + e.getMessage());
+            return Optional.empty();
         }
     }
 
-    public List<Project> getAllProjects() {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Project", Project.class).list();
+    public Optional<Project> findByName(String name) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Project> query = session.createQuery(
+                    "FROM Project p WHERE p.name = :name", Project.class);
+            query.setParameter("name", name);
+            return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.err.println("Erreur trouver par nom projet: " + e.getMessage());
+            return Optional.empty();
         }
     }
-    public List<Project> getProjectsByStatus(Status status) {
-        try (Session session = sessionFactory.openSession()) {
-            return session.createQuery("FROM Project p WHERE p.status = :status", Project.class)
-                    .setParameter("status", status)
-                    .list();
+
+    public List<Project> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Project> query = session.createQuery("FROM Project", Project.class);
+            return query.list();
         } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+            System.err.println("Erreur trouver tous les projets: " + e.getMessage());
+            return new ArrayList<>();
         }
     }
+
+    public List<Project> findByStatus(Status status) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Project> query = session.createQuery(
+                    "FROM Project p WHERE p.status = :status", Project.class);
+            query.setParameter("status", status);
+            return query.list();
+        } catch (Exception e) {
+            System.err.println("Erreur trouver pas état projets: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+/*
+    public List<Project> findByUserId(Integer userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Project> query = session.createQuery(
+                    "SELECT p FROM Project p JOIN p.users u WHERE u.id = :userId", Project.class);
+            query.setParameter("userId", userId);
+            return query.list();
+        } catch (Exception e) {
+            System.err.println("❌ Erreur findByUserId projets: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+    public boolean assignUserToProject(Integer projectId, String registrationNumber) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            Project project = session.find(Project.class, projectId);
+            User user = session.createQuery(
+                            "FROM User u WHERE u.registrationNumber = :reg", User.class)
+                    .setParameter("reg", registrationNumber)
+                    .uniqueResult();
+
+            if (project != null && user != null) {
+                project.getUsers().add(user);
+                user.getProjects().add(project);
+                session.merge(user);
+                transaction.commit();
+                // System.out.println("Utilisateur " + registrationNumber + " assigné au projet ID=" + projectId);
+                return true;
+            } else {
+                System.err.println("Projet ou utilisateur introuvable.");
+                if (transaction != null) transaction.rollback();
+                return false;
+            }
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("Erreur assignation utilisateur à projet : " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean removeUserFromProject(Integer projectId, String registrationNumber) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            Project project = session.get(Project.class, projectId);
+            User user = session.createQuery(
+                            "FROM User u WHERE u.registrationNumber = :reg", User.class)
+                    .setParameter("reg", registrationNumber)
+                    .uniqueResult();
+
+            if (project != null && user != null) {
+                project.getUsers().remove(user);
+                user.getProjects().remove(project);
+                session.merge(project);
+                session.merge(user);
+                transaction.commit();
+                System.out.println("✅ Utilisateur " + registrationNumber + " retiré du projet ID=" + projectId);
+                return true;
+            } else {
+                System.err.println("Projet ou utilisateur introuvable.");
+                if (transaction != null) transaction.rollback();
+                return false;
+            }
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("Erreur suppression utilisateur dans un projet : " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+*/
 }
