@@ -87,3 +87,8 @@ Desktop.ini
 *.swp
 *~.nib
 *.orig
+/target/
+# Fichiers et dossiers générés par l'IDE et Maven
+.idea/
+target/
+*.iml
