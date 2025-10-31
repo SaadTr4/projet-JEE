@@ -106,7 +106,7 @@ public class ProjectDAO {
         }
         return false;
     }
-/*
+
     public List<Project> findByUserId(Integer userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Project> query = session.createQuery(
@@ -154,7 +154,7 @@ public class ProjectDAO {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
 
-            Project project = session.get(Project.class, projectId);
+            Project project = session.find(Project.class, projectId);
             User user = session.createQuery(
                             "FROM User u WHERE u.registrationNumber = :reg", User.class)
                     .setParameter("reg", registrationNumber)
@@ -180,5 +180,5 @@ public class ProjectDAO {
             return false;
         }
     }
-*/
+
 }
