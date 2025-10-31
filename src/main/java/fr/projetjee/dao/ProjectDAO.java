@@ -96,6 +96,16 @@ public class ProjectDAO {
             return new ArrayList<>();
         }
     }
+    public boolean updateStatus(Integer projectId, Status newStatus) {
+        Optional<Project> opt = findById(projectId);
+        if (opt.isPresent()) {
+            Project project = opt.get();
+            project.setStatus(newStatus);
+            save(project);
+            return true;
+        }
+        return false;
+    }
 /*
     public List<Project> findByUserId(Integer userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

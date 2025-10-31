@@ -87,13 +87,13 @@ public class PayslipDAO {
     public List<Payslip> findByMonth(User user, int year, int month) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Payslip> query = session.createQuery(
-                    "FROM Payslip p WHERE p.user = :user AND year(p.date) = :year AND month(p.date) = :month", Payslip.class);
+                    "FROM Payslip p WHERE p.user = :user AND p.year = :year AND p.month = :month", Payslip.class);
             query.setParameter("user", user);
             query.setParameter("year", year);
             query.setParameter("month", month);
             return query.list();
         } catch (Exception e) {
-            System.err.println("Erreur trouver fiches de paie par mois: " + e.getMessage());
+            System.err.println("Erreur trouver fiches de paie par période: " + e.getMessage());
             return new ArrayList<>();
         }
     }

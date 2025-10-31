@@ -4,7 +4,6 @@ package fr.projetjee.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
@@ -16,10 +15,14 @@ public class Payslip {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     Integer id;
+    @Column(name = "generation_date", nullable = false)
+    private LocalDate generationDate;
 
-    @Temporal(TemporalType.DATE)
-    @Column(name = "date", nullable = false)
-    private LocalDate date;
+    @Column(name = "month", nullable = false)
+    private Integer month; // 1 = janvier, 12 = décembre
+
+    @Column(name = "year", nullable = false)
+    private Integer year;
 
     @Column(name = "base_salary", precision = 10, scale = 2)
     private BigDecimal baseSalary;
@@ -41,14 +44,15 @@ public class Payslip {
     // Constructors
     // ===============================
     public Payslip() {}
-    public Payslip(LocalDate date, BigDecimal baseSalary, BigDecimal bonuses,
-                   BigDecimal deductions, User user) {
-        this.date = date;
+    public Payslip(Integer year, Integer month, BigDecimal baseSalary, BigDecimal bonuses, BigDecimal deductions, User user) {
+        this.year = year;
+        this.month = month;
         this.baseSalary = baseSalary;
         this.bonuses = bonuses != null ? bonuses : BigDecimal.ZERO;
         this.deductions = deductions != null ? deductions : BigDecimal.ZERO;
         this.user = user;
-        this.calculateNetPay(); // ⚙️ auto-calcul du net
+        this.generationDate = LocalDate.now();
+        this.calculateNetPay();
     }
 
     // ===============================
@@ -56,8 +60,14 @@ public class Payslip {
     // ===============================
     public Integer getId() { return id; }
     public void setId(Integer id) { this.id = id; }
-    public LocalDate getDate() { return date; }
-    public void setDate(LocalDate date) { this.date = date; }
+
+    public LocalDate getGenerationDate() { return generationDate; }
+    public void setGenerationDate(LocalDate generationDate) { this.generationDate = generationDate; }
+    public Integer getMonth() { return month; }
+    public void setMonth(Integer month) { this.month = month; }
+    public Integer getYear() { return year; }
+    public void setYear(Integer year) { this.year = year; }
+
     public BigDecimal getBaseSalary() { return baseSalary; }
     public void setBaseSalary(BigDecimal baseSalary) { this.baseSalary = baseSalary; }
     public BigDecimal getBonuses() { return bonuses; }
@@ -77,11 +87,45 @@ public class Payslip {
                 .add(bonuses != null ? bonuses : BigDecimal.ZERO)
                 .subtract(deductions != null ? deductions : BigDecimal.ZERO);
     }
+
+    public void addBonus(BigDecimal amount) {
+        if (amount != null) {
+            this.bonuses = this.bonuses.add(amount);
+            calculateNetPay();
+        }
+    }
+
+    // Delete bonus (reset to zero)
+    public void clearBonus() {
+        this.bonuses = BigDecimal.ZERO;
+        calculateNetPay();
+    }
+    public void addDeduction(BigDecimal amount) {
+        if (amount != null) {
+            this.deductions = this.deductions.add(amount);
+            calculateNetPay();
+        }
+    }
+
+    // Delete deduction (reset to zero)
+    public void clearDeduction() {
+        this.deductions = BigDecimal.ZERO;
+        calculateNetPay();
+    }
+
+    // Update base salary
+    public void updateBaseSalary(BigDecimal amount) {
+        if (amount != null) {
+            this.baseSalary = amount;
+            calculateNetPay();
+        }
+    }
     @Override
     public String toString() {
         return "Payslip{" +
                 "id=" + id +
-                ", date=" + date +
+                ", year=" + year +
+                ", month=" + month +
                 ", baseSalary=" + baseSalary +
                 ", bonuses=" + bonuses +
                 ", deductions=" + deductions +

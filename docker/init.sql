@@ -51,10 +51,13 @@ CREATE TABLE user_project (
 CREATE TABLE payslip (
      id SERIAL PRIMARY KEY,
      registration_number VARCHAR(20),
-     date DATE NOT NULL,
+     year INT NOT NULL,
+     month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
      base_salary DECIMAL(10,2),
      bonuses DECIMAL(10,2),
      deductions DECIMAL(10,2),
      net_pay DECIMAL(10,2),
+     generation_date DATE NOT NULL DEFAULT CURRENT_DATE,
      FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE
+     CONSTRAINT unique_payslip_per_period UNIQUE (registration_number, year, month)
 );
