@@ -22,7 +22,8 @@ CREATE TABLE project (
 
 -- Table User
 CREATE TABLE user_account (
-      registration_number VARCHAR(20) PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
+      registration_number VARCHAR(20) UNIQUE NOT NULL,
       last_name VARCHAR(50) NOT NULL,
       first_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
@@ -49,11 +50,11 @@ CREATE TABLE user_project (
 -- Table Payslip
 CREATE TABLE payslip (
      id SERIAL PRIMARY KEY,
-     employee_number VARCHAR(20),
+     registration_number VARCHAR(20),
      date DATE NOT NULL,
      base_salary DECIMAL(10,2),
      bonuses DECIMAL(10,2),
      deductions DECIMAL(10,2),
      net_pay DECIMAL(10,2),
-     FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE
+     FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE
 );
