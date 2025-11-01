@@ -124,30 +124,33 @@ public class ProjectDAO {
             transaction = session.beginTransaction();
 
             Project project = session.find(Project.class, projectId);
-            User user = session.createQuery(
-                            "FROM User u WHERE u.registrationNumber = :reg", User.class)
+            User user = session.createQuery("FROM User u WHERE u.matricule = :reg", User.class)
                     .setParameter("reg", registrationNumber)
                     .uniqueResult();
 
             if (project != null && user != null) {
+                // S'assurer que l'ID est présent
+                if (user.getId() == null) {
+                    session.persist(user); // Persist si jamais l'objet est "transient"
+                }
+
                 project.getUsers().add(user);
                 user.getProjects().add(project);
-                session.merge(user);
+
+                session.merge(project); // merge le projet et les relations
                 transaction.commit();
-                // System.out.println("Utilisateur " + registrationNumber + " assigné au projet ID=" + projectId);
                 return true;
             } else {
-                System.err.println("Projet ou utilisateur introuvable.");
                 if (transaction != null) transaction.rollback();
                 return false;
             }
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
-            System.err.println("Erreur assignation utilisateur à projet : " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
+
 
     public boolean removeUserFromProject(Integer projectId, String registrationNumber) {
         Transaction transaction = null;
@@ -156,7 +159,7 @@ public class ProjectDAO {
 
             Project project = session.find(Project.class, projectId);
             User user = session.createQuery(
-                            "FROM User u WHERE u.registrationNumber = :reg", User.class)
+                            "FROM User u WHERE u.matricule = :reg", User.class)
                     .setParameter("reg", registrationNumber)
                     .uniqueResult();
 

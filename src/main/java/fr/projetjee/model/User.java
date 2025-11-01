@@ -3,6 +3,9 @@ package fr.projetjee.model;
 import jakarta.persistence.*;
 import fr.projetjee.model.*;
 
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.io.Serializable;
 import java.sql.Blob;
 import java.util.HashSet;
@@ -41,12 +44,12 @@ public class User implements Serializable {
     
     @Column(name = "phone", length = 20)
     private String phone;
-    
-    /*@Lob
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.BINARY)  // ← Force BYTEA
     @Column(name = "image")
-    private Blob image;*/
+    private byte[] image;
 
-    
     @Column(name = "address", length = 255)
     private String address;
     
@@ -72,7 +75,7 @@ public class User implements Serializable {
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
         name = "user_project",
-        joinColumns = @JoinColumn(name = "registration_number"),  // ✅ Changé de employee_number à user_id
+        joinColumns = @JoinColumn(name = "user_id"),  // ✅ Changé de employee_number à user_id
         inverseJoinColumns = @JoinColumn(name = "project_id")
     )
     private Set<Project> projects = new HashSet<>();
@@ -147,13 +150,12 @@ public class User implements Serializable {
         this.phone = phone;
     }
     
-    /*public Blob getImage() {
+    public byte[] getImage() {
         return image;
     }
-    
-    public void setImage(Blob image) {
+    public void setImage(byte[] image) {
         this.image = image;
-    }*/
+    }
     
     public String getAddress() {
         return address;

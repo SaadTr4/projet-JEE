@@ -84,7 +84,7 @@ public class UserDAO {
     public Optional<User> findByMatricule(String matricule) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.matricule = :matricule", User.class);
+                "FROM User u WHERE u.matricule = :matricule", User.class);
             query.setParameter("matricule", matricule);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
@@ -95,7 +95,7 @@ public class UserDAO {
     
     public List<User> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<User> query = session.createQuery("FROM Utilisateur", User.class);
+            Query<User> query = session.createQuery("FROM User", User.class);
             return query.list();
         } catch (Exception e) {
             System.err.println("❌ Erreur findAll: " + e.getMessage());
@@ -106,7 +106,7 @@ public class UserDAO {
     public Optional<User> findByEmail(String email) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.email = :email", User.class);
+                "FROM User u WHERE u.email = :email", User.class);
             query.setParameter("email", email);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
@@ -118,7 +118,7 @@ public class UserDAO {
     public List<User> findByLastName(String lastName) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE LOWER(u.lastName) LIKE LOWER(:lastName)", User.class);
+                "FROM User u WHERE LOWER(u.lastName) LIKE LOWER(:lastName)", User.class);
             query.setParameter("lastName", "%" + lastName + "%");
             return query.list();
         } catch (Exception e) {
@@ -130,7 +130,7 @@ public class UserDAO {
     public List<User> findByFirstName(String firstName) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE LOWER(u.firstName) LIKE LOWER(:firstName)", User.class);
+                "FROM User u WHERE LOWER(u.firstName) LIKE LOWER(:firstName)", User.class);
             query.setParameter("firstName", "%" + firstName + "%");
             return query.list();
         } catch (Exception e) {
@@ -142,7 +142,7 @@ public class UserDAO {
     public List<User> findByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.grade = :grade", User.class);
+                "FROM User u WHERE u.grade = :grade", User.class);
             query.setParameter("grade", grade);
             return query.list();
         } catch (Exception e) {
@@ -154,7 +154,7 @@ public class UserDAO {
     public List<User> findByRole(Role role) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.role = :role", User.class);
+                "FROM User u WHERE u.role = :role", User.class);
             query.setParameter("role", role);
             return query.list();
         } catch (Exception e) {
@@ -163,7 +163,7 @@ public class UserDAO {
         }
     }
     
-    public List<User> findByDepartment(Integer departmentId) {
+   /* public List<User> findByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
                 "FROM Utilisateur u WHERE u.department.id = :deptId", User.class);
@@ -173,9 +173,9 @@ public class UserDAO {
             System.err.println("❌ Erreur findByDepartment: " + e.getMessage());
             return new ArrayList<>();
         }
-    }
+    }*/
     
-    public List<User> findByPosition(Integer positionId) {
+   /* public List<User> findByPosition(Integer positionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
                 "FROM Utilisateur u WHERE u.position.id = :posId", User.class);
@@ -186,11 +186,11 @@ public class UserDAO {
             return new ArrayList<>();
         }
     }
-    
+    */
     public List<User> findByProject(Integer projectId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "SELECT u FROM Utilisateur u JOIN u.projects p WHERE p.id = :projId", User.class);
+                "SELECT u FROM User u JOIN u.projects p WHERE p.id = :projId", User.class);
             query.setParameter("projId", projectId);
             return query.list();
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class UserDAO {
     
     public long count() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Long> query = session.createQuery("SELECT COUNT(u) FROM Utilisateur u", Long.class);
+            Query<Long> query = session.createQuery("SELECT COUNT(u) FROM User u", Long.class);
             return query.uniqueResult();
         } catch (Exception e) {
             System.err.println("❌ Erreur count: " + e.getMessage());
@@ -209,7 +209,7 @@ public class UserDAO {
         }
     }
     
-    public long countByDepartment(Integer departmentId) {
+    /*public long countByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
                 "SELECT COUNT(u) FROM Utilisateur u WHERE u.department.id = :deptId", Long.class);
@@ -219,12 +219,12 @@ public class UserDAO {
             System.err.println("❌ Erreur countByDepartment: " + e.getMessage());
             return 0;
         }
-    }
+    }*/
     
     public long countByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
-                "SELECT COUNT(u) FROM Utilisateur u WHERE u.grade = :grade", Long.class);
+                "SELECT COUNT(u) FROM User u WHERE u.grade = :grade", Long.class);
             query.setParameter("grade", grade);
             return query.uniqueResult();
         } catch (Exception e) {

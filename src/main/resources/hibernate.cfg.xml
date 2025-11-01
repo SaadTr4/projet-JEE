@@ -18,6 +18,9 @@
         <property name="hibernate.use_sql_comments">true</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
 
+        <!-- Forcer Hibernate à utiliser BYTEA pour les LOB -->
+        <property name="hibernate.jdbc.lob.non_contextual_creation">true</property>
+
         <!-- Gestion des sessions -->
         <property name="hibernate.current_session_context_class">thread</property>
 
