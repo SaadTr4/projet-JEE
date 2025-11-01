@@ -1,6 +1,6 @@
 package fr.projetjee.dao;
 
-import fr.projetjee.Model.Utilisateur;
+import fr.projetjee.model.User;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.util.HibernateUtil;
@@ -12,10 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UtilisateurDAO {
+public class UserDAO {
     
     // ✅ Maintenant par ID (Integer)
-    public Utilisateur save(Utilisateur utilisateur) {
+    public User save(User utilisateur) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -31,7 +31,7 @@ public class UtilisateurDAO {
         }
     }
     
-    public Utilisateur update(Utilisateur utilisateur) {
+    public User update(User utilisateur) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -52,7 +52,7 @@ public class UtilisateurDAO {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            Utilisateur utilisateur = session.get(Utilisateur.class, id);
+            User utilisateur = session.find(User.class, id);
             if (utilisateur != null) {
                 session.remove(utilisateur);
                 transaction.commit();
@@ -70,9 +70,9 @@ public class UtilisateurDAO {
     }
     
     // ✅ Trouver par ID
-    public Optional<Utilisateur> findById(Integer id) {
+    public Optional<User> findById(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Utilisateur utilisateur = session.get(Utilisateur.class, id);
+            User utilisateur = session.find(User.class, id);
             return Optional.ofNullable(utilisateur);
         } catch (Exception e) {
             System.err.println("❌ Erreur recherche: " + e.getMessage());
@@ -81,10 +81,10 @@ public class UtilisateurDAO {
     }
     
     // ✅ NOUVELLE méthode : Trouver par matricule
-    public Optional<Utilisateur> findByMatricule(String matricule) {
+    public Optional<User> findByMatricule(String matricule) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.matricule = :matricule", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.matricule = :matricule", User.class);
             query.setParameter("matricule", matricule);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
@@ -93,9 +93,9 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findAll() {
+    public List<User> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery("FROM Utilisateur", Utilisateur.class);
+            Query<User> query = session.createQuery("FROM User", User.class);
             return query.list();
         } catch (Exception e) {
             System.err.println("❌ Erreur findAll: " + e.getMessage());
@@ -103,10 +103,10 @@ public class UtilisateurDAO {
         }
     }
     
-    public Optional<Utilisateur> findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.email = :email", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.email = :email", User.class);
             query.setParameter("email", email);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
@@ -115,10 +115,10 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findByLastName(String lastName) {
+    public List<User> findByLastName(String lastName) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE LOWER(u.lastName) LIKE LOWER(:lastName)", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE LOWER(u.lastName) LIKE LOWER(:lastName)", User.class);
             query.setParameter("lastName", "%" + lastName + "%");
             return query.list();
         } catch (Exception e) {
@@ -127,10 +127,10 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findByFirstName(String firstName) {
+    public List<User> findByFirstName(String firstName) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE LOWER(u.firstName) LIKE LOWER(:firstName)", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE LOWER(u.firstName) LIKE LOWER(:firstName)", User.class);
             query.setParameter("firstName", "%" + firstName + "%");
             return query.list();
         } catch (Exception e) {
@@ -139,10 +139,10 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findByGrade(Grade grade) {
+    public List<User> findByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.grade = :grade", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.grade = :grade", User.class);
             query.setParameter("grade", grade);
             return query.list();
         } catch (Exception e) {
@@ -151,10 +151,10 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findByRole(Role role) {
+    public List<User> findByRole(Role role) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.role = :role", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.role = :role", User.class);
             query.setParameter("role", role);
             return query.list();
         } catch (Exception e) {
@@ -163,22 +163,22 @@ public class UtilisateurDAO {
         }
     }
     
-    public List<Utilisateur> findByDepartment(Integer departmentId) {
+   /* public List<User> findByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.department.id = :deptId", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM Utilisateur u WHERE u.department.id = :deptId", User.class);
             query.setParameter("deptId", departmentId);
             return query.list();
         } catch (Exception e) {
             System.err.println("❌ Erreur findByDepartment: " + e.getMessage());
             return new ArrayList<>();
         }
-    }
+    }*/
     
-    public List<Utilisateur> findByPosition(Integer positionId) {
+   /* public List<User> findByPosition(Integer positionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.position.id = :posId", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "FROM Utilisateur u WHERE u.position.id = :posId", User.class);
             query.setParameter("posId", positionId);
             return query.list();
         } catch (Exception e) {
@@ -186,11 +186,11 @@ public class UtilisateurDAO {
             return new ArrayList<>();
         }
     }
-    
-    public List<Utilisateur> findByProject(Integer projectId) {
+    */
+    public List<User> findByProject(Integer projectId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Utilisateur> query = session.createQuery(
-                "SELECT u FROM Utilisateur u JOIN u.projects p WHERE p.id = :projId", Utilisateur.class);
+            Query<User> query = session.createQuery(
+                "SELECT u FROM User u JOIN u.projects p WHERE p.id = :projId", User.class);
             query.setParameter("projId", projectId);
             return query.list();
         } catch (Exception e) {
@@ -201,7 +201,7 @@ public class UtilisateurDAO {
     
     public long count() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<Long> query = session.createQuery("SELECT COUNT(u) FROM Utilisateur u", Long.class);
+            Query<Long> query = session.createQuery("SELECT COUNT(u) FROM User u", Long.class);
             return query.uniqueResult();
         } catch (Exception e) {
             System.err.println("❌ Erreur count: " + e.getMessage());
@@ -209,7 +209,7 @@ public class UtilisateurDAO {
         }
     }
     
-    public long countByDepartment(Integer departmentId) {
+    /*public long countByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
                 "SELECT COUNT(u) FROM Utilisateur u WHERE u.department.id = :deptId", Long.class);
@@ -219,12 +219,12 @@ public class UtilisateurDAO {
             System.err.println("❌ Erreur countByDepartment: " + e.getMessage());
             return 0;
         }
-    }
+    }*/
     
     public long countByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
-                "SELECT COUNT(u) FROM Utilisateur u WHERE u.grade = :grade", Long.class);
+                "SELECT COUNT(u) FROM User u WHERE u.grade = :grade", Long.class);
             query.setParameter("grade", grade);
             return query.uniqueResult();
         } catch (Exception e) {
@@ -236,7 +236,7 @@ public class UtilisateurDAO {
     // ✅ Vérifier existence par ID
     public boolean exists(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Utilisateur utilisateur = session.get(Utilisateur.class, id);
+            User utilisateur = session.find(User.class, id);
             return utilisateur != null;
         } catch (Exception e) {
             System.err.println("❌ Erreur exists: " + e.getMessage());

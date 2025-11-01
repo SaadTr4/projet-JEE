@@ -1,4 +1,4 @@
-package fr.projetjee.Model;
+package fr.projetjee.model;
 
 public class Position {
 

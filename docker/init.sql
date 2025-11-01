@@ -40,10 +40,10 @@ CREATE TABLE user_account (
 
 -- N-N Relationship Table User-Project, can't use "user" as table name because it's a reserved word in SQL
 CREATE TABLE user_project (
-      registration_number VARCHAR(20),
-      project_id INT,
-      PRIMARY KEY (registration_number, project_id),
-      FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,
+      user_id INT NOT NULL,
+      project_id INT NOT NULL,
+      PRIMARY KEY (user_id, project_id),
+      FOREIGN KEY (user_id) REFERENCES user_account(id) ON DELETE CASCADE,
       FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
 
@@ -58,6 +58,6 @@ CREATE TABLE payslip (
      deductions DECIMAL(10,2),
      net_pay DECIMAL(10,2),
      generation_date DATE NOT NULL DEFAULT CURRENT_DATE,
-     FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE
+     FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,
      CONSTRAINT unique_payslip_per_period UNIQUE (registration_number, year, month)
 );
