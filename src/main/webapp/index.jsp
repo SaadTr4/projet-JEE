@@ -16,6 +16,7 @@
 <div class="auth-card">
     <h4 class="auth-title">Connexion</h4>
 
+    <!-- Formulaire de connexion -->
     <form action="login" method="post">
         <div class="form-row">
             <label class="label" for="username">Nom d'utilisateur</label>
@@ -30,13 +31,14 @@
         <button class="btn" type="submit">Se connecter</button>
     </form>
 
+    <!-- Message d’erreur -->
     <% if (request.getAttribute("error") != null) { %>
-    <div class="alert"><%= request.getAttribute("error") %></div>
+        <div class="alert"><%= request.getAttribute("error") %></div>
     <% } %>
-
 </div>
 
 <footer class="footer">© 2025 - Application JEE Gestion RH</footer>
 
 </body>
 </html>
+
