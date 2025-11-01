@@ -1,30 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-  // Données de test (à remplacer plus tard par la BDD)
-  String username = (String) session.getAttribute("username");
-  if (username == null || username.isBlank()) username = "Haitam";
+String username = "Admin";
 
-  int totalEmployees = 120;
-  int totalProjects = 15;
-  int totalDepartments = 6;
+    int totalEmployees = 120;
+    int totalProjects = 15;
+    int totalDepartments = 6;
 %>
-<%
-    // Vérifie si l'utilisateur est connecté
-    String email = (String) session.getAttribute("userEmail");
-    if (email == null) {
-        // Pas de session → redirige vers la page de connexion
-        response.sendRedirect("index.jsp");
-        return;
-    }
-%>
-<%
-String user = (String) session.getAttribute("userEmail");
-if (user == null) {
-    response.sendRedirect("index.jsp");
-    return;
-}
-%>
-
 
 <!DOCTYPE html>
 <html lang="fr">
