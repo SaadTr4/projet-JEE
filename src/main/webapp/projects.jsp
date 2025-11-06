@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, fr.projetjee.models.Project" %>
+<%@ page import="java.util.*, fr.projetjee.model.Project" %>
 
 <%
     String username = "Admin";
@@ -83,13 +83,29 @@
                                for (Project p : projects) { %>
                             <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
                                 <td style="padding:10px;"><%= p.getId() %></td>
-                                <td><%= p.getNom() %></td>
-                                <td><%= p.getChefProjet() %></td>
-                                <td><%= p.getStatut() %></td>
-                                <td><%= String.join(", ", p.getEmployesAffectes()) %></td>
+                                <td><%= p.getName() %></td>
+                                <td><%= p.getProjectManager() %></td>
+                                <td><%= p.getStatus() %></td>
+                                <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
                                 <td>
-                                    <a href="EditProjectServlet?id=<%= p.getId() %>" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">Modifier</a>
-                                    <a href="DeleteProjectServlet?id=<%= p.getId() %>" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</a>
+                                    <!-- Formulaire pour modifier -->
+                                    <form method="post" action="projects" style="display:inline;">
+                                        <input type="hidden" name="id" value="<%= p.getId() %>">
+                                        <input type="hidden" name="nom" value="<%= p.getName() %>">
+                                        <input type="hidden" name="chefProjet" value="<%= p.getProjectManager() %>">
+                                        <input type="hidden" name="statut" value="<%= p.getStatus() %>">
+                                        <button type="submit" name="action" value="update"
+                                                class="welcome-logout"
+                                                style="padding:6px 10px; font-size:.85rem;">Modifier</button>
+                                    </form>
+
+                                    <!-- Formulaire pour supprimer -->
+                                    <form method="post" action="projects" style="display:inline;">
+                                        <input type="hidden" name="id" value="<%= p.getId() %>">
+                                        <button type="submit" name="action" value="delete"
+                                                class="welcome-logout"
+                                                style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</button>
+                                    </form>
                                 </td>
                             </tr>
                         <% } } %>
@@ -104,15 +120,15 @@
 <div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Ajouter un projet</h3>
-        <form method="post" action="AddProjectServlet">
+        <form method="post" action="projects">
             <input name="nom" class="input" placeholder="Nom du projet" required>
             <input name="chefProjet" class="input" placeholder="Chef de projet" required>
             <select name="statut" class="input" required>
-                <option value="En cours">En cours</option>
-                <option value="Terminé">Terminé</option>
-                <option value="Annulé">Annulé</option>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="COMPLETED">Terminé</option>
+                <option value="CANCELLED">Annulé</option>
             </select>
-            <button class="welcome-logout" style="margin-top:10px;">Enregistrer</button>
+            <button class="welcome-logout" style="margin-top:10px;"  name="action"  value="register">Enregistrer</button>
             <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="closeModal()">Annuler</button>
         </form>
     </div>

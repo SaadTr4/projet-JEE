@@ -18,7 +18,7 @@ public class ProjectDAO {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(project);
+            session.persist(project);
             transaction.commit();
             // System.out.println("Project sauvegardé: ID=" + project.getId() + ", Nom=" + project.getName());
             return project;
@@ -49,10 +49,21 @@ public class ProjectDAO {
             return false;
         }
     }
-    public void update(Project project){
-        save(project);
+    public Project update(Project project) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            session.merge(project);
+            transaction.commit();
+            // System.out.println("Project sauvegardé: ID=" + project.getId() + ", Nom=" + project.getName());
+            return project;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("Erreur sauvegarde projet: " + e.getMessage());
+            e.printStackTrace();
+            return null;
+        }
     }
-
     public Optional<Project> findById(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Project project = session.find(Project.class, id);
@@ -75,10 +86,22 @@ public class ProjectDAO {
         }
     }
 
-    public List<Project> findAll() {
+    /*public List<Project> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Project> query = session.createQuery("FROM Project", Project.class);
             return query.list();
+        } catch (Exception e) {
+            System.err.println("Erreur trouver tous les projets: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }*/
+    public List<Project> findAll() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // Charge les projets + users en une seule requête
+            List<Project> projects = session.createQuery(
+                    "SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.users", Project.class
+            ).list();
+            return projects;
         } catch (Exception e) {
             System.err.println("Erreur trouver tous les projets: " + e.getMessage());
             return new ArrayList<>();

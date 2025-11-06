@@ -17,6 +17,7 @@ CREATE TABLE project (
      id SERIAL PRIMARY KEY,
      name VARCHAR(100) NOT NULL,
      description TEXT,
+     project_manager VARCHAR(100),
      status VARCHAR(20) DEFAULT 'IN_PROGRESS'
 );
 

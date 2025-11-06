@@ -25,6 +25,8 @@ public class Project implements Serializable {
     @Column(name = "status", length = 20)
     private Status status;
 
+    @Column(name = "project_manager", length = 100)
+    private String projectManager;
     @ManyToMany(mappedBy = "projects", fetch = FetchType.LAZY)
     private Set<User> users = new HashSet<>();
 
@@ -39,11 +41,17 @@ public class Project implements Serializable {
         this.description = description;
         this.status = Status.IN_PROGRESS; // Default status
     }
-    public Project(String name, String description, Status status) {
+    public Project(String name, String projectManager, Status status) {
+        this.name = name;
+        this.projectManager = projectManager;
+        this.status = status;
+    }
+    public Project(String name,  String projectManager, String description, Status status) {
         this.name = name;
         this.description = description;
         this.status = status;
     }
+
 
     // ========================================
     // GETTERS / SETTERS
@@ -56,6 +64,8 @@ public class Project implements Serializable {
     public void setDescription(String description) { this.description = description; }
     public Status getStatus() { return status; }
     public void setStatus(Status status) { this.status = status; }
+    public String getProjectManager() { return projectManager; }
+    public void setProjectManager(String projectManager) { this.projectManager = projectManager; }
     public Set<User> getUsers() { return users; }
     public void setUsers(Set<User> users) { this.users = users; }
 
