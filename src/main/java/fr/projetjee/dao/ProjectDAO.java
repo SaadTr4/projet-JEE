@@ -12,66 +12,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class ProjectDAO {
+public class ProjectDAO extends GenericDAO<Project, Integer> {
 
-    public Project save(Project project) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(project);
-            transaction.commit();
-            System.out.println("[SUCCESS][DAO] Project sauvegardé: ID=" + project.getId() + ", Nom=" + project.getName());
-            return project;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("[ERROR][DAO] Erreur sauvegarde projet: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public boolean delete(Integer id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Project project = session.find(Project.class, id);
-            if (project != null) {
-                session.remove(project);
-                transaction.commit();
-                System.out.println("[SUCCESS][DAO] Projet supprimé: ID=" + id);
-                return true;
-            }
-            transaction.commit();
-            return false;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("[ERROR][DAO] Erreur suppression projet: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-    public Project update(Project project) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(project);
-            transaction.commit();
-            System.out.println("[SUCCESS][DAO] Project mis à jour: ID=" + project.getId() + ", Nom=" + project.getName());
-            return project;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("[ERROR][DAO] Erreur sauvegarde projet: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-    public Optional<Project> findById(Integer id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Project project = session.find(Project.class, id);
-            return Optional.ofNullable(project);
-        } catch (Exception e) {
-            System.err.println("[ERROR][DAO] Erreur trouver par ID projet: " + e.getMessage());
-            return Optional.empty();
-        }
+    public ProjectDAO() {
+        super(Project.class);
     }
 
     public Optional<Project> findByName(String name) {

@@ -144,7 +144,7 @@ public class ProjectServlet extends HttpServlet {
         }
 
         Integer id = Integer.parseInt(idParam);
-        projectDAO.delete(id);
+        projectDAO.deleteById(id);
         System.out.println("[INFO][Servlet] Projet supprimé, ID : " + id);
         response.sendRedirect("projects");
     }

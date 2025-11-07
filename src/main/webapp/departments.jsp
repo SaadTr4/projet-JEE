@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, fr.projetjee.models.Department" %>
+<%@ page import="java.util.*, fr.projetjee.model.Department" %>
 
 <%
     String username = "Admin";
@@ -80,9 +80,7 @@
                  for (Department d : departments) { %>
               <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
                 <td style="padding:10px;"><%= d.getId() %></td>
-                <td><%= d.getNom() %></td>
-                <td><%= d.getChef() %></td>
-                <td><%= d.getNbEmployes() %></td>
+                <td><%= d.getName() %></td>
                 <td>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">Modifier</a>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">👥 Membres</a>

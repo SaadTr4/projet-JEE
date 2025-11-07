@@ -1,14 +1,14 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, fr.projetjee.models.Employee" %>
+<%@ page import="java.util.*, fr.projetjee.model.User" %>
 
 <%
     // Pas de vérification de session (test)
     String username = "Admin";
 
-    List<Employee> employees = new ArrayList<>();
-    employees.add(new Employee(1, "Dupont", "Jean", "jean.dupont@entreprise.com", "Développeur", "Informatique", "Projet X", 3500));
-    employees.add(new Employee(2, "Martin", "Sophie", "sophie.martin@entreprise.com", "RH", "Ressources Humaines", "-", 3000));
-    employees.add(new Employee(3, "Benali", "Karim", "karim.benali@entreprise.com", "Chef Projet", "Informatique", "Projet Alpha", 4800));
+    List<User> employees = new ArrayList<>();
+    //    public User(String matricule, String lastName, String firstName, String email) {
+    employees.add(new User("E1","Dupont","Jean","jean.dupont@entreprise.com"));
+    employees.add(new User("E5","jk","Jeahn","jean.dupgont@entreprise.com"));
 %>
 
 <!DOCTYPE html>
@@ -100,16 +100,14 @@
                             </tr>
                         </thead>
                         <tbody>
-                        <% for (Employee e : employees) { %>
+                        <% for (User e : employees) { %>
                             <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
                                 <td style="padding:10px;"><%= e.getId() %></td>
-                                <td><%= e.getNom() %></td>
-                                <td><%= e.getPrenom() %></td>
+                                <td><%= e.getLastName() %></td>
+                                <td><%= e.getFirstName() %></td>
                                 <td><%= e.getEmail() %></td>
                                 <td><%= e.getRole() %></td>
-                                <td><%= e.getDepartement() %></td>
-                                <td><%= e.getProjet() %></td>
-                                <td><%= e.getSalaire() %></td>
+                                <td><%= e.getProjects() %></td>
                                 <td>
                                     <a href="EditEmployeeServlet?id=<%= e.getId() %>" class="welcome-logout">Modifier</a>
                                     <a href="DeleteEmployeeServlet?id=<%= e.getId() %>" class="welcome-logout" style="background:#ef4444;">Supprimer</a>

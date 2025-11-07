@@ -29,58 +29,34 @@ public class GenericDAO<T, ID> {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            session.merge(entity);
-            transaction.commit();
-            System.out.println("✅ " + entityClass.getSimpleName() + " sauvegardé: " + entity);
-            return entity;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur sauvegarde " + entityClass.getSimpleName() + ": " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
-     * Persiste une nouvelle entité (INSERT)
-     */
-    public T persist(T entity) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
             session.persist(entity);
             transaction.commit();
-            System.out.println("✅ " + entityClass.getSimpleName() + " persisté: " + entity);
+            System.out.println("[SUCCESS][DAO] " +entityClass.getSimpleName() + " sauvegardé: " + entity.toString());
             return entity;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur persistence " + entityClass.getSimpleName() + ": " + e.getMessage());
+            System.err.println("[ERROR][DAO] sauvegarde " + entityClass.getSimpleName() + ": " + e.getMessage());
             e.printStackTrace();
             return null;
         }
     }
 
     /**
-     * Supprime une entité par son ID
+     * Met à jour une entité
      */
-    public boolean deleteById(ID id) {
+    public T update(T entity) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
-            T entity = session.find(entityClass, id);
-            if (entity != null) {
-                session.remove(entity);
-                transaction.commit();
-                System.out.println("✅ " + entityClass.getSimpleName() + " supprimé: ID=" + id);
-                return true;
-            }
+            session.merge(entity);
             transaction.commit();
-            return false;
+            System.out.println("[SUCCESS][DAO] " + entityClass.getSimpleName() + " mis à jour : " + entity.toString());
+            return entity;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur update " + entityClass.getSimpleName() + ": " + e.getMessage());
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
@@ -93,22 +69,40 @@ public class GenericDAO<T, ID> {
             transaction = session.beginTransaction();
             session.remove(entity);
             transaction.commit();
-            System.out.println("✅ " + entityClass.getSimpleName() + " supprimé: " + entity);
+            System.out.println("[SUCCESS][DAO] " + entityClass.getSimpleName() + " supprimé: " + entity);
             return true;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
             e.printStackTrace();
             return false;
         }
     }
 
     /**
-     * Met à jour une entité
+     * Supprime une entité par son ID
      */
-    public T update(T entity) {
-        return save(entity);
-    }
+   public boolean deleteById(ID id) {
+       Transaction transaction = null;
+       try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+           transaction = session.beginTransaction();
+           T entity = session.find(entityClass, id);
+           if (entity != null) {
+               session.remove(entity);
+               transaction.commit();
+               System.out.println("[SUCCESS][DAO] " + entityClass.getSimpleName() + " supprimé: ID=" + id);
+               return true;
+           }
+           transaction.commit();
+           return false;
+       } catch (Exception e) {
+           if (transaction != null) transaction.rollback();
+           System.err.println("[ERROR][DAO] Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
+           e.printStackTrace();
+           return false;
+       }
+   }
+
 
     /**
      * Trouve une entité par son ID
@@ -118,7 +112,7 @@ public class GenericDAO<T, ID> {
             T entity = session.find(entityClass, id);
             return Optional.ofNullable(entity);
         } catch (Exception e) {
-            System.err.println("❌ Erreur recherche " + entityClass.getSimpleName() + " par ID: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur recherche " + entityClass.getSimpleName() + " par ID: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -126,7 +120,7 @@ public class GenericDAO<T, ID> {
     /**
      * Trouve toutes les entités
      */
-    public List<T> findAll() {
+  /*  public List<T> findAll() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<T> query = session.createQuery("FROM " + entityClass.getSimpleName(), entityClass);
             return query.list();
@@ -134,12 +128,12 @@ public class GenericDAO<T, ID> {
             System.err.println("❌ Erreur recherche toutes les " + entityClass.getSimpleName() + ": " + e.getMessage());
             return new ArrayList<>();
         }
-    }
+    }*/
 
     /**
      * Trouve des entités avec une requête HQL personnalisée
      */
-    public List<T> findByQuery(String hql, Object... parameters) {
+    /*public List<T> findByQuery(String hql, Object... parameters) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<T> query = session.createQuery(hql, entityClass);
             for (int i = 0; i < parameters.length; i++) {
@@ -150,12 +144,12 @@ public class GenericDAO<T, ID> {
             System.err.println("❌ Erreur recherche par requête " + entityClass.getSimpleName() + ": " + e.getMessage());
             return new ArrayList<>();
         }
-    }
+    }*/
 
     /**
      * Trouve une entité unique avec une requête HQL personnalisée
      */
-    public Optional<T> findUniqueByQuery(String hql, Object... parameters) {
+    /*public Optional<T> findUniqueByQuery(String hql, Object... parameters) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<T> query = session.createQuery(hql, entityClass);
             for (int i = 0; i < parameters.length; i++) {
@@ -166,12 +160,12 @@ public class GenericDAO<T, ID> {
             System.err.println("❌ Erreur recherche unique par requête " + entityClass.getSimpleName() + ": " + e.getMessage());
             return Optional.empty();
         }
-    }
+    }*/
 
     /**
      * Compte toutes les entités
      */
-    public long count() {
+    /*public long count() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
                     "SELECT COUNT(e) FROM " + entityClass.getSimpleName() + " e", Long.class);
@@ -180,12 +174,12 @@ public class GenericDAO<T, ID> {
             System.err.println("❌ Erreur comptage " + entityClass.getSimpleName() + ": " + e.getMessage());
             return 0;
         }
-    }
+    }*/
 
     /**
      * Compte avec une requête HQL personnalisée
      */
-    public long countByQuery(String hql, Object... parameters) {
+    /*public long countByQuery(String hql, Object... parameters) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(hql, Long.class);
             for (int i = 0; i < parameters.length; i++) {
@@ -196,19 +190,19 @@ public class GenericDAO<T, ID> {
             System.err.println("❌ Erreur comptage par requête " + entityClass.getSimpleName() + ": " + e.getMessage());
             return 0;
         }
-    }
+    }*/
 
     /**
      * Vérifie si une entité existe par son ID
      */
-    public boolean exists(ID id) {
+    /*public boolean exists(ID id) {
         return findById(id).isPresent();
     }
-
+*/
     /**
      * Exécute une opération en transaction
      */
-    public <R> R executeInTransaction(TransactionOperation<R> operation) {
+    /*public <R> R executeInTransaction(TransactionOperation<R> operation) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -221,27 +215,27 @@ public class GenericDAO<T, ID> {
             e.printStackTrace();
             return null;
         }
-    }
+    }*/
 
     /**
      * Interface fonctionnelle pour les opérations en transaction
      */
-    @FunctionalInterface
+   /* @FunctionalInterface
     public interface TransactionOperation<R> {
         R execute(Session session);
     }
-
+*/
     /**
      * Méthode utilitaire pour créer des requêtes nommées
      */
-    public Query<T> createNamedQuery(Session session, String queryName) {
+    /*public Query<T> createNamedQuery(Session session, String queryName) {
         return session.createNamedQuery(queryName, entityClass);
-    }
+    }*/
 
     /**
      * Méthode utilitaire pour créer des requêtes HQL
      */
-    public Query<T> createQuery(Session session, String hql) {
+   /* public Query<T> createQuery(Session session, String hql) {
         return session.createQuery(hql, entityClass);
-    }
+    }*/
 }

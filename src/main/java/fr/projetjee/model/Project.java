@@ -86,12 +86,12 @@ public class Project implements Serializable {
 
     @Override
     public String toString() {
-        return "Project{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", status=" + status +
-                ", projectManager='" + projectManager + '\'' +
-                '}';
+        return "Project [\n" +
+                "               id  = " + id + ",\n" +
+                "             name  = " + name + ",\n" +
+                "           status  = " + status + ",\n" +
+                "   projectManager  = " + projectManager.getFullName() + "\n" +
+                ']';
     }
 
     @Override
