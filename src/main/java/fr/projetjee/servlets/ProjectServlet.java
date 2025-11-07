@@ -1,5 +1,6 @@
 package fr.projetjee.servlets;
 
+import fr.projetjee.enums.Role;
 import fr.projetjee.enums.Status;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
@@ -13,18 +14,18 @@ import fr.projetjee.dao.*;
 public class ProjectServlet extends HttpServlet {
 
     private ProjectDAO projectDAO;
+    private UserDAO userDAO;
 
     @Override
     public void init() {
         projectDAO = new ProjectDAO();
+        userDAO = new UserDAO();
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String action = request.getParameter("action");
-        System.out.println("➡️ doPost() appelé, action=" + action);
 
         try {
             switch (action) {
@@ -42,6 +43,7 @@ public class ProjectServlet extends HttpServlet {
 
                 default:
                     request.setAttribute("error", "Action invalide.");
+                    System.out.println("[ERROR] Action invalide reçue: " + action);
                     doGet(request, response);
                     break;
             }
@@ -52,89 +54,109 @@ public class ProjectServlet extends HttpServlet {
         }
     }
 
-    private void addProject(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void addProject(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String name = request.getParameter("nom");
-        String manager = request.getParameter("chefProjet");
-        String statutParam = request.getParameter("statut");
+        String managerMatricule = request.getParameter("chefProjet");
+        String statusParam = request.getParameter("statut");
+        String description = ""; // Optional description can be added later
 
         if (name == null || name.isEmpty()) {
             request.setAttribute("error", "Le nom du projet est obligatoire.");
+            System.out.println("[ERROR] Nom du projet manquant lors de l'ajout");
             doGet(request, response);
             return;
         }
 
-        Status statut;
+        Status status;
         try {
-            statut = Status.valueOf(statutParam);
+            status = Status.valueOf(statusParam);
         } catch (Exception e) {
-            statut = Status.IN_PROGRESS;
+            status = Status.IN_PROGRESS;
         }
 
-        Project project = new Project(name, manager, statut);
+        User manager = getProjectManagerOrSendError(request, response, managerMatricule);
+        if (manager == null) return; // stop if invalid
+
+        Project project = new Project(name, manager, description, status);
         Project saved = projectDAO.save(project);
         if (saved != null) {
+            System.out.println("[SUCCESS] Projet ajouté : " + project.getName() + ", chef : " + manager.getFullName());
             response.sendRedirect("projects");
         } else {
             request.setAttribute("error", "Erreur lors de l'ajout du projet.");
+            System.out.println("[ERROR] Échec de l'ajout du projet : " + name + ", chef : " + manager.getFullName());
             doGet(request, response);
         }
     }
 
     private void updateProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String idParam = request.getParameter("id");
+        Integer id = Integer.parseInt(request.getParameter("id"));
         String name = request.getParameter("nom");
-        String manager = request.getParameter("chefProjet");
-        String statutParam = request.getParameter("statut");
+        String managerMatricule = request.getParameter("chefProjet");
+        String statusParam = request.getParameter("statut");
+        String description = request.getParameter("description");
 
-        if (idParam == null || idParam.isEmpty()) {
-            request.setAttribute("error", "ID du projet manquant.");
-            doGet(request, response);
-            return;
-        }
-
-        Integer id = Integer.parseInt(idParam);
         Project project = projectDAO.findById(id).orElse(null);
-
         if (project == null) {
-            request.setAttribute("error", "Projet introuvable.");
-            doGet(request, response);
-            return;
-        }
+            System.out.println("[ERROR] Projet introuvable pour l'ID : " + id); request.setAttribute("error","Le projet est introuvable.");
+            doGet(request,response); return; }
+
+        User manager = getProjectManagerOrSendError(request, response, managerMatricule);
+        if (manager == null) return; // stop if invalid
 
         project.setName(name);
+        if (description != null && !description.isEmpty()) { project.setDescription(description); }
         project.setProjectManager(manager);
+
         try {
-            project.setStatus(Status.valueOf(statutParam));
+            project.setStatus(Status.valueOf(statusParam));
         } catch (Exception e) {
             project.setStatus(Status.IN_PROGRESS);
         }
 
         projectDAO.update(project);
+        System.out.println("[SUCCESS] Projet mis à jour : " + project.getName() + ", chef : " + manager.getFullName());
         response.sendRedirect("projects");
     }
 
-    private void deleteProject(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    private void deleteProject(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String idParam = request.getParameter("id");
-
         if (idParam == null || idParam.isEmpty()) {
             request.setAttribute("error", "ID du projet manquant.");
+            System.out.println("[ERROR] ID du projet manquant lors de la suppression");
             doGet(request, response);
             return;
         }
 
         Integer id = Integer.parseInt(idParam);
         projectDAO.delete(id);
+        System.out.println("[INFO] Projet supprimé, ID : " + id);
         response.sendRedirect("projects");
     }
 
+    /** Retrieves the project manager by employee number and returns an error if invalid.
+     * Returns null if the project manager is invalid, otherwise returns the User object.
+     */
+    private User getProjectManagerOrSendError(HttpServletRequest request, HttpServletResponse response, String matricule) throws ServletException, IOException {
+        User manager = userDAO.findByMatricule(matricule).orElse(null);
+        if (manager == null || !userDAO.isUserProjectManager(Role.CHEF_PROJET, manager.getId())) {
+            System.out.println("[ERROR] Chef de projet invalide: " + matricule + ", trouvé: " + (manager != null ? manager.getFullName() : "null") + ", rôle: " + (manager != null ? manager.getRole() : "null"));
+            request.setAttribute("error", "Le chef de projet spécifié est invalide ou n'est pas un chef de projet.");
+            doGet(request, response);
+            return null; // on retournera null pour signaler que la suite ne doit pas continuer
+        }
+        System.out.println("[INFO] Manager valide trouvé : " + manager.getFullName() + ", matricule : " + matricule);
+        return manager;
+    }
+
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Project> projects = projectDAO.findAll();
         request.setAttribute("projects", projects);
+
+        List<User> chefs = userDAO.findByRole(Role.CHEF_PROJET);
+        request.setAttribute("chefs", chefs);
         request.getRequestDispatcher("projects.jsp").forward(request, response);
     }
 }

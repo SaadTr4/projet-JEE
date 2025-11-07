@@ -162,6 +162,22 @@ public class UserDAO {
             return new ArrayList<>();
         }
     }
+
+    public boolean isUserProjectManager(Role role, Integer id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                    "FROM User u WHERE u.role = :role AND u.id = :id",
+                    User.class
+            );
+            query.setParameter("role", role);
+            query.setParameter("id", id);
+            return query.uniqueResult() != null;
+        } catch (Exception e) {
+            System.err.println("❌ Erreur isUserProjectManager: " + e.getMessage());
+            return false;
+        }
+    }
+
     
    /* public List<User> findByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

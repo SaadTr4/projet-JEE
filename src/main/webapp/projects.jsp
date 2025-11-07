@@ -1,9 +1,12 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, fr.projetjee.model.Project" %>
+<%@ page import="fr.projetjee.model.User" %>
 
 <%
     String username = "Admin";
     List<Project> projects = (List<Project>) request.getAttribute("projects");
+    List<User> chefs = (List<User>) request.getAttribute("chefs");
+
 %>
 
 <!DOCTYPE html>
@@ -15,6 +18,11 @@
 </head>
 <body>
 <div class="bg"></div>
+<datalist id="chefsList">
+    <% for (User chef : chefs) { %>
+    <option value="<%= chef.getMatricule() %>"><%= chef.getFullName() %></option>
+    <% } %>
+</datalist>
 
 <div class="app-shell">
     <!-- SIDEBAR -->
@@ -63,7 +71,7 @@
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
                         </div>
                     </div>
-                    <button class="welcome-logout" onclick="openModal()">+ Ajouter</button>
+                    <button class="welcome-logout" onclick="toggleAddModal(true)">+ Ajouter</button>
                 </div>
 
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
@@ -84,22 +92,36 @@
                             <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
                                 <td style="padding:10px;"><%= p.getId() %></td>
                                 <td><%= p.getName() %></td>
-                                <td><%= p.getProjectManager() %></td>
-                                <td><%= p.getStatus() %></td>
+                                <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
+                                <td><%= p.getStatus().getDisplayName() %></td>
                                 <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
                                 <td>
-                                    <!-- Formulaire pour modifier -->
-                                    <form method="post" action="projects" style="display:inline;">
-                                        <input type="hidden" name="id" value="<%= p.getId() %>">
-                                        <input type="hidden" name="nom" value="<%= p.getName() %>">
-                                        <input type="hidden" name="chefProjet" value="<%= p.getProjectManager() %>">
-                                        <input type="hidden" name="statut" value="<%= p.getStatus() %>">
-                                        <button type="submit" name="action" value="update"
+                                    <button type="button" name="action" value="update" onclick="toggleUpdateModal('modalUpdate_<%= p.getId() %>', true)"
                                                 class="welcome-logout"
                                                 style="padding:6px 10px; font-size:.85rem;">Modifier</button>
-                                    </form>
 
-                                    <!-- Formulaire pour supprimer -->
+                                    <div id="modalUpdate_<%= p.getId() %>" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
+                                        <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
+                                            <h3>Modifier le projet</h3>
+
+                                            <form method="post" action="projects">
+                                                <input type="hidden" name="id" value="<%= p.getId() %>">
+
+                                                <input name="nom" value="<%= p.getName() %>" placeholder="Nom du projet" required>
+                                                <input name="chefProjet" list="chefsList" value="<%= p.getProjectManager() != null ? p.getProjectManager().getMatricule() : "" %>" placeholder="Chef de projet" required oninput="checkChefValid(this)">
+                                                <select name="statut" required>
+                                                    <option value="IN_PROGRESS" <%= "IN_PROGRESS".equals(p.getStatus()) ? "selected" : "" %>>En cours</option>
+                                                    <option value="COMPLETED" <%= "COMPLETED".equals(p.getStatus()) ? "selected" : "" %>>Terminé</option>
+                                                    <option value="CANCELLED" <%= "CANCELLED".equals(p.getStatus()) ? "selected" : "" %>>Annulé</option>
+                                                </select>
+                                                <input name="description" value="<%= p.getDescription() %>" placeholder="Description">
+
+                                                <button class="welcome-logout" style="margin-top:10px;"  name="action" value="update">Enregistrer</button>
+                                                <button type="button"  class="welcome-logout" style="background:#ef4444;" onclick="toggleUpdateModal('modalUpdate_<%= p.getId() %>', false)">Annuler</button>
+                                            </form>
+                                        </div>
+                                    </div>
+
                                     <form method="post" action="projects" style="display:inline;">
                                         <input type="hidden" name="id" value="<%= p.getId() %>">
                                         <button type="submit" name="action" value="delete"
@@ -122,21 +144,33 @@
         <h3>Ajouter un projet</h3>
         <form method="post" action="projects">
             <input name="nom" class="input" placeholder="Nom du projet" required>
-            <input name="chefProjet" class="input" placeholder="Chef de projet" required>
+            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkChefValid(this)">
             <select name="statut" class="input" required>
                 <option value="IN_PROGRESS">En cours</option>
                 <option value="COMPLETED">Terminé</option>
                 <option value="CANCELLED">Annulé</option>
             </select>
             <button class="welcome-logout" style="margin-top:10px;"  name="action"  value="register">Enregistrer</button>
-            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="closeModal()">Annuler</button>
+            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="toggleAddModal(false)">Annuler</button>
         </form>
     </div>
 </div>
 
+
+
 <script>
-function openModal(){ document.getElementById('modalAdd').style.display='flex'; }
-function closeModal(){ document.getElementById('modalAdd').style.display='none'; }
+    function toggleAddModal(show) { document.getElementById('modalAdd').style.display = show ? 'flex' : 'none'; }
+    function toggleUpdateModal(modalId, show) { document.getElementById(modalId).style.display = show ? 'flex' : 'none'; }
+
+    function checkChefValid(input) {
+        const datalist = document.getElementById('chefsList');
+        const options = Array.from(datalist.options).map(opt => opt.value.trim());
+        if (!options.includes(input.value.trim())) {
+            input.setCustomValidity("Veuillez choisir un chef de projet valide.");
+        } else {
+            input.setCustomValidity("");
+        }
+    }
 </script>
 </body>
 </html>

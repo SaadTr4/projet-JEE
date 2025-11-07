@@ -12,15 +12,6 @@ CREATE TABLE position (
       description TEXT
 );
 
--- Table Project
-CREATE TABLE project (
-     id SERIAL PRIMARY KEY,
-     name VARCHAR(100) NOT NULL,
-     description TEXT,
-     project_manager VARCHAR(100),
-     status VARCHAR(20) DEFAULT 'IN_PROGRESS'
-);
-
 -- Table User
 CREATE TABLE user_account (
       id SERIAL PRIMARY KEY,
@@ -37,6 +28,16 @@ CREATE TABLE user_account (
       position_id INT,
       FOREIGN KEY (department_id) REFERENCES department(id),
       FOREIGN KEY (position_id) REFERENCES position(id)
+);
+
+-- Table Project
+CREATE TABLE project (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(100) NOT NULL,
+     description TEXT,
+     project_manager_id INT,
+     status VARCHAR(20) DEFAULT 'IN_PROGRESS',
+     FOREIGN KEY (project_manager_id) REFERENCES user_account(id)
 );
 
 -- N-N Relationship Table User-Project, can't use "user" as table name because it's a reserved word in SQL
