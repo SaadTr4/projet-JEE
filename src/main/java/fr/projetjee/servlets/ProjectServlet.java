@@ -87,6 +87,8 @@ public class ProjectServlet extends HttpServlet {
             System.out.println("[ERROR][Servlet] Échec de l'ajout du projet : " + name + ", chef : " + manager.getFullName());
             doGet(request, response);
         }
+        projectDAO.assignUserToProject(project.getId(),managerMatricule);
+        System.out.println("[SUCCESS][Servlet] Chef de projet assigné au projet.");
     }
 
     private void updateProject(HttpServletRequest request, HttpServletResponse response)
@@ -102,12 +104,24 @@ public class ProjectServlet extends HttpServlet {
             System.out.println("[ERROR][Servlet] Projet introuvable pour l'ID : " + id); request.setAttribute("error","Le projet est introuvable.");
             doGet(request,response); return; }
 
-        User manager = getProjectManagerOrSendError(request, response, managerMatricule);
-        if (manager == null) return; // stop if invalid
+        User updatedManager = getProjectManagerOrSendError(request, response, managerMatricule);
+        if (updatedManager == null) return; // stop if invalid
 
         project.setName(name);
         if (description != null && !description.isEmpty()) { project.setDescription(description); }
-        project.setProjectManager(manager);
+
+        // Save the current manager before updating
+        User currentManager = project.getProjectManager();
+        if (currentManager == null || !currentManager.getMatricule().equals(managerMatricule)) {
+            if (currentManager != null) {
+                projectDAO.removeUserFromProject(project.getId(), currentManager.getMatricule());
+                System.out.println("[INFO][Servlet] Ancien chef de projet désassigné : " + currentManager.getFullName());
+            }
+
+            projectDAO.assignUserToProject(project.getId(), updatedManager.getMatricule());
+            System.out.println("[SUCCESS][Servlet] Nouveau chef de projet assigné : " + updatedManager.getFullName());
+        }
+        project.setProjectManager(updatedManager);
 
         try {
             project.setStatus(Status.valueOf(statusParam));
@@ -116,7 +130,7 @@ public class ProjectServlet extends HttpServlet {
         }
 
         projectDAO.update(project);
-        System.out.println("[SUCCESS][Servlet] Projet mis à jour : " + project.getName() + ", chef : " + manager.getFullName());
+        System.out.println("[SUCCESS][Servlet] Projet mis à jour : " + project.getName() + ", chef : " + updatedManager.getFullName());
         response.sendRedirect("projects");
     }
 
