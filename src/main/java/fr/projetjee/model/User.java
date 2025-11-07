@@ -62,14 +62,14 @@ public class User implements Serializable {
     private Role role;
     
     // Relation Many-to-One avec Department
-    /*@ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
-    private Department department;*/
+    private Department department;
     
     // Relation Many-to-One avec Position
-    /*@ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "position_id")
-    private fr.projetjee.model.Position position;*/
+    private fr.projetjee.model.Position position;
     
     // Relation Many-to-Many avec Project
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -181,7 +181,7 @@ public class User implements Serializable {
         this.role = role;
     }
     
-   /* public Department getDepartment() {
+   public Department getDepartment() {
         return department;
     }
     
@@ -195,7 +195,7 @@ public class User implements Serializable {
     
     public void setPosition(Position position) {
         this.position = position;
-    }*/
+    }
     
     public Set<Project> getProjects() {
         return projects;

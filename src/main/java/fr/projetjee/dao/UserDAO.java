@@ -163,22 +163,22 @@ public class UserDAO {
         }
     }
     
-   /* public List<User> findByDepartment(Integer departmentId) {
+   public List<User> findByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.department.id = :deptId", User.class);
+                "FROM User u WHERE u.department.id = :deptId", User.class);
             query.setParameter("deptId", departmentId);
             return query.list();
         } catch (Exception e) {
             System.err.println("❌ Erreur findByDepartment: " + e.getMessage());
             return new ArrayList<>();
         }
-    }*/
-    
-   /* public List<User> findByPosition(Integer positionId) {
+    }
+
+    public List<User> findByPosition(Integer positionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.position.id = :posId", User.class);
+                "FROM User u WHERE u.position.id = :posId", User.class);
             query.setParameter("posId", positionId);
             return query.list();
         } catch (Exception e) {
@@ -186,7 +186,7 @@ public class UserDAO {
             return new ArrayList<>();
         }
     }
-    */
+
     public List<User> findByProject(Integer projectId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
@@ -209,17 +209,17 @@ public class UserDAO {
         }
     }
     
-    /*public long countByDepartment(Integer departmentId) {
+    public long countByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
-                "SELECT COUNT(u) FROM Utilisateur u WHERE u.department.id = :deptId", Long.class);
+                "SELECT COUNT(u) FROM User u WHERE u.department.id = :deptId", Long.class);
             query.setParameter("deptId", departmentId);
             return query.uniqueResult();
         } catch (Exception e) {
             System.err.println("❌ Erreur countByDepartment: " + e.getMessage());
             return 0;
         }
-    }*/
+    }
     
     public long countByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
