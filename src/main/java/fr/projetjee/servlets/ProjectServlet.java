@@ -80,11 +80,11 @@ public class ProjectServlet extends HttpServlet {
         Project project = new Project(name, manager, description, status);
         Project saved = projectDAO.save(project);
         if (saved != null) {
-            System.out.println("[SUCCESS] Projet ajouté : " + project.getName() + ", chef : " + manager.getFullName());
+            System.out.println("[SUCCESS][Servlet] Projet ajouté : " + project.getName() + ", chef : " + manager.getFullName());
             response.sendRedirect("projects");
         } else {
             request.setAttribute("error", "Erreur lors de l'ajout du projet.");
-            System.out.println("[ERROR] Échec de l'ajout du projet : " + name + ", chef : " + manager.getFullName());
+            System.out.println("[ERROR][Servlet] Échec de l'ajout du projet : " + name + ", chef : " + manager.getFullName());
             doGet(request, response);
         }
     }
@@ -99,7 +99,7 @@ public class ProjectServlet extends HttpServlet {
 
         Project project = projectDAO.findById(id).orElse(null);
         if (project == null) {
-            System.out.println("[ERROR] Projet introuvable pour l'ID : " + id); request.setAttribute("error","Le projet est introuvable.");
+            System.out.println("[ERROR][Servlet] Projet introuvable pour l'ID : " + id); request.setAttribute("error","Le projet est introuvable.");
             doGet(request,response); return; }
 
         User manager = getProjectManagerOrSendError(request, response, managerMatricule);
@@ -116,7 +116,7 @@ public class ProjectServlet extends HttpServlet {
         }
 
         projectDAO.update(project);
-        System.out.println("[SUCCESS] Projet mis à jour : " + project.getName() + ", chef : " + manager.getFullName());
+        System.out.println("[SUCCESS][Servlet] Projet mis à jour : " + project.getName() + ", chef : " + manager.getFullName());
         response.sendRedirect("projects");
     }
 
@@ -124,14 +124,14 @@ public class ProjectServlet extends HttpServlet {
         String idParam = request.getParameter("id");
         if (idParam == null || idParam.isEmpty()) {
             request.setAttribute("error", "ID du projet manquant.");
-            System.out.println("[ERROR] ID du projet manquant lors de la suppression");
+            System.out.println("[ERROR][Servlet] ID du projet manquant lors de la suppression");
             doGet(request, response);
             return;
         }
 
         Integer id = Integer.parseInt(idParam);
         projectDAO.delete(id);
-        System.out.println("[INFO] Projet supprimé, ID : " + id);
+        System.out.println("[INFO][Servlet] Projet supprimé, ID : " + id);
         response.sendRedirect("projects");
     }
 
@@ -141,12 +141,12 @@ public class ProjectServlet extends HttpServlet {
     private User getProjectManagerOrSendError(HttpServletRequest request, HttpServletResponse response, String matricule) throws ServletException, IOException {
         User manager = userDAO.findByMatricule(matricule).orElse(null);
         if (manager == null || !userDAO.isUserProjectManager(Role.CHEF_PROJET, manager.getId())) {
-            System.out.println("[ERROR] Chef de projet invalide: " + matricule + ", trouvé: " + (manager != null ? manager.getFullName() : "null") + ", rôle: " + (manager != null ? manager.getRole() : "null"));
+            System.out.println("[ERROR][Servlet] Chef de projet invalide: " + matricule + ", trouvé: " + (manager != null ? manager.getFullName() : "null") + ", rôle: " + (manager != null ? manager.getRole() : "null"));
             request.setAttribute("error", "Le chef de projet spécifié est invalide ou n'est pas un chef de projet.");
             doGet(request, response);
             return null; // on retournera null pour signaler que la suite ne doit pas continuer
         }
-        System.out.println("[INFO] Manager valide trouvé : " + manager.getFullName() + ", matricule : " + matricule);
+        System.out.println("[INFO][Servlet] Manager valide trouvé : " + manager.getFullName() + ", matricule : " + matricule);
         return manager;
     }
 
