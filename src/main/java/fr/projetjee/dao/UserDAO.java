@@ -14,14 +14,14 @@ import java.util.Optional;
 
 public class UserDAO {
     
-    // ✅ Maintenant par ID (Integer)
+    // Maintenant par ID (Integer)
     public User save(User utilisateur) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
             session.persist(utilisateur);
             transaction.commit();
-            System.out.println("✅ Utilisateur créé: ID=" + utilisateur.getId() + ", Matricule=" + utilisateur.getMatricule());
+            System.out.println(" Utilisateur créé: ID=" + utilisateur.getId() + ", Matricule=" + utilisateur.getMatricule());
             return utilisateur;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -37,7 +37,7 @@ public class UserDAO {
             transaction = session.beginTransaction();
             session.merge(utilisateur);
             transaction.commit();
-            System.out.println("✅ Utilisateur mis à jour: ID=" + utilisateur.getId());
+            System.out.println("Utilisateur mis à jour: ID=" + utilisateur.getId());
             return utilisateur;
         } catch (Exception e) {
             if (transaction != null) transaction.rollback();
@@ -47,7 +47,7 @@ public class UserDAO {
         }
     }
     
-    // ✅ Supprimer par ID (Integer)
+    //  Supprimer par ID (Integer)
     public boolean delete(Integer id) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -56,7 +56,7 @@ public class UserDAO {
             if (utilisateur != null) {
                 session.remove(utilisateur);
                 transaction.commit();
-                System.out.println("✅ Utilisateur supprimé: ID=" + id);
+                System.out.println(" Utilisateur supprimé: ID=" + id);
                 return true;
             }
             transaction.commit();
@@ -69,7 +69,7 @@ public class UserDAO {
         }
     }
     
-    // ✅ Trouver par ID
+    //  Trouver par ID
     public Optional<User> findById(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             User utilisateur = session.find(User.class, id);
@@ -80,7 +80,7 @@ public class UserDAO {
         }
     }
     
-    // ✅ NOUVELLE méthode : Trouver par matricule
+    //  NOUVELLE méthode : Trouver par matricule
     public Optional<User> findByMatricule(String matricule) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
@@ -233,13 +233,13 @@ public class UserDAO {
         }
     }
     
-    // ✅ Vérifier existence par ID
+    //  Vérifier existence par ID
     public boolean exists(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             User utilisateur = session.find(User.class, id);
             return utilisateur != null;
         } catch (Exception e) {
-            System.err.println("❌ Erreur exists: " + e.getMessage());
+            System.err.println(" Erreur exists: " + e.getMessage());
             return false;
         }
     }
