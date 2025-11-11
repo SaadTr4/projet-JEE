@@ -17,16 +17,39 @@ public class ProjectServlet extends HttpServlet {
     private UserDAO userDAO;
 
     @Override
-    public void init() {
-        projectDAO = new ProjectDAO();
-        userDAO = new UserDAO();
+    public void init() throws ServletException {
+        try {
+            projectDAO = new ProjectDAO();
+            userDAO = new UserDAO();
+            System.out.println("[INFO] ProjectServlet initialisé avec succès.");
+        } catch (Exception e) {
+            System.err.println("[ERROR] Erreur lors de l'initialisation de ProjectServlet : " + e.getMessage());
+            e.printStackTrace();
+            // Optionnel : lancer une exception pour empêcher le servlet de démarrer
+            throw new ServletException("Impossible d'initialiser les DAO : " + e.getMessage());
+        }
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-        String action = request.getParameter("action");
+        String action = safeTrim(request.getParameter("action"));
 
+        if (action == null) {
+            request.setAttribute("error", "Action manquante");
+            System.out.println("[ERROR] Action manquante dans la requête POST avec action = " + action);
+            doGet(request, response);
+            return;
+        }
+
+        if ("filter".equals(action)) {
+            FilterPost(request, response);
+            return;
+        }
+        if ("reset".equals(action)) {
+            resetFilters(request, response);
+            return;
+        }
         try {
             switch (action) {
                 case "register":
@@ -55,13 +78,13 @@ public class ProjectServlet extends HttpServlet {
     }
 
     private void addProject(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String name = request.getParameter("nom");
-        String managerMatricule = request.getParameter("chefProjet");
+        String name = safeTrim(request.getParameter("nom"));
+        String managerMatricule = safeTrim(request.getParameter("chefProjet"));
         String statusParam = request.getParameter("statut");
         String description = ""; // Optional description can be added later
 
-        if (name == null || name.isEmpty()) {
-            request.setAttribute("error", "Le nom du projet est obligatoire.");
+        if (name == null || name.isEmpty() || name.length() > 100) {
+            request.setAttribute("error", "Nom du projet invalide ");
             System.out.println("[ERROR] Nom du projet manquant lors de l'ajout");
             doGet(request, response);
             return;
@@ -94,10 +117,10 @@ public class ProjectServlet extends HttpServlet {
     private void updateProject(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Integer id = Integer.parseInt(request.getParameter("id"));
-        String name = request.getParameter("nom");
-        String managerMatricule = request.getParameter("chefProjet");
+        String name = safeTrim(request.getParameter("nom"));
+        String managerMatricule = safeTrim(request.getParameter("chefProjet"));
         String statusParam = request.getParameter("statut");
-        String description = request.getParameter("description");
+        String description = safeTrim(request.getParameter("description"));
 
         Project project = projectDAO.findById(id).orElse(null);
         if (project == null) {
@@ -107,21 +130,17 @@ public class ProjectServlet extends HttpServlet {
         User updatedManager = getProjectManagerOrSendError(request, response, managerMatricule);
         if (updatedManager == null) return; // stop if invalid
 
-        project.setName(name);
-        if (description != null && !description.isEmpty()) { project.setDescription(description); }
+        if(name.length() <= 100) { project.setName(name); }
+        if (description != null && !description.isEmpty() && description.length() <= 500) { project.setDescription(description); }
 
-        // Save the current manager before updating
-        User currentManager = project.getProjectManager();
-        if (currentManager == null || !currentManager.getMatricule().equals(managerMatricule)) {
-            if (currentManager != null) {
-                projectDAO.removeUserFromProject(project.getId(), currentManager.getMatricule());
-                System.out.println("[INFO][Servlet] Ancien chef de projet désassigné : " + currentManager.getFullName());
-            }
-
-            projectDAO.assignUserToProject(project.getId(), updatedManager.getMatricule());
-            System.out.println("[SUCCESS][Servlet] Nouveau chef de projet assigné : " + updatedManager.getFullName());
+        // Update project manager if changed
+        boolean updated = projectDAO.updateProjectManager(project.getId(), updatedManager.getMatricule());
+        if (!updated) {
+            request.setAttribute("error", "Impossible de mettre à jour le chef de projet.");
+            doGet(request, response);
+            return;
         }
-        project.setProjectManager(updatedManager);
+
 
         try {
             project.setStatus(Status.valueOf(statusParam));
@@ -166,11 +185,72 @@ public class ProjectServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        List<Project> projects = projectDAO.findAll();
-        request.setAttribute("projects", projects);
+        HttpSession session = request.getSession();
 
-        List<User> chefs = userDAO.findByRole(Role.CHEF_PROJET);
-        request.setAttribute("chefs", chefs);
+        String nameFilter = (String) session.getAttribute("filter_name");
+        String managerFilter = (String) session.getAttribute("filter_manager");
+        Status statusFilter = (Status) session.getAttribute("filter_status");
+
+        List<Project> allProjects = projectDAO.findAll(); // Pour la datalist complète
+        List<Project> filteredProjects;
+        // Appliquer les filtres uniquement si au moins un champ est rempli
+        if ((nameFilter != null && !nameFilter.isEmpty()) ||
+                (managerFilter != null && !managerFilter.isEmpty()) ||
+                statusFilter != null) {
+
+            filteredProjects = projectDAO.findProjectsWithFilters(nameFilter, managerFilter, statusFilter);
+
+        } else {
+            // Aucun filtre => récupérer tous les projets
+            filteredProjects = allProjects;
+        }
+
+        request.setAttribute("allProjects", allProjects);
+        request.setAttribute("projects", filteredProjects);
+        request.setAttribute("chefs", userDAO.findByRole(Role.CHEF_PROJET));
+
+        // Pré-remplir les filtres pour le JSP
+        request.setAttribute("filter_name", nameFilter != null ? nameFilter : "");
+        request.setAttribute("filter_manager", managerFilter != null ? managerFilter : "");
+        request.setAttribute("filter_status", statusFilter != null ? statusFilter.name() : "");
+
         request.getRequestDispatcher("projects.jsp").forward(request, response);
+    }
+
+    private String safeTrim(String value) {
+        return value != null ? value.trim() : null;
+    }
+
+    private void FilterPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String name = safeTrim(request.getParameter("name"));
+        String manager = safeTrim(request.getParameter("manager"));
+        String statusStr = safeTrim(request.getParameter("status"));
+
+        Status status = null;
+        if (statusStr != null && !statusStr.isEmpty()) {
+            try {
+                status = Status.valueOf(statusStr);
+            } catch (IllegalArgumentException ignored) { }
+        }
+
+        HttpSession session = request.getSession();
+        session.setAttribute("filter_name", name);
+        session.setAttribute("filter_manager", manager);
+        session.setAttribute("filter_status", status);
+
+        // Redirection GET → évite le "rechargement du formulaire"
+        response.sendRedirect("projects");
+    }
+    private void resetFilters(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession();
+        session.removeAttribute("filter_name");
+        session.removeAttribute("filter_manager");
+        session.removeAttribute("filter_status");
+        response.sendRedirect("projects");
+    }
+    @Override
+    public void destroy() {
+        System.out.println("ProjectServlet détruit");
+        super.destroy();
     }
 }

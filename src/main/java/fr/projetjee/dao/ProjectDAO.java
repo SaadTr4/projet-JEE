@@ -161,4 +161,103 @@ public class ProjectDAO extends GenericDAO<Project, Integer> {
         }
     }
 
+    public boolean updateProjectManager(Integer projectId, String newManagerMatricule) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+
+            // Load the project
+            Project project = session.find(Project.class, projectId);
+            if (project == null) {
+                System.err.println("[ERROR][DAO] Projet introuvable (ID=" + projectId + ")");
+                return false;
+            }
+
+            // Find the new manager by matricule
+            User newManager = session.createQuery(
+                            "FROM User u WHERE u.matricule = :reg", User.class)
+                    .setParameter("reg", newManagerMatricule)
+                    .uniqueResult();
+
+            if (newManager == null) {
+                System.err.println("[ERROR][DAO] Nouveau chef introuvable (matricule=" + newManagerMatricule + ")");
+                return false;
+            }
+
+            // Remove the current manager from the N-N relationship if different
+            User currentManager = project.getProjectManager();
+            if (currentManager != null && !currentManager.getId().equals(newManager.getId())) {
+                project.getUsers().remove(currentManager);
+                currentManager.getProjects().remove(project);
+                session.merge(currentManager);
+            }
+
+            // Add the new manager to the N-N relationship if not already present
+            if (!project.getUsers().contains(newManager)) {
+                project.getUsers().add(newManager);
+                newManager.getProjects().add(project);
+            }
+
+            // Update the project manager
+            project.setProjectManager(newManager);
+
+            session.merge(newManager);
+            session.merge(project);
+
+            transaction.commit();
+
+            System.out.println("[SUCCESS][DAO] Chef de projet mis à jour (Projet ID=" + projectId +
+                    ", Nouveau manager=" + newManager.getFullName() + ")");
+            return true;
+
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("[ERROR][DAO] Erreur lors de la mise à jour du chef de projet : " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+
+    public List<Project> findProjectsWithFilters(String name, String managerMatricule, Status status) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            if (name != null) name = name.trim();
+            if (managerMatricule != null) managerMatricule = managerMatricule.trim();
+
+            StringBuilder hql = new StringBuilder("SELECT DISTINCT p FROM Project p " +
+                    "LEFT JOIN FETCH p.users " +
+                    "LEFT JOIN FETCH p.projectManager m WHERE 1=1 ");
+
+            if (name != null && !name.isEmpty()) {
+                hql.append("AND p.name LIKE :namePattern ");
+            }
+            if (managerMatricule != null && !managerMatricule.isEmpty()) {
+                hql.append("AND m.matricule = :manager ");
+            }
+            if (status != null) {
+                hql.append("AND p.status = :status ");
+            }
+
+            Query<Project> query = session.createQuery(hql.toString(), Project.class);
+
+            if (name != null && !name.isEmpty()) {
+                query.setParameter("namePattern", "%" + name + "%");
+            }
+            if (managerMatricule != null && !managerMatricule.isEmpty()) {
+                query.setParameter("manager", managerMatricule);
+            }
+            if (status != null) {
+                query.setParameter("status", status);
+            }
+
+            return query.list();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+
 }
