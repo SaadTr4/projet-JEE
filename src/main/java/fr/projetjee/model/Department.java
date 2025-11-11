@@ -75,14 +75,13 @@ public class Department implements Serializable {
     // ==============================
     // Utility Methods
     // ==============================
-
     @Override
     public String toString() {
-        return "Department{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "Department [\n" +
+                "               id  = " + id + ",\n" +
+                "             name  = " + name + ",\n" +
+                "      description  = " + description + "\n" +
+                ']';
     }
 
     @Override

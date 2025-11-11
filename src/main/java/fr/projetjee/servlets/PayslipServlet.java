@@ -101,12 +101,12 @@ public class PayslipServlet extends HttpServlet {
 
     private void deletePayslip(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         int id = Integer.parseInt(request.getParameter("id"));
-        boolean success = payslipDAO.delete(id);
-        if (success) {
+        //boolean success = payslipDAO.delete(id);
+        /*if (success) {
             System.out.println("[SUCCESS][Servlet] Fiche de paie supprimée, ID=" + id);
         } else {
             System.out.println("[ERROR][Servlet] Échec suppression fiche de paie, ID=" + id);
-        }
+        }*/
         response.sendRedirect("payslips");
     }
 }

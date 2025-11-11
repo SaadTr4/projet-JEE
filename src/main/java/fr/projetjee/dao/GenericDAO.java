@@ -82,26 +82,26 @@ public class GenericDAO<T, ID> {
     /**
      * Supprime une entité par son ID
      */
-   public boolean deleteById(ID id) {
-       Transaction transaction = null;
-       try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-           transaction = session.beginTransaction();
-           T entity = session.find(entityClass, id);
-           if (entity != null) {
-               session.remove(entity);
-               transaction.commit();
-               System.out.println("[SUCCESS][DAO] " + entityClass.getSimpleName() + " supprimé: ID=" + id);
-               return true;
-           }
-           transaction.commit();
-           return false;
-       } catch (Exception e) {
-           if (transaction != null) transaction.rollback();
-           System.err.println("[ERROR][DAO] Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
-           e.printStackTrace();
-           return false;
-       }
-   }
+    public boolean deleteById(ID id) {
+        Transaction transaction = null;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
+            T entity = session.find(entityClass, id);
+            if (entity != null) {
+                session.remove(entity);
+                transaction.commit();
+                System.out.println("[SUCCESS][DAO] " + entityClass.getSimpleName() + " supprimé: ID=" + id);
+                return true;
+            }
+            transaction.commit();
+            return false;
+        } catch (Exception e) {
+            if (transaction != null) transaction.rollback();
+            System.err.println("[ERROR][DAO] Erreur suppression " + entityClass.getSimpleName() + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
 
 
     /**
@@ -117,18 +117,7 @@ public class GenericDAO<T, ID> {
         }
     }
 
-    /**
-     * Trouve toutes les entités
-     */
-  /*  public List<T> findAll() {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<T> query = session.createQuery("FROM " + entityClass.getSimpleName(), entityClass);
-            return query.list();
-        } catch (Exception e) {
-            System.err.println("❌ Erreur recherche toutes les " + entityClass.getSimpleName() + ": " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }*/
+
 
     /**
      * Trouve des entités avec une requête HQL personnalisée

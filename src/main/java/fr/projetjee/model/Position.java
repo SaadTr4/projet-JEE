@@ -78,11 +78,11 @@ public class Position implements Serializable {
 
     @Override
     public String toString() {
-        return "Position{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                '}';
+        return "Position [\n" +
+                "               id  = " + id + ",\n" +
+                "             name  = " + name + ",\n" +
+                "      description  = " + description + "\n" +
+                ']';
     }
 
     @Override

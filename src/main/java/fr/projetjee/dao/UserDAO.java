@@ -12,75 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class UserDAO {
-    
-    // ✅ Maintenant par ID (Integer)
-    public User save(User utilisateur) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.persist(utilisateur);
-            transaction.commit();
-            System.out.println("✅ Utilisateur créé: ID=" + utilisateur.getId() + ", Matricule=" + utilisateur.getMatricule());
-            return utilisateur;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur création: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
+public class UserDAO extends GenericDAO<User, Integer> {
+
+    public UserDAO() {
+        super(User.class);
     }
-    
-    public User update(User utilisateur) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(utilisateur);
-            transaction.commit();
-            System.out.println("✅ Utilisateur mis à jour: ID=" + utilisateur.getId());
-            return utilisateur;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur mise à jour: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-    
-    // ✅ Supprimer par ID (Integer)
-    public boolean delete(Integer id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            User utilisateur = session.find(User.class, id);
-            if (utilisateur != null) {
-                session.remove(utilisateur);
-                transaction.commit();
-                System.out.println("✅ Utilisateur supprimé: ID=" + id);
-                return true;
-            }
-            transaction.commit();
-            return false;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur suppression: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-    
-    // ✅ Trouver par ID
-    public Optional<User> findById(Integer id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            User utilisateur = session.find(User.class, id);
-            return Optional.ofNullable(utilisateur);
-        } catch (Exception e) {
-            System.err.println("❌ Erreur recherche: " + e.getMessage());
-            return Optional.empty();
-        }
-    }
-    
-    // ✅ NOUVELLE méthode : Trouver par matricule
+
+    //  NOUVELLE méthode : Trouver par matricule
     public Optional<User> findByMatricule(String matricule) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
@@ -88,7 +26,7 @@ public class UserDAO {
             query.setParameter("matricule", matricule);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByMatricule: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByMatricule: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -98,7 +36,7 @@ public class UserDAO {
             Query<User> query = session.createQuery("FROM User", User.class);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findAll: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findAll: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -110,7 +48,7 @@ public class UserDAO {
             query.setParameter("email", email);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByEmail: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByEmail: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -122,7 +60,7 @@ public class UserDAO {
             query.setParameter("lastName", "%" + lastName + "%");
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByLastName: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByLastName: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -134,7 +72,7 @@ public class UserDAO {
             query.setParameter("firstName", "%" + firstName + "%");
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByFirstName: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByFirstName: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -146,7 +84,7 @@ public class UserDAO {
             query.setParameter("grade", grade);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByGrade: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByGrade: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -158,7 +96,7 @@ public class UserDAO {
             query.setParameter("role", role);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByRole: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByRole: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -173,36 +111,36 @@ public class UserDAO {
             query.setParameter("id", id);
             return query.uniqueResult() != null;
         } catch (Exception e) {
-            System.err.println("❌ Erreur isUserProjectManager: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur isUserProjectManager: " + e.getMessage());
             return false;
         }
     }
 
     
-   /* public List<User> findByDepartment(Integer departmentId) {
+   public List<User> findByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.department.id = :deptId", User.class);
+                "FROM User u WHERE u.department.id = :deptId", User.class);
             query.setParameter("deptId", departmentId);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByDepartment: " + e.getMessage());
-            return new ArrayList<>();
-        }
-    }*/
-    
-   /* public List<User> findByPosition(Integer positionId) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Query<User> query = session.createQuery(
-                "FROM Utilisateur u WHERE u.position.id = :posId", User.class);
-            query.setParameter("posId", positionId);
-            return query.list();
-        } catch (Exception e) {
-            System.err.println("❌ Erreur findByPosition: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByDepartment: " + e.getMessage());
             return new ArrayList<>();
         }
     }
-    */
+
+    public List<User> findByPosition(Integer positionId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.position.id = :posId", User.class);
+            query.setParameter("posId", positionId);
+            return query.list();
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] Erreur findByPosition: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     public List<User> findByProject(Integer projectId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
@@ -210,7 +148,7 @@ public class UserDAO {
             query.setParameter("projId", projectId);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur findByProject: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur findByProject: " + e.getMessage());
             return new ArrayList<>();
         }
     }
@@ -220,22 +158,22 @@ public class UserDAO {
             Query<Long> query = session.createQuery("SELECT COUNT(u) FROM User u", Long.class);
             return query.uniqueResult();
         } catch (Exception e) {
-            System.err.println("❌ Erreur count: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur count: " + e.getMessage());
             return 0;
         }
     }
     
-    /*public long countByDepartment(Integer departmentId) {
+    public long countByDepartment(Integer departmentId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery(
-                "SELECT COUNT(u) FROM Utilisateur u WHERE u.department.id = :deptId", Long.class);
+                "SELECT COUNT(u) FROM User u WHERE u.department.id = :deptId", Long.class);
             query.setParameter("deptId", departmentId);
             return query.uniqueResult();
         } catch (Exception e) {
-            System.err.println("❌ Erreur countByDepartment: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur countByDepartment: " + e.getMessage());
             return 0;
         }
-    }*/
+    }
     
     public long countByGrade(Grade grade) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -244,18 +182,18 @@ public class UserDAO {
             query.setParameter("grade", grade);
             return query.uniqueResult();
         } catch (Exception e) {
-            System.err.println("❌ Erreur countByGrade: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur countByGrade: " + e.getMessage());
             return 0;
         }
     }
     
-    // ✅ Vérifier existence par ID
+    //  Vérifier existence par ID
     public boolean exists(Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             User utilisateur = session.find(User.class, id);
             return utilisateur != null;
         } catch (Exception e) {
-            System.err.println("❌ Erreur exists: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur exists: " + e.getMessage());
             return false;
         }
     }

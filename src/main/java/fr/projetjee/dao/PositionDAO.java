@@ -11,57 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class PositionDAO {
+public class PositionDAO extends GenericDAO<Position, Integer> {
 
-    public Position save(Position position) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            session.merge(position);
-            transaction.commit();
-            System.out.println("✅ Position sauvegardée: ID=" + position.getId() + ", Nom=" + position.getName());
-            return position;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur sauvegarde position: " + e.getMessage());
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public boolean delete(Integer id) {
-        Transaction transaction = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            transaction = session.beginTransaction();
-            Position position = session.find(Position.class, id);
-            if (position != null) {
-                session.remove(position);
-                transaction.commit();
-                System.out.println("✅ Position supprimée: ID=" + id);
-                return true;
-            }
-            transaction.commit();
-            return false;
-        } catch (Exception e) {
-            if (transaction != null) transaction.rollback();
-            System.err.println("❌ Erreur suppression position: " + e.getMessage());
-            e.printStackTrace();
-            return false;
-        }
-    }
-
-    public void update(Position position) {
-        save(position);
-    }
-
-    public Optional<Position> findById(Integer id) {
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            Position position = session.find(Position.class, id);
-            return Optional.ofNullable(position);
-        } catch (Exception e) {
-            System.err.println("❌ Erreur trouver position par ID: " + e.getMessage());
-            return Optional.empty();
-        }
+    public PositionDAO() {
+        super(Position.class);
     }
 
     public Optional<Position> findByName(String name) {
@@ -71,7 +24,7 @@ public class PositionDAO {
             query.setParameter("name", name);
             return Optional.ofNullable(query.uniqueResult());
         } catch (Exception e) {
-            System.err.println("❌ Erreur trouver position par nom: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur trouver position par nom: " + e.getMessage());
             return Optional.empty();
         }
     }
@@ -81,12 +34,12 @@ public class PositionDAO {
             Query<Position> query = session.createQuery("FROM Position", Position.class);
             return query.list();
         } catch (Exception e) {
-            System.err.println("❌ Erreur trouver toutes les positions: " + e.getMessage());
+            System.err.println("[ERROR][DAO] Erreur trouver toutes les positions: " + e.getMessage());
             return new ArrayList<>();
         }
     }
 
-    /*
+
     public List<User> findUsersByPosition(Integer positionId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(
@@ -137,5 +90,8 @@ public class PositionDAO {
             e.printStackTrace();
             return false;
         }
-    }*/
-}
+
+    }
+
+    }
+

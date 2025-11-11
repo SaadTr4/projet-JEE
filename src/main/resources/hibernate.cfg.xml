@@ -28,6 +28,8 @@
         <mapping class="fr.projetjee.model.User"/>
         <mapping class="fr.projetjee.model.Project"/>
         <mapping class="fr.projetjee.model.Payslip"/>
+        <mapping class="fr.projetjee.model.Department"/>
+        <mapping class="fr.projetjee.model.Position"/>
 
     </session-factory>
 </hibernate-configuration>
