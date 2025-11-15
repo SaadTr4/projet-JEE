@@ -14,8 +14,8 @@ public class RolePermissions {
                 Action.READ_PROJECT, Action.CREATE_PROJECT, Action.UPDATE_PROJECT, Action.DELETE_PROJECT,
                 Action.FILTER_PROJECT, Action.READ_PAYSLIP, Action.EXPORT_PAYSLIP, Action.FILTER_PAYSLIP
         ));
-        permissions.put(Role.CHEF_PROJET, EnumSet.of(Action.READ_PROJECT, Action.UPDATE_PROJECT, Action.DELETE_PROJECT, Action.READ_PAYSLIP));
-        permissions.put(Role.EMPLOYE, EnumSet.of(Action.READ_PROJECT, Action.READ_PAYSLIP));
+        permissions.put(Role.CHEF_PROJET, EnumSet.of(Action.READ_PROJECT, Action.UPDATE_PROJECT, Action.DELETE_PROJECT, Action.READ_PAYSLIP, Action.EXPORT_PAYSLIP, Action.FILTER_PAYSLIP));
+        permissions.put(Role.EMPLOYE, EnumSet.of(Action.READ_PROJECT, Action.READ_PAYSLIP, Action.READ_PAYSLIP, Action.EXPORT_PAYSLIP, Action.FILTER_PAYSLIP));
     }
 
     public static boolean hasPermission(Role role, Action action) {

@@ -39,6 +39,18 @@ public class PayslipDAO extends GenericDAO<Payslip, Integer> {
         }
     }
 
+    public List<Payslip> findByUserId(Integer userId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<Payslip> query = session.createQuery(
+                    "SELECT DISTINCT p FROM Payslip p " + "LEFT JOIN FETCH p.user u " + "WHERE u.id = :userId", Payslip.class);
+            query.setParameter("userId", userId);
+            return query.list();
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] Erreur findByUserId payslips: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     public List<Payslip> findByMonth(User user, int year, int month) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Payslip> query = session.createQuery(
@@ -97,6 +109,21 @@ public class PayslipDAO extends GenericDAO<Payslip, Integer> {
         } catch (Exception e) {
             e.printStackTrace();
             return new ArrayList<>();
+        }
+    }
+
+    public boolean existsPayslipForUserAndMonth(User user, int year, int month) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            String hql = "SELECT count(p) FROM Payslip p WHERE p.user = :user AND p.year = :year AND p.month = :month";
+            Query<Long> query = session.createQuery(hql, Long.class);
+            query.setParameter("user", user);
+            query.setParameter("year", year);
+            query.setParameter("month", month);
+            Long count = query.uniqueResult();
+            return count != null && count > 0;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false; // En cas d'erreur on considère qu'il n'existe pas (à gérer selon contexte)
         }
     }
 }

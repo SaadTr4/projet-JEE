@@ -15,6 +15,29 @@ public enum Action {
     UPDATE_PAYSLIP,
     DELETE_PAYSLIP,
     FILTER_PAYSLIP,
-    EXPORT_PAYSLIP
+    EXPORT_PAYSLIP,
+
+    // User Actions
+    READ_USER,
+    CREATE_USER,
+    UPDATE_USER,
+    DELETE_USER,
+    FILTER_USER,
+
+    // Department Actions
+    READ_DEPARTMENT,
+    CREATE_DEPARTMENT,
+    UPDATE_DEPARTMENT,
+    DELETE_DEPARTMENT,
+    FILTER_DEPARTMENT,
+
+    // Position Actions
+
+    READ_POSITION,
+    CREATE_POSITION,
+    UPDATE_POSITION,
+    DELETE_POSITION,
+    FILTER_POSITION,
+
 }
 
