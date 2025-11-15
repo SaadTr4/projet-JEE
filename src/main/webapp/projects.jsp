@@ -47,7 +47,7 @@
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
       <span>Départements</span>
     </a>
-    <a class="side-link" href="payslips.jsp">
+    <a class="side-link" href="payslips">
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
       <span>Fiches de paie</span>
     </a>
@@ -96,7 +96,7 @@
                            list="chefsList"
                            placeholder="Chef de projet"
                            value="<%= request.getAttribute("filter_manager") %>"
-                           oninput="checkChefValid(this)" data-required="false">
+                           oninput="checkManagerValid(this)" data-required="false">
 
                     <!-- Statut -->
                     <select name="status">
@@ -133,7 +133,7 @@
                                 <td><%= p.getStatus().getDisplayName() %></td>
                                 <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
                                 <td><button type="button" class="welcome-logout"
-                                            onclick='toggleUpdateModal({
+                                            onclick='toggleProjectModal({
                                                     id:<%= p.getId() %>,
                                                     name:"<%= StringEscapeUtils.escapeEcmaScript(p.getName()) %>",
                                                     managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
@@ -165,7 +165,7 @@
         <h3>Ajouter un projet</h3>
         <form method="post" action="projects">
             <input name="nom" class="input" placeholder="Nom du projet" required>
-            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkChefValid(this)" data-required="true">
+            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">
             <select name="statut" class="input" required>
                 <option value="IN_PROGRESS">En cours</option>
                 <option value="COMPLETED">Terminé</option>
@@ -184,7 +184,7 @@
         <form id="updateForm" method="post" action="projects">
             <input type="hidden" name="id">
             <input name="nom" class="input" placeholder="Nom du projet" required>
-            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkChefValid(this)" data-required="true">
+            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">
             <select name="statut" class="input" required>
                 <option value="IN_PROGRESS">En cours</option>
                 <option value="COMPLETED">Terminé</option>
@@ -193,83 +193,12 @@
             </select>
             <textarea name="description" class="input" placeholder="Description (optionnel)" style="height:80px;"></textarea>
             <button class="welcome-logout" style="margin-top:10px;"  name="action"  value="update">Mettre à jour</button>
-            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="toggleUpdateModal(null)">Annuler</button>
+            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="toggleProjectModal(null)">Annuler</button>
         </form>
     </div>
 </div>
 
 
-<script>
-    function toggleAddModal(show) { const modal = document.getElementById('modalAdd'); modal.style.display = show ? 'flex' : 'none'; if (show) attachModalCloseListeners(modal); }
-
-    function toggleUpdateModal(project) {
-        const modal = document.getElementById('modalUpdate');
-        const form = document.getElementById('updateForm');
-
-        if(project) {
-            // Si on reçoit un projet → on ouvre et remplit le formulaire
-            form.id.value = project.id;
-            form.nom.value = project.name;
-            form.chefProjet.value = project.managerMatricule;
-            form.statut.value = project.status;
-            form.description.value = project.description || '';
-            modal.style.display = 'flex';
-            attachModalCloseListeners(modal);
-        } else {
-            // Sinon → on ferme le modal
-            modal.style.display = 'none';
-        }
-
-    }
-
-    function attachModalCloseListeners(modal) {
-        modal.onclick = function(event) {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-            }
-        };
-        document.onkeydown = function(event) {
-            if (event.key === "Escape") {
-                modal.style.display = 'none';
-            }
-        };
-    }
-
-    function checkChefValid(input) {
-        const value = input.value.trim();
-        const required = input.dataset.required === "true"; // true for add/update, false for filter
-
-        if (!required && value === "") {
-            input.setCustomValidity(""); // not required and empty is valid
-            return;
-        }
-
-        const datalist = document.getElementById('chefsList');
-        const options = Array.from(datalist.options).map(opt => opt.value.trim());
-        if (!options.includes(value)) {
-            input.setCustomValidity("Veuillez choisir un chef de projet valide.");
-        } else {
-            input.setCustomValidity("");
-        }
-    }
-
-    function checkProjectValid(input) {
-        const value = input.value.trim();
-
-        if( value === "") {
-            input.setCustomValidity(""); // empty is valid
-            return;
-        }
-
-        const datalist = document.getElementById('projectsList');
-        const options = Array.from(datalist.options).map(opt => opt.value.trim());
-        if (!options.includes(value)) {
-            input.setCustomValidity("Veuillez choisir un projet valide.");
-        } else {
-            input.setCustomValidity("");
-        }
-    }
-
-</script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>

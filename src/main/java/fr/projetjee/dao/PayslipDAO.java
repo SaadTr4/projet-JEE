@@ -52,4 +52,51 @@ public class PayslipDAO extends GenericDAO<Payslip, Integer> {
             return new ArrayList<>();
         }
     }
+
+
+    /**
+     * Filtrage dynamique des fiches de paie
+     * @param matricule ex : "EMP001"
+     * @param year ex : "2024"
+     * @param month ex : "5"
+     */
+    public List<Payslip> findFiltered(String matricule, Integer year, Integer month) {
+
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            StringBuilder hql = new StringBuilder(
+                    "SELECT p FROM Payslip p " +
+                            "LEFT JOIN FETCH p.user u " +
+                            "WHERE 1=1 "
+            );
+
+            if (matricule != null && !matricule.isEmpty())
+                hql.append("AND u.matricule = :matricule ");
+
+            if (year != null)
+                hql.append("AND p.year = :year ");
+
+            if (month != null)
+                hql.append("AND p.month = :month ");
+
+            hql.append("ORDER BY p.year DESC, p.month DESC");
+
+            Query<Payslip> query = session.createQuery(hql.toString(), Payslip.class);
+
+            if (matricule != null && !matricule.isEmpty())
+                query.setParameter("matricule", matricule);
+
+            if (year != null)
+                query.setParameter("year", year);
+
+            if (month != null)
+                query.setParameter("month", month);
+
+            return query.list();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
 }

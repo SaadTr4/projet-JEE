@@ -43,7 +43,7 @@ String username = "Admin";
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
         <span>Départements</span>
       </a>
-      <a class="side-link" href="payslips.jsp">
+      <a class="side-link" href="payslips">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
         <span>Fiches de paie</span>
       </a>

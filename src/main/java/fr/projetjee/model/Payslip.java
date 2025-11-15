@@ -3,13 +3,16 @@ package fr.projetjee.model;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
 import jakarta.persistence.*;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Entity
 @Table(name = "payslip")
-public class Payslip {
+public class Payslip implements Serializable {
 
+    private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -119,16 +122,33 @@ public class Payslip {
             calculateNetPay();
         }
     }
+
+
     @Override
     public String toString() {
-        return "Payslip{" +
-                "id=" + id +
-                ", year=" + year +
-                ", month=" + month +
-                ", baseSalary=" + baseSalary +
-                ", bonuses=" + bonuses +
-                ", deductions=" + deductions +
-                ", netPay=" + netPay +
-                '}';
+        return "Payslip [\n" +
+                "               id  = " + id + ",\n" +
+                "    generationDate  = " + generationDate + ",\n" +
+                "            month  = " + month + ",\n" +
+                "             year  = " + year + ",\n" +
+                "      baseSalary  = " + baseSalary + ",\n" +
+                "         bonuses  = " + bonuses + ",\n" +
+                "       deductions  = " + deductions + ",\n" +
+                "          netPay  = " + netPay + ",\n" +
+                "            user  = " + (user != null ? user.getId() : null) + "\n" +
+                ']';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Payslip)) return false;
+        Payslip other = (Payslip) o;
+        return id != null && id.equals(other.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return getClass().hashCode();
     }
 }
