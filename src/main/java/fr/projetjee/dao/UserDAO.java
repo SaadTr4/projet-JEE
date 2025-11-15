@@ -152,7 +152,18 @@ public class UserDAO extends GenericDAO<User, Integer> {
             return new ArrayList<>();
         }
     }
-    
+    public Optional<User> findByEmailOrMatricule(String login) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                    "FROM User u WHERE u.email = :login OR u.matricule = :login", User.class);
+            query.setParameter("login", login);
+            return Optional.ofNullable(query.uniqueResult());
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] Erreur findByEmailOrMatricule: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
+
     public long count() {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Long> query = session.createQuery("SELECT COUNT(u) FROM User u", Long.class);

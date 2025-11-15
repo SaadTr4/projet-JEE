@@ -19,8 +19,9 @@
     <!-- Formulaire de connexion -->
     <form action="login" method="post">
         <div class="form-row">
-            <label class="label" for="username">Nom d'utilisateur</label>
-            <input class="input" id="username" name="username" placeholder="ex: jdupont" required>
+            <label class="label" for="login">Matricule ou email</label>
+            <input class="input" id="login" name="login" placeholder="ex: jdupont ou EMP001" required>
+
         </div>
 
         <div class="form-row">

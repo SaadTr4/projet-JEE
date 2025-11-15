@@ -1,10 +1,13 @@
+<%@ page import="fr.projetjee.model.User" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
-String username = "Admin";
 
     int totalEmployees = 120;
     int totalProjects = 15;
     int totalDepartments = 6;
+
+    User currentUser = (User) session.getAttribute("currentUser");
+    String username = currentUser != null ? currentUser.getFullName() : "Utilisateur Anonyme";
 %>
 
 <!DOCTYPE html>

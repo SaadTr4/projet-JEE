@@ -3,6 +3,8 @@ package fr.projetjee.dto;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.model.User;
+import fr.projetjee.util.PasswordUtil;
+
 import java.util.Base64;
 
 /**
@@ -16,6 +18,8 @@ public class UserDTO {
     private String firstName;
     private String email;
     private String phone;
+    private String password;
+
     private String address;
     private String imageBase64;
     private Grade grade;
@@ -91,6 +95,10 @@ public class UserDTO {
         user.setGrade(this.grade);
         user.setRole(this.role);
 
+        if (this.password != null && !this.password.isEmpty()) {
+            user.setPassword(PasswordUtil.hashPassword(this.password));
+        }
+
         // Convertir Base64 → byte[]
         if (this.imageBase64 != null && !this.imageBase64.isEmpty()) {
             try {
@@ -115,6 +123,10 @@ public class UserDTO {
         if (this.address != null) user.setAddress(this.address);
         if (this.grade != null) user.setGrade(this.grade);
         if (this.role != null) user.setRole(this.role);
+
+        if (this.password != null && !this.password.isEmpty()) {
+            user.setPassword(PasswordUtil.hashPassword(this.password));
+        }
 
         // Mettre à jour l'image
         if (this.imageBase64 != null && !this.imageBase64.isEmpty()) {
@@ -147,6 +159,9 @@ public class UserDTO {
 
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
 
     public String getAddress() { return address; }
     public void setAddress(String address) { this.address = address; }

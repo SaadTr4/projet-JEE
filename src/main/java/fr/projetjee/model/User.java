@@ -44,6 +44,9 @@ public class User implements Serializable {
     
     @Column(name = "phone", length = 20)
     private String phone;
+
+    @Column(name = "password", nullable = false)
+    private String password;
     @Lob
     @Basic(fetch = FetchType.LAZY)
     @JdbcTypeCode(SqlTypes.BINARY)  // ← Force BYTEA
@@ -149,6 +152,9 @@ public class User implements Serializable {
     public void setPhone(String phone) {
         this.phone = phone;
     }
+
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
     
     public byte[] getImage() {
         return image;

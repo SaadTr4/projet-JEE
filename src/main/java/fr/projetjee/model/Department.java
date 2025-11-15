@@ -19,6 +19,9 @@ public class Department implements Serializable {
     @Column(name = "name", nullable = false, length = 100)
     private String name;
 
+    @Column(name = "code", unique = true, length = 10)
+    private String code;  // exemple: "RH", "IT", "FIN"
+
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
@@ -31,8 +34,9 @@ public class Department implements Serializable {
 
     public Department() {}
 
-    public Department(String name, String description) {
+    public Department(String name, String code, String description) {
         this.name = name;
+        this.code = code;
         this.description = description;
     }
 
@@ -55,6 +59,9 @@ public class Department implements Serializable {
     public void setName(String name) {
         this.name = name;
     }
+
+    public String getCode() { return code; }
+    public void setCode(String code) { this.code = code; }
 
     public String getDescription() {
         return description;
@@ -80,6 +87,7 @@ public class Department implements Serializable {
         return "Department [\n" +
                 "               id  = " + id + ",\n" +
                 "             name  = " + name + ",\n" +
+                "             code  = " + code + ",\n" +
                 "      description  = " + description + "\n" +
                 ']';
     }

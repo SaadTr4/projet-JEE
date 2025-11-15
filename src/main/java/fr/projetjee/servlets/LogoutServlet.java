@@ -1,4 +1,4 @@
-package fr.projetjee;
+package fr.projetjee.servlets;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;

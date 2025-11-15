@@ -1,11 +1,14 @@
 package fr.projetjee.servlets;
 
+import fr.projetjee.enums.Action;
 import fr.projetjee.enums.Role;
 import fr.projetjee.enums.Status;
+import fr.projetjee.security.RolePermissions;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import fr.projetjee.model.*;
 import fr.projetjee.dao.*;
@@ -186,27 +189,27 @@ public class ProjectServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
+        User user = (User) session.getAttribute("currentUser");
 
+        // Sécurité : utilisateur non connecté
+        if (user == null) {
+            response.sendRedirect("login.jsp");
+            return;
+        }
+
+        // Récupération des filtres en session
         String nameFilter = (String) session.getAttribute("filter_name");
         String managerFilter = (String) session.getAttribute("filter_manager");
         Status statusFilter = (Status) session.getAttribute("filter_status");
 
-        List<Project> allProjects = projectDAO.findAll(); // Pour la datalist complète
-        List<Project> filteredProjects;
-        // Appliquer les filtres uniquement si au moins un champ est rempli
-        if ((nameFilter != null && !nameFilter.isEmpty()) ||
-                (managerFilter != null && !managerFilter.isEmpty()) ||
-                statusFilter != null) {
+        // Récupérer la liste filtrée selon rôle
+        List<Project> projects = loadProjectsForUser(user, nameFilter, managerFilter, statusFilter);
 
-            filteredProjects = projectDAO.findProjectsWithFilters(nameFilter, managerFilter, statusFilter);
-
-        } else {
-            // Aucun filtre => récupérer tous les projets
-            filteredProjects = allProjects;
-        }
+        // Pour datalist
+        List<Project> allProjects = projectDAO.findAll();
 
         request.setAttribute("allProjects", allProjects);
-        request.setAttribute("projects", filteredProjects);
+        request.setAttribute("projects", projects);
         request.setAttribute("chefs", userDAO.findByRole(Role.CHEF_PROJET));
 
         // Pré-remplir les filtres pour le JSP
@@ -248,6 +251,50 @@ public class ProjectServlet extends HttpServlet {
         session.removeAttribute("filter_status");
         response.sendRedirect("projects");
     }
+
+    private List<Project> loadProjectsForUser(User user, String nameFilter, String managerFilter, Status statusFilter) {
+
+        // Accès refusé si aucune permission READ_PROJECT
+        if (!RolePermissions.hasPermission(user.getRole(), Action.READ_PROJECT)) {
+            return Collections.emptyList();
+        }
+
+        // Traitement spécial pour les employés du département RH
+        boolean isRHDepartment = user.getDepartment() != null &&
+                "RH".equalsIgnoreCase(user.getDepartment().getCode());
+
+        switch (user.getRole()) {
+
+            case ADMINISTRATEUR:
+            case CHEF_DEPARTEMENT:
+                // Accès complet
+                return getFilteredOrAllProjects(nameFilter, managerFilter, statusFilter);
+
+            case EMPLOYE:
+            case CHEF_PROJET:
+                // Accès complet si département = RH
+                if (isRHDepartment) {
+                    return getFilteredOrAllProjects(nameFilter, managerFilter, statusFilter);
+                }
+                return projectDAO.findByUserId(user.getId());
+
+
+            default:
+                return Collections.emptyList();
+        }
+    }
+
+    private List<Project> getFilteredOrAllProjects(String nameFilter, String managerFilter, Status statusFilter) {
+        boolean hasFilters =
+                (nameFilter != null && !nameFilter.isEmpty()) ||
+                        (managerFilter != null && !managerFilter.isEmpty()) ||
+                        statusFilter != null;
+
+        return hasFilters
+                ? projectDAO.findProjectsWithFilters(nameFilter, managerFilter, statusFilter)
+                : projectDAO.findAll();
+    }
+
     @Override
     public void destroy() {
         System.out.println("ProjectServlet détruit");

@@ -115,8 +115,8 @@ public class TestApp {
             // ==========================
             // CRÉATION DÉPARTEMENTS & POSTES
             System.out.println("🏢 Création des départements et postes...");
-            Department dep1 = departmentDAO.save(new Department("[Test] Informatique", "Gestion des systèmes d'information"));
-            Department dep2 = departmentDAO.save(new Department("[Test] Ressources Humaines", "Gestion du personnel et des recrutements"));
+            Department dep1 = departmentDAO.save(new Department("[Test] Informatique", "IT","Gestion des systèmes d'information"));
+            Department dep2 = departmentDAO.save(new Department("[Test] Ressources Humaines", "RH","Gestion du personnel et des recrutements"));
             Position pos1 = positionDAO.save(new Position("[Test] Développeur Backend", "Développement des services backend"));
             Position pos2 = positionDAO.save(new Position("[Test] Chef de Projet", "Gestion et coordination des projets"));
 

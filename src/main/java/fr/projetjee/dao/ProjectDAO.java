@@ -84,7 +84,7 @@ public class ProjectDAO extends GenericDAO<Project, Integer> {
     public List<Project> findByUserId(Integer userId) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<Project> query = session.createQuery(
-                    "SELECT p FROM Project p JOIN p.users u WHERE u.id = :userId", Project.class);
+                    "SELECT DISTINCT p FROM Project p LEFT JOIN FETCH p.users u WHERE u.id = :userId", Project.class);
             query.setParameter("userId", userId);
             return query.list();
         } catch (Exception e) {
@@ -92,6 +92,7 @@ public class ProjectDAO extends GenericDAO<Project, Integer> {
             return new ArrayList<>();
         }
     }
+
     public boolean assignUserToProject(Integer projectId, String registrationNumber) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {

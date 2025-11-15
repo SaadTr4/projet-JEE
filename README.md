@@ -74,9 +74,9 @@ docker compose -f docker/docker-compose.yml down
 ### 4️⃣ Reconstruire la base de données 
 Pour supprimer toutes les données et reconstruire la base de données, exécute :
 ```bash
-docker compose -f docker/docker-compose.yml down -v
+docker compose -f docker/docker-compose.yml down
 docker volume rm docker_jee-dev_postgres_data # utiliser cette commande pour supprimer le volume de données (non obligatoire)
-docker compose -f docker/docker-compose.yml up --build -d
+docker compose -f docker/docker-compose.yml up -d
 ```
 
 ## 3. Se connecter à pgAdmin

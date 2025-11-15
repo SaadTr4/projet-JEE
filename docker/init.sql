@@ -2,6 +2,7 @@
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    code VARCHAR(20) UNIQUE NOT NULL,
     description TEXT
 );
 
@@ -20,6 +21,7 @@ CREATE TABLE user_account (
       first_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
       phone VARCHAR(20),
+      password VARCHAR(255) NOT NULL,
       image BYTEA,
       address VARCHAR(255),
       grade VARCHAR(20),
