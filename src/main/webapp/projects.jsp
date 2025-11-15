@@ -2,14 +2,37 @@
 <%@ page import="java.util.*, fr.projetjee.model.Project" %>
 <%@ page import="fr.projetjee.model.User" %>
 <%@ page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="fr.projetjee.enums.Role" %>
 
 
 <%
-    String username = "Admin";
     List<Project> projects = (List<Project>) request.getAttribute("projects");
     List<User> chefs = (List<User>) request.getAttribute("chefs");
     List<Project> allProjects = (List<Project>) request.getAttribute("allProjects");
 
+    User currentUser = (User) session.getAttribute("currentUser");
+    String username = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "Invité";
+    boolean showFilter = false;
+    boolean showAddButton = false;
+    boolean showActions = false;
+
+    if (currentUser != null) {
+        String deptCode = currentUser.getDepartment() != null ? currentUser.getDepartment().getCode() : "";
+
+        if (currentUser.getRole() == Role.ADMINISTRATEUR || currentUser.getRole() == Role.CHEF_DEPARTEMENT) {
+            showFilter = true;
+            showAddButton = true;
+            showActions = true;
+        } else if (currentUser.getRole() == Role.EMPLOYE && "RH".equalsIgnoreCase(deptCode)) {
+            showFilter = true;
+            showAddButton = true;
+            showActions = true;
+        } else if (currentUser.getRole() == Role.CHEF_PROJET) {
+            showActions = true;
+        }
+        // Other roles have no special permissions (classic employee or no connection)
+    }
+%>
 %>
 
 <!DOCTYPE html>
@@ -74,10 +97,15 @@
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
                         </div>
                     </div>
+                    <% if (showAddButton) { %>
                     <button class="welcome-logout" onclick="toggleAddModal(true)">+ Ajouter</button>
+                    <% } %>
                 </div>
 
+                <% if (showFilter) { %>
                 <form method="post" action="projects" style="margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+
                     <!-- Nom du projet -->
                     <input name="name"
                            list="projectsList"
@@ -110,6 +138,7 @@
                     <button type="submit" class="welcome-logout" name="action" value="filter">Filtrer</button>
                     <button type="submit" class="welcome-logout" name="action" value="reset">Réinitialiser</button>
                 </form>
+                <% } %>
 
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
                     <table style="width:100%; border-collapse:collapse; color:#fff;">
@@ -120,7 +149,7 @@
                                 <th>Chef de projet</th>
                                 <th>Statut</th>
                                 <th>Employés affectés</th>
-                                <th>Actions</th>
+                                <% if (showActions) { %><th>Actions</th> <% } %>
                             </tr>
                         </thead>
                         <tbody>
@@ -132,6 +161,7 @@
                                 <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
                                 <td><%= p.getStatus().getDisplayName() %></td>
                                 <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
+                                <% if (showActions) { %>
                                 <td><button type="button" class="welcome-logout"
                                             onclick='toggleProjectModal({
                                                     id:<%= p.getId() %>,
@@ -139,17 +169,17 @@
                                                     managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
                                                     status:"<%= p.getStatus() %>",
                                                     description:"<%= p.getDescription() != null ? StringEscapeUtils.escapeEcmaScript(p.getDescription()) : "" %>"
-                                                    })'>
-                                    Modifier
-                                </button>
+                                                    })'>Modifier</button>
 
                                     <form method="post" action="projects" style="display:inline;">
+                                        <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
                                         <input type="hidden" name="id" value="<%= p.getId() %>">
                                         <button type="submit" name="action" value="delete"
                                                 class="welcome-logout"
                                                 style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</button>
                                     </form>
                                 </td>
+                                <% } %>
                             </tr>
                         <% } } %>
                         </tbody>
@@ -164,6 +194,7 @@
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Ajouter un projet</h3>
         <form method="post" action="projects">
+            <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
             <input name="nom" class="input" placeholder="Nom du projet" required>
             <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">
             <select name="statut" class="input" required>
@@ -182,6 +213,7 @@
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Mettre à jour le projet</h3>
         <form id="updateForm" method="post" action="projects">
+            <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
             <input type="hidden" name="id">
             <input name="nom" class="input" placeholder="Nom du projet" required>
             <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">

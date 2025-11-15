@@ -74,15 +74,6 @@ public class Project implements Serializable {
     // ==============================
     // Utility Methods
     // ==============================
-   /* public void addUser(User user) {
-        users.add(user);
-        user.getProjects().add(this); // synchronise le côté inverse
-    }
-
-    public void removeUser(User user) {
-        users.remove(user);
-        user.getProjects().remove(this);
-    }*/
 
     @Override
     public String toString() {
@@ -91,6 +82,7 @@ public class Project implements Serializable {
                 "             name  = " + name + ",\n" +
                 "           status  = " + status + ",\n" +
                 "   projectManager  = " + projectManager.getFullName() + "\n" +
+                "      description  = " + description + "\n" +
                 ']';
     }
 
