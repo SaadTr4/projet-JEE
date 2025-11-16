@@ -118,6 +118,14 @@ public class DataInitializer {
             medhi.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(medhi);
 
+            User chefSup = new User("EMP006","Anonyme", "CDP", "cdp@entreprise.fr");
+            chefSup.setGrade(Grade.EXPERT);
+            chefSup.setRole(Role.CHEF_PROJET);
+            chefSup.setDepartment(finance);
+            chefSup.setPosition(chefProjet);
+            chefSup.setPassword(PasswordUtil.hashPassword("motdepasse123"));
+            userDAO.save(chefSup);
+
             System.out.println("✅ Utilisateurs créés et assignés.\n");
 
             // ==========================

@@ -277,6 +277,7 @@ public class ProjectServlet extends HttpServlet {
             doGet(request, response);
             return;
         }
+        project.setProjectManager(updatedManager);
 
         try {
             project.setStatus(Status.valueOf(statusParam));

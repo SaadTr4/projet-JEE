@@ -26,6 +26,9 @@ public class GenericDAO<T, ID> {
      * Sauvegarde ou met à jour une entité
      */
     public T save(T entity) {
+        if(entity == null) {
+            throw new IllegalArgumentException("L'entité à sauvegarder ne peut pas être null");
+        }
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -45,6 +48,9 @@ public class GenericDAO<T, ID> {
      * Met à jour une entité
      */
     public T update(T entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("L'entité à mettre à jour ne peut pas être null");
+        }
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();
@@ -64,6 +70,9 @@ public class GenericDAO<T, ID> {
      * Supprime une entité
      */
     public boolean delete(T entity) {
+        if (entity == null) {
+            throw new IllegalArgumentException("L'entité à supprimer ne peut pas être null");
+        }
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             transaction = session.beginTransaction();

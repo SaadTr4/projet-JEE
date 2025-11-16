@@ -127,15 +127,15 @@ public class Payslip implements Serializable {
     @Override
     public String toString() {
         return "Payslip [\n" +
-                "               id  = " + id + ",\n" +
-                "    generationDate  = " + generationDate + ",\n" +
-                "            month  = " + month + ",\n" +
-                "             year  = " + year + ",\n" +
-                "      baseSalary  = " + baseSalary + ",\n" +
-                "         bonuses  = " + bonuses + ",\n" +
-                "       deductions  = " + deductions + ",\n" +
-                "          netPay  = " + netPay + ",\n" +
-                "            user  = " + (user != null ? user.getId() : null) + "\n" +
+                "                id = " + id + ",\n" +
+                "    generationDate = " + generationDate + ",\n" +
+                "             month = " + month + ",\n" +
+                "              year = " + year + ",\n" +
+                "        baseSalary = " + baseSalary + ",\n" +
+                "           bonuses = " + bonuses + ",\n" +
+                "        deductions = " + deductions + ",\n" +
+                "            netPay = " + netPay + ",\n" +
+                "              user = " + (user != null ? user.getId() : null) + "\n" +
                 ']';
     }
 

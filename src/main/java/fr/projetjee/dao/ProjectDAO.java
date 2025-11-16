@@ -92,6 +92,18 @@ public class ProjectDAO extends GenericDAO<Project, Integer> {
             return new ArrayList<>();
         }
     }
+    public Optional<Project> findByIdWithUsers(Integer id) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Project project = session.createQuery(
+                            "SELECT p FROM Project p LEFT JOIN FETCH p.users WHERE p.id = :id", Project.class)
+                    .setParameter("id", id)
+                    .uniqueResult();
+            return Optional.ofNullable(project);
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] findByIdWithUsers: " + e.getMessage());
+            return Optional.empty();
+        }
+    }
 
     public boolean assignUserToProject(Integer projectId, String registrationNumber) {
         Transaction transaction = null;
