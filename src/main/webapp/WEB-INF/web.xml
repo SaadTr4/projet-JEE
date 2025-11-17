@@ -9,7 +9,7 @@
     <!-- ============================================ -->
 
     <!-- Servlet UserServlet -->
-    <servlet>
+   <!--- <servlet>
         <servlet-name>UserServlet</servlet-name>
         <servlet-class>fr.projetjee.servlets.UserServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
@@ -18,7 +18,7 @@
     <servlet-mapping>
         <servlet-name>UserServlet</servlet-name>
         <url-pattern>/api/users/*</url-pattern>
-    </servlet-mapping>
+    </servlet-mapping>-->
 
     <!-- Filtre CORS -->
     <filter>

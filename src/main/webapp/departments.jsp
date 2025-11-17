@@ -25,7 +25,7 @@
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
         <span>Tableau de bord</span>
       </a>
-      <a class="side-link" href="employees.jsp">
+      <a class="side-link" href="user">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
         <span>Employés</span>
       </a>
