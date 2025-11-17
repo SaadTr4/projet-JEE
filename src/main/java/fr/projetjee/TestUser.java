@@ -1,6 +1,5 @@
 package fr.projetjee;
 
-
 import fr.projetjee.model.User;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
@@ -18,8 +17,14 @@ public class TestUser {
 
             System.out.println("🚀 Test d’enregistrement d’un utilisateur...");
 
-            // Création d’un utilisateur de test
-            User user = new User("EMP_TEST", "Durand", "Alice", "alice.durand@entreprise.fr");
+            // Création d’un utilisateur de test avec matricule UNIQUE
+            User user = new User(
+                    "EMP_" + System.currentTimeMillis(),   // 🔥 matricule unique
+                    "Durand",
+                    "Alice",
+                    "alice1.durand@entreprise.fr"
+            );
+
             user.setPhone("0600000000");
             user.setAddress("1 Rue de la Paix, Paris");
             user.setGrade(Grade.JUNIOR);
@@ -46,4 +51,3 @@ public class TestUser {
         }
     }
 }
-
