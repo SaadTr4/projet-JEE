@@ -2,6 +2,7 @@ package fr.projetjee;
 
 import fr.projetjee.dao.ProjectDAO;
 import fr.projetjee.dao.UserDAO;
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.enums.Status;
 import fr.projetjee.enums.Role;
 import fr.projetjee.model.Project;
@@ -30,12 +31,12 @@ public class TestProject {
         userDAO = new UserDAO();
 
         // Création des users
-        user1 = new User("EMP100_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr");
+        user1 = new User("EMP100_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr", ContractType.FREELANCE_CONTRACTOR);
         user1.setPassword("test123");
         user1.setRole(Role.CHEF_PROJET);
         userDAO.save(user1);
 
-        user2 = new User("EMP101_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr");
+        user2 = new User("EMP101_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
         user2.setPassword("test123");
         user2.setRole(Role.EMPLOYE);
         userDAO.save(user2);

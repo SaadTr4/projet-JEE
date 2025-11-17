@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bulletin de Paie</title>
+    <style type="text/css">
+        * { margin:0; padding:0; box-sizing:border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f5f5;
+            padding: 20px;
+        }
+        .payslip {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border: 1px solid #ddd;
+        }
+        .header {
+            background-color: #2563eb;
+            color: white;
+            padding: 30px;
+        }
+        .header-content { width: 100%; }
+        .company-info {
+            display: inline-block;
+            vertical-align: top;
+            width: 55%;
+        }
+        .company-info h1 { font-size:24px; margin-bottom:10px; font-weight:600; }
+        .company-info p { font-size:13px; opacity:0.95; line-height:1.6; }
+        .payslip-title {
+            display:inline-block;
+            width:40%;
+            text-align:right;
+        }
+        .payslip-title h2 { font-size:28px; font-weight:700; margin-bottom:8px; }
+        .payslip-title p { font-size:14px; opacity:0.9; }
+        .info-section { width:100%; background:#f8f9fa; border-bottom:3px solid #2563eb; font-size:13px; }
+        .info-box { display:inline-block; width:48%; vertical-align:top; padding:15px 1%; }
+        .info-box h3 { color:#2563eb; font-size:14px; font-weight:600; margin-bottom:15px; text-transform:uppercase; letter-spacing:0.5px; }
+        .info-row { width:100%; overflow:hidden; padding:8px 0; border-bottom:1px solid #e0e0e0; }
+        .info-label { float:left; color:#666; font-weight:500; }
+        .info-value { float:right; color:#333; font-weight:600; }
+        .content { padding:30px; }
+        .section-title { background-color:#2563eb; color:white; padding:12px 20px; font-size:15px; font-weight:600; margin-top:25px; margin-bottom:0; text-transform:uppercase; letter-spacing:0.5px; }
+        .section-title:first-child { margin-top:0; }
+        table { width:100%; border-collapse:collapse; margin-bottom:25px; font-size:13px; }
+        thead { background:#f8f9fa; }
+        th { padding:12px 10px; text-align:left; font-weight:600; color:#555; border-bottom:2px solid #2563eb; font-size:12px; text-transform:uppercase; }
+        th.right, td.right { text-align:right; }
+        tbody tr { border-bottom:1px solid #e8e8e8; }
+        td { padding:10px; color:#333; }
+        .subtotal-row { background:#e0e7ff; font-weight:600; }
+        .subtotal-row td { padding:12px 10px; color:#2563eb; border-top:2px solid #2563eb; }
+        .summary { background-color:#2563eb; color:white; padding:25px 30px; margin-top:30px; }
+        .summary-grid { width:100%; }
+        .summary-item { display:inline-block; width:48%; text-align:center; padding:15px 1%; background:rgba(255,255,255,0.1); border-radius:8px; margin-bottom:10px; }
+        .summary-label { font-size:12px; opacity:0.9; margin-bottom:8px; text-transform:uppercase; letter-spacing:0.5px; }
+        .summary-value { font-size:24px; font-weight:700; }
+        .net-pay { width:100%; background:rgba(255,255,255,0.15); padding:20px; display:block; }
+        .net-pay .summary-label { font-size:14px; }
+        .net-pay .summary-value { font-size:36px; margin-top:5px; }
+        .footer { padding:20px 30px; background:#f8f9fa; border-top:1px solid #e0e0e0; font-size:11px; color:#666; text-align:center; }
+        .footer p { margin-top:15px; font-style:italic; }
+        .amount { font-weight:600; color:#333; }
+        .negative { color:#dc2626; }
+        @media print { body { padding:0; background:white; } .payslip { border:none; } }
+    </style>
+</head>
+<body>
+<div class="payslip">
+    <div class="header">
+        <div class="header-content">
+            <div class="company-info">
+                <h1>Entreprise CY Solutions</h1>
+                <p>8 Avenue du Parc<br />9500 Cergy<br />SIRET: 123 456 789 00012<br />Code NAF: 6201Z - Programmation informatique</p>
+            </div>
+            <div class="payslip-title">
+                <h2>BULLETIN DE PAIE</h2>
+                <p id="period">{{monthName}} {{year}}</p>
+                <p id="paymentDate">Payé le {{generationDate}}</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="info-section">
+        <div class="info-box">
+            <h3>👤 Informations Salarié</h3>
+            <div class="info-row"><span class="info-label">Nom complet</span><span class="info-value" id="employeeName">{{employeeName}}</span></div>
+            <div class="info-row"><span class="info-label">Matricule</span><span class="info-value" id="registrationNumber">{{registrationNumber}}</span></div>
+            <div class="info-row"><span class="info-label">Département</span><span class="info-value" id="department">{{department}}</span></div>
+            <div class="info-row"><span class="info-label">Poste</span><span class="info-value" id="position">{{position}}</span></div>
+            <div class="info-row"><span class="info-label">Grade</span><span class="info-value" id="grade">{{grade}}</span></div>
+            <div class="info-row"><span class="info-label">Email</span><span class="info-value" id="email">{{email}}</span></div>
+            <div class="info-row"><span class="info-label">Téléphone</span><span class="info-value" id="phone">{{phone}}</span></div>
+        </div>
+        <div class="info-box">
+            <h3>📋 Informations Contrat et Période</h3>
+            <div class="info-row"><span class="info-label">Type de contrat</span><span class="info-value">{{contractType}}</span></div>
+            <div class="info-row"><span class="info-label">Convention collective</span><span class="info-value">Syntec</span></div>
+            <div class="info-row"><span class="info-label">Période</span><span class="info-value" id="workPeriod">01/11/2025 - 30/11/2025</span></div>
+            <div class="info-row"><span class="info-label">Mois de paie</span><span class="info-value" id="payMonth">{{monthName}} {{year}}</span></div>
+            <div class="info-row"><span class="info-label">Année</span><span class="info-value" id="payYear">{{year}}</span></div>
+            <div class="info-row"><span class="info-label">Date de génération</span><span class="info-value" id="generationDate">{{generationDate}}</span></div>
+        </div>
+    </div>
+
+    <div class="content">
+        <div class="section-title">💰 Rémunération</div>
+        <table>
+            <thead><tr><th>Libellé</th><th class="right">Montant</th></tr></thead>
+            <tbody>
+            <tr><td>Salaire de base</td><td class="right amount" id="baseSalary">{{baseSalary}} €</td></tr>
+            <tr><td>Primes et bonus</td><td class="right amount" id="bonuses">{{bonuses}} €</td></tr>
+            <tr class="subtotal-row"><td>TOTAL BRUT</td><td class="right" id="totalGross">{{grossPay}} €</td></tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">📉 Cotisations et Déductions</div>
+        <table>
+            <thead><tr><th>Libellé</th><th class="right">Montant</th></tr></thead>
+            <tbody>
+            <tr><td>Cotisations sociales salariales</td><td class="right amount negative">- <span id="socialContributions">{{socialContributions}}</span> €</td></tr>
+            <tr><td>CSG / CRDS</td><td class="right amount negative">- <span id="csgCrds">{{getCsgCrdsAmount}}</span> €</td></tr>
+            <tr><td>Autres déductions</td><td class="right amount negative">- <span id="customDeductionsInput">{{custom_deductions}}</span></td></tr>
+            <tr class="subtotal-row"><td>TOTAL DÉDUCTIONS</td><td class="right negative">- <span id="totalDeductions">{{deductions}}</span> €</td></tr>
+            </tbody>
+        </table>
+
+        <div class="section-title">📊 Calcul du Net à Payer</div>
+        <table>
+            <thead><tr><th>Opération</th><th class="right">Montant</th></tr></thead>
+            <tbody>
+            <tr><td>Salaire brut (base + primes)</td><td class="right amount" id="calcGross">{{grossPay}} €</td></tr>
+            <tr><td>Total des déductions</td><td class="right amount negative">- <span id="calcDeductions">{{deductions}}</span> €</td></tr>
+            <tr class="subtotal-row"><td>Net à payer</td><td class="right" id="netBeforeTax">{{netPay}} €</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="summary">
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-label">Salaire Brut</div>
+                <div class="summary-value" id="summaryGross">{{grossPay}} €</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Total Déductions</div>
+                <div class="summary-value" id="summaryDeductions">- {{deductions}} €</div>
+            </div>
+            <div class="summary-item net-pay">
+                <div class="summary-label">💵 NET À PAYER</div>
+                <div class="summary-value" id="netPay">{{netPay}} €</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="footer">
+        <p><strong>⚠️ Bulletin à conserver sans limitation de durée</strong></p>
+        <p>Document confidentiel généré automatiquement le <span id="footerDate">{{generationDate}}</span></p>
+        <p>En cas de questions, contactez le service RH : rh@cysolutions.fr | Tél: 01 23 45 67 89</p>
+    </div>
+</div>
+</body>
+</html>

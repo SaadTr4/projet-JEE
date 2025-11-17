@@ -1,5 +1,6 @@
 package fr.projetjee.model;
 
+import fr.projetjee.enums.ContractType;
 import jakarta.persistence.*;
 import fr.projetjee.model.*;
 
@@ -7,6 +8,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.sql.Blob;
 import java.util.HashSet;
 import java.util.Set;
@@ -63,7 +65,14 @@ public class User implements Serializable {
     @Enumerated(EnumType.STRING)
     @Column(name = "role", length = 20)
     private Role role;
-    
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "contract_type", length = 30)
+    private ContractType contractType;
+
+    @Column(name = "base_salary", precision = 10, scale = 2)
+    private BigDecimal baseSalary;
+
     // Relation Many-to-One avec Department
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "department_id")
@@ -93,11 +102,12 @@ public class User implements Serializable {
     
     public User() {}
     
-    public User(String matricule, String lastName, String firstName, String email) {
+    public User(String matricule, String lastName, String firstName, String email, ContractType contractType) {
         this.matricule = matricule;
         this.lastName = lastName;
         this.firstName = firstName;
         this.email = email;
+        this.contractType = contractType;
     }
     
     // ========================================
@@ -186,7 +196,11 @@ public class User implements Serializable {
     public void setRole(Role role) {
         this.role = role;
     }
-    
+
+    public ContractType getContractType() { return contractType; }
+    public void setContractType(ContractType contractType) { this.contractType = contractType; }
+    public BigDecimal getBaseSalary() { return baseSalary; }
+    public void setBaseSalary(BigDecimal baseSalary) { this.baseSalary = baseSalary; }
    public Department getDepartment() {
         return department;
     }
@@ -243,6 +257,7 @@ public class User implements Serializable {
                 "          address  = " + address + ",\n" +
                 "            grade  = " + grade + ",\n" +
                 "             role  = " + role + "\n" +
+                 "    contractType  = " + contractType + ",\n" +
                 ']';
 
     }

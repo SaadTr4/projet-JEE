@@ -3,6 +3,7 @@ package fr.projetjee;
 import fr.projetjee.dao.DepartmentDAO;
 import fr.projetjee.dao.PositionDAO;
 import fr.projetjee.dao.UserDAO;
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.model.Department;
 import fr.projetjee.model.Position;
 import fr.projetjee.model.User;
@@ -56,7 +57,7 @@ public class TestDepartmentAndPostion {
         posManagerId = posManager.getId();
 
         // Création des utilisateurs
-        user1 = new User("EMP300_TEST","Nom","Louis","louis@entreprise.fr");
+        user1 = new User("EMP300_TEST","Nom","Louis","louis@entreprise.fr", ContractType.TEMPORARY_AGENCY);
         user1.setPassword("test123");
         userDAO.save(user1);
     }
