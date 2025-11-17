@@ -141,7 +141,7 @@
                                 <th>Année</th>
                                 <th>Mois</th>
                                 <th>Total (€)</th>
-                                <% if (canAccess) { %> <th>Actions</th> <% } %>
+                                <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -155,8 +155,8 @@
                                 <td><%= p.getMonth()%></td>
                                 <td><%= p.getNetPay() %></td>
 
-                                <% if (canAccess) { %>
                                 <td>
+                                    <% if (canAccess) { %>
                                     <button class="welcome-logout" style="background:#3b82f6; padding:4px 8px;"
                                             onclick='togglePayslipModal({
                                                     id: "<%= p.getId() %>",
@@ -169,6 +169,7 @@
                                                     month: <%= p.getMonth() %>
                                                     })'>Modifier
                                     </button>
+                                    <% } %>
 
                                     <form method="post" action="payslips" style="display:inline;">
                                         <input type="hidden" name="action" value="export">
@@ -177,14 +178,15 @@
                                         <button class="welcome-logout" style="padding:4px 8px;">PDF</button>
                                     </form>
 
+                                    <% if (canAccess) { %>
                                     <form method="post" action="payslips" style="display:inline;">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
                                         <input type="hidden" name="id" value="<%= p.getId() %>">
                                         <button class="welcome-logout" style="background:#ef4444; padding:4px 8px;">Supprimer</button>
                                     </form>
+                                    <% } %>
                                 </td>
-                                <% } %>
                             </tr>
                         <% } } %>
                         </tbody>
