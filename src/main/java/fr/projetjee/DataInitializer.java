@@ -86,6 +86,7 @@ public class DataInitializer {
             jean_claude.setPosition(chefProjet);
             jean_claude.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             jean_claude.setBaseSalary(new BigDecimal("4000.00"));
+            jean_claude.setPhone("0612345678");
             userDAO.save(jean_claude);
 
             User saad = new User("EMP002", "Tarmidi", "Saad", "saad.tarmidi@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
@@ -94,6 +95,7 @@ public class DataInitializer {
             saad.setDepartment(rh);
             saad.setPosition(devBackend);
             saad.setBaseSalary(new BigDecimal("3000.00"));
+            saad.setPhone("0698765432");
             saad.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(saad);
 
@@ -103,6 +105,7 @@ public class DataInitializer {
             adam.setDepartment(finance);
             adam.setPosition(chefDepartement);
             adam.setBaseSalary(new BigDecimal("5000000.00"));
+            adam.setPhone("0678901234");
             adam.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(adam);
 
@@ -112,6 +115,7 @@ public class DataInitializer {
             haitam.setDepartment(informatique);
             haitam.setPosition(administrateurSysteme);
             haitam.setBaseSalary(new BigDecimal("4500.00"));
+            haitam.setPhone("0654321098");
             haitam.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(haitam);
 
@@ -121,6 +125,7 @@ public class DataInitializer {
             medhi.setDepartment(finance);
             medhi.setPosition(devFrontend);
             medhi.setBaseSalary(new BigDecimal("2800.00"));
+            medhi.setPhone("0643210987");
             medhi.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(medhi);
 
@@ -130,6 +135,7 @@ public class DataInitializer {
             chefSup.setDepartment(finance);
             chefSup.setPosition(chefProjet);
             chefSup.setBaseSalary(new BigDecimal("6000.00"));
+            chefSup.setPhone("0600000000");
             chefSup.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(chefSup);
 

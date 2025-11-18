@@ -519,9 +519,10 @@ public class PayslipServlet extends HttpServlet {
 
 
 
+        String fileName = "Fiche_de_paie_" + user.getLastName() + "_" +  user.getFirstName() + "_" + payslip.getMonthName() + "_" + payslip.getYear() + ".pdf";
         // 4) Convertir en PDF
         resp.setContentType("application/pdf");
-        resp.setHeader("Content-Disposition", "attachment; filename=payslip.pdf");
+        resp.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
 
         OutputStream os = resp.getOutputStream();
         ITextRenderer renderer = new ITextRenderer();

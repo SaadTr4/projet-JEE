@@ -27,7 +27,6 @@ function togglePayslipModal(payslip) {
     if (payslip) {
         // Remplir le formulaire avec les données du payslip
         form.id.value = payslip.id;
-        form.baseSalary.value = payslip.baseSalary;
         form.bonuses.value = payslip.bonuses;
         form.deductions.value = payslip.deductions;
 
@@ -35,6 +34,7 @@ function togglePayslipModal(payslip) {
         document.getElementById('employeeName').value = payslip.userFullName;
         document.getElementById('employeeMatricule').value = payslip.userMatricule;
         document.getElementById('yearDisplay').value = payslip.year;
+        document.getElementById('baseSalary').value = payslip.baseSalary;
 
         // Afficher le mois par nom
         const months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];
