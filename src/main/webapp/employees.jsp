@@ -74,7 +74,6 @@
 
                 <div class="welcome-card">
                     <div class="welcome-left">
-                        <span class="wave">👋</span>
                         <div>
                             <h2 class="welcome-title">Liste des employés</h2>
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
