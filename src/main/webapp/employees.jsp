@@ -74,7 +74,6 @@
 
                 <div class="welcome-card">
                     <div class="welcome-left">
-                        <span class="wave">👋</span>
                         <div>
                             <h2 class="welcome-title">Liste des employés</h2>
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
@@ -111,8 +110,8 @@
                                 <td>
                                     <a href="EditEmployeeServlet?id=<%= e.getId() %>" class="welcome-logout">Modifier</a>
                                     <a href="DeleteEmployeeServlet?id=<%= e.getId() %>" class="welcome-logout" style="background:#ef4444;">Supprimer</a>
-                                    
-                                    
+
+
                                 </td>
                             </tr>
                         <% } %>
@@ -125,7 +124,7 @@
 </div>
 
 <!-- MODAL -->
-<div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
+<div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:9999 !important; justify-content:center; align-items:center;">
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Ajouter un employé</h3>
         <form method="post" action="AddEmployeeServlet">
@@ -137,7 +136,15 @@
             <input name="projet" class="input" placeholder="Projet">
             <input name="salaire" type="number" class="input" placeholder="Salaire (€)" required>
             <button class="welcome-logout" style="margin-top:10px;">Enregistrer</button>
-            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="closeModal()">Annuler</button>
+
+            <button type="button"
+                    class="welcome-logout"
+                    style="background:#ef4444; margin-top:10px;"
+                    onclick="toggleAddModal(false)">
+                Annuler
+            </button>
+
+F
         </form>
     </div>
 </div>

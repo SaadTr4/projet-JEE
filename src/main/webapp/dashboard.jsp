@@ -87,7 +87,6 @@
         <!-- Bienvenue -->
         <div class="welcome-card">
           <div class="welcome-left">
-            <span class="wave">👋</span>
             <div>
               <h2 class="welcome-title">Bienvenue, <%= username %></h2>
               <p class="welcome-sub">Voici le résumé de l’activité de votre entreprise</p>
