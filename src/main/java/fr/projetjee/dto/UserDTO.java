@@ -1,10 +1,12 @@
 package fr.projetjee.dto;
 
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.model.User;
 import fr.projetjee.util.PasswordUtil;
 
+import java.math.BigDecimal;
 import java.util.Base64;
 
 /**
@@ -21,9 +23,12 @@ public class UserDTO {
     private String password;
 
     private String address;
+
     private String imageBase64;
     private Grade grade;
     private Role role;
+    private ContractType contractType;
+    private BigDecimal baseSalary;
 
     // Relations
     private Integer departmentId;
@@ -60,6 +65,8 @@ public class UserDTO {
         dto.setAddress(user.getAddress());
         dto.setGrade(user.getGrade());
         dto.setRole(user.getRole());
+        dto.setContractType(user.getContractType());
+        dto.setBaseSalary(user.getBaseSalary());
 
         // Convertir image byte[] → Base64
         if (includeImage && user.getImage() != null && user.getImage().length > 0) {
@@ -94,6 +101,8 @@ public class UserDTO {
         user.setAddress(this.address);
         user.setGrade(this.grade);
         user.setRole(this.role);
+        user.setContractType(this.contractType);
+        user.setBaseSalary(this.baseSalary);
 
         if (this.password != null && !this.password.isEmpty()) {
             user.setPassword(PasswordUtil.hashPassword(this.password));
@@ -123,6 +132,9 @@ public class UserDTO {
         if (this.address != null) user.setAddress(this.address);
         if (this.grade != null) user.setGrade(this.grade);
         if (this.role != null) user.setRole(this.role);
+        if (this.contractType != null) user.setContractType(this.contractType);
+        if (this.baseSalary != null) user.setBaseSalary(this.baseSalary);
+
 
         if (this.password != null && !this.password.isEmpty()) {
             user.setPassword(PasswordUtil.hashPassword(this.password));
@@ -174,6 +186,10 @@ public class UserDTO {
 
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+    public ContractType getContractType() { return contractType; }
+    public void setContractType(ContractType contractType) { this.contractType = contractType; }
+    public BigDecimal getBaseSalary() { return baseSalary; }
+    public void setBaseSalary(BigDecimal baseSalary) { this.baseSalary = baseSalary; }
 
     public Integer getDepartmentId() { return departmentId; }
     public void setDepartmentId(Integer departmentId) { this.departmentId = departmentId; }

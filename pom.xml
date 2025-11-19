@@ -82,6 +82,13 @@
             <version>5.9.3</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Flying Saucer PDF generation -->
+        <dependency>
+            <groupId>org.xhtmlrenderer</groupId>
+            <artifactId>flying-saucer-pdf-openpdf</artifactId>
+            <version>9.1.22</version>
+        </dependency>
     </dependencies>
 
     <build>

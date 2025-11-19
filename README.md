@@ -84,3 +84,11 @@ Ouvre un navigateur et accède à : `http://localhost:8081`
 Utilise les identifiants suivants :
 - mail : admin@admin.com
 - mot de passe : admin
+
+Se connecter au serveur PostgreSQL :
+- Hôte : db
+- Port : 5432
+- Maintenance DB : cytech_entreprise
+- Nom d’utilisateur : cytech_user
+- Mot de passe : CyT3ch2025!
+- 

@@ -101,6 +101,18 @@ public class UserDAO extends GenericDAO<User, Integer> {
         }
     }
 
+    public List<User> findByContractType(String contractType) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                "FROM User u WHERE u.contractType = :contractType", User.class);
+            query.setParameter("contractType", contractType);
+            return query.list();
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] Erreur findByContractType: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     public boolean isUserProjectManager(Role role, Integer id) {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             Query<User> query = session.createQuery(

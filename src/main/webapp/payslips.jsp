@@ -256,7 +256,7 @@
             <input type="text" id="monthDisplay" class="input" disabled>
 
             <label>Salaire de base :</label>
-            <input type="number" name="baseSalary" id="baseSalary" class="input" step="0.01" required>
+            <input type="number" name="baseSalary" id="baseSalary" class="input" step="0.01" disabled>
 
             <label>Prime :</label>
             <input type="number" name="bonuses" id="bonuses" class="input" step="0.01" value="0" required>

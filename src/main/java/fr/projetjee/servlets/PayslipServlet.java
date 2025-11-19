@@ -10,12 +10,18 @@ import fr.projetjee.security.RolePermissions;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -203,7 +209,6 @@ public class PayslipServlet extends HttpServlet {
         Integer year = Integer.parseInt(request.getParameter("year"));
         Integer month = Integer.parseInt(request.getParameter("month"));
 
-        BigDecimal baseSalary = parseOrZero(request.getParameter("baseSalary"));
         BigDecimal bonuses = parseOrZero(request.getParameter("bonuses"));
         BigDecimal deductions = parseOrZero(request.getParameter("deductions"));
 
@@ -224,7 +229,8 @@ public class PayslipServlet extends HttpServlet {
             return;
         }
 
-        Payslip payslip = new Payslip(year, month, baseSalary, bonuses, deductions, user);
+        Payslip payslip = new Payslip(year, month, bonuses, deductions, user);
+        BigDecimal baseSalary = user.getBaseSalary();
         if (!validateAndReportErrors(request, payslip, baseSalary, bonuses, deductions, false)) {
             doGet(request, response);
             return;
@@ -260,10 +266,10 @@ public class PayslipServlet extends HttpServlet {
             return;
         }
 
-        BigDecimal baseSalary = parseOrZero(request.getParameter("baseSalary"));
         BigDecimal bonuses = parseOrZero(request.getParameter("bonuses"));
         BigDecimal deductions = parseOrZero(request.getParameter("deductions"));
 
+        BigDecimal baseSalary = payslip.getBaseSalary();
         if (!validateAndReportErrors(request, payslip, baseSalary, bonuses, deductions, true)) {
             doGet(request, response);
             return;
@@ -465,12 +471,71 @@ public class PayslipServlet extends HttpServlet {
      * Exports payslips to PDF (functionality to implement).
      *
      * @param req HttpServletRequest
-     * @param res HttpServletResponse
+     * @param resp HttpServletResponse
      * @throws IOException if an I/O error occurs during redirect
      */
-    private void exportPDF(HttpServletRequest req, HttpServletResponse res) throws IOException {
+    private void exportPDF(HttpServletRequest req, HttpServletResponse resp) throws IOException {
+        Integer payslipId = Integer.parseInt(req.getParameter("id"));
+
+        if (payslipId == null || payslipId <= 0) {
+            resp.sendRedirect("payslips?export=invalid_id");
+            return;
+        }
+        // 1) Charger le bulletin depuis la BDD
+        Payslip payslip = payslipDAO.findById(payslipId).orElse(null);
+        User user = payslip.getUser();
+
+        // 2) Charger le HTML template
+        String html = loadTemplate("/WEB-INF/templates/payslip_template.html");
+
+        // 3) Injecter les données
+        html = html.replace("{{employeeName}}",
+                Objects.toString(user.getFirstName(), "N/A") + " " + Objects.toString(user.getLastName(), "N/A"));
+        html = html.replace("{{registrationNumber}}", Objects.toString(user.getMatricule(), "N/A"));
+        html = html.replace("{{department}}",
+                user.getDepartment() != null ? Objects.toString(user.getDepartment().getName(), "N/A") : "N/A");
+        html = html.replace("{{position}}",
+                user.getPosition() != null ? Objects.toString(user.getPosition().getName(), "N/A") : "N/A");
+        html = html.replace("{{grade}}",
+                user.getGrade() != null ? Objects.toString(user.getGrade().getDisplayName(), "N/A") : "N/A");
+        html = html.replace("{{email}}", Objects.toString(user.getEmail(), "N/A"));
+        html = html.replace("{{phone}}", Objects.toString(user.getPhone(), "N/A"));
+        html = html.replace("{{contractType}}",
+                user.getContractType() != null ? Objects.toString(user.getContractType().getDisplayName(), "N/A") : "N/A");
+
+        html = html.replace("{{monthName}}", String.valueOf(payslip.getMonthName()));
+        html = html.replace("{{year}}", String.valueOf(payslip.getYear()));
+        html = html.replace("{{generationDate}}",
+                payslip.getFormattedGenerationDate() != null ? payslip.getFormattedGenerationDate().toString() : "N/A");
+
+        html = html.replace("{{baseSalary}}", payslip.getFormattedCurrency(payslip.getBaseSalary()));
+        html = html.replace("{{bonuses}}", payslip.getFormattedCurrency(payslip.getBonuses()));
+        html = html.replace("{{custom_deductions}}", payslip.getFormattedCurrency(payslip.getCustom_deductions()));
+        html = html.replace("{{deductions}}", payslip.getFormattedCurrency(payslip.getDeductions()));
+        html = html.replace("{{socialContributions}}", payslip.getFormattedCurrency(payslip.getSocialContributions()));
+        html = html.replace("{{getCsgCrdsAmount}}", payslip.getFormattedCurrency(payslip.getCsgCrdsAmount()));
+        html = html.replace("{{grossPay}}", payslip.getFormattedCurrency(payslip.getGrossPay()));
+        html = html.replace("{{netPay}}", payslip.getFormattedCurrency(payslip.getNetPay()));
+
+
+
+        String fileName = "Fiche_de_paie_" + user.getLastName() + "_" +  user.getFirstName() + "_" + payslip.getMonthName() + "_" + payslip.getYear() + ".pdf";
+        // 4) Convertir en PDF
+        resp.setContentType("application/pdf");
+        resp.setHeader("Content-Disposition", "attachment; filename=\"" + fileName + "\"");
+
+        OutputStream os = resp.getOutputStream();
+        ITextRenderer renderer = new ITextRenderer();
+        renderer.setDocumentFromString(html);
+        renderer.layout();
+        renderer.createPDF(os);
+        os.close();
         // TODO: Implement PDF export functionality
-        res.sendRedirect("payslips?export=todo");
+       // res.sendRedirect("payslips?export=todo");
+    }
+    private String loadTemplate(String path) throws IOException {
+        InputStream is = getServletContext().getResourceAsStream(path);
+        return new String(is.readAllBytes(), StandardCharsets.UTF_8);
     }
 
     /**

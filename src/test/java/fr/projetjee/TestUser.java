@@ -1,6 +1,7 @@
 package fr.projetjee;
 
 import fr.projetjee.dao.UserDAO;
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.model.User;
@@ -24,7 +25,7 @@ public class TestUser {
     void initDAO() {
         userDAO = new UserDAO();
 
-        user1 = new User("EMP001_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr");
+        user1 = new User("EMP001_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr", ContractType.APPRENTICESHIP);
         user1.setPassword("test123");
         user1.setAddress("123 Rue de la Paix, 75002 Paris");
         user1.setPhone("0601020304");
@@ -32,7 +33,7 @@ public class TestUser {
         user1.setRole(Role.CHEF_PROJET);
         userDAO.save(user1);
 
-        user2 = new User("EMP002_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr");
+        user2 = new User("EMP002_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
         user2.setPassword("test123");
         user2.setAddress("456 Avenue des Champs, 75008 Paris");
         user2.setPhone("0602030405");
@@ -49,7 +50,7 @@ public class TestUser {
     @Order(1)
     // Vérifie que save fonctionne pour un utilisateur valide.
     void testSaveUser_success() {
-        User testUser = new User("EMP007_TEST", "TestUser", "Alice", "alice.test@entreprise.fr");
+        User testUser = new User("EMP007_TEST", "TestUser", "Alice", "alice.test@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
         testUser.setPassword("password123");
         testUser.setAddress("10 Rue Test, 75010 Paris");
         testUser.setPhone("0607080910");
@@ -117,7 +118,7 @@ public class TestUser {
     @Test
     @Order(6)
     void testUpdateUser_nonExistingUser() {
-        User nonExistingUser = new User("EMP999_TEST", "NonExistant", "User", "non.existant@entreprise.fr");
+        User nonExistingUser = new User("EMP999_TEST", "NonExistant", "User", "non.existant@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
         assertThrows(Exception.class, () -> userDAO.update(nonExistingUser), "La mise à jour d'un utilisateur inexistant devrait lancer une exception.");
     }
 

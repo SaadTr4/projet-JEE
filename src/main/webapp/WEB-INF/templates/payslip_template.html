@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="fr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Bulletin de Paie</title>
+    <style type="text/css">
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #ffffff;
+            font-size: 12px;
+            line-height: 1.4;
+        }
+
+        .payslip {
+            width: 100%;
+            max-width: 750px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #d97706;
+        }
+
+        /* En-tête */
+        .header {
+            background-color: #d97706;
+            color: white;
+            padding: 25px;
+            border-bottom: 4px solid #b45309;
+        }
+
+        .header-content {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .company-info {
+            float: left;
+            width: 58%;
+            padding-right: 2%;
+        }
+
+        .company-info h1 {
+            font-size: 22px;
+            margin-bottom: 12px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .company-info p {
+            font-size: 11px;
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .payslip-title {
+            float: right;
+            width: 38%;
+            text-align: right;
+            padding-left: 2%;
+        }
+
+        .payslip-title h2 {
+            font-size: 26px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+
+        .payslip-title p {
+            font-size: 12px;
+            margin: 4px 0;
+        }
+
+        /* Section informations */
+        .info-section {
+            width: 100%;
+            background: #fff7ed;
+            border-bottom: 3px solid #d97706;
+            overflow: hidden;
+            padding: 20px 0;
+        }
+
+        .info-box {
+            float: left;
+            width: 48%;
+            padding: 0 2%;
+            margin-bottom: 15px;
+        }
+
+        .info-box h3 {
+            color: #d97706;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            border-bottom: 2px solid #d97706;
+            padding-bottom: 6px;
+        }
+
+        .info-row {
+            width: 100%;
+            overflow: hidden;
+            padding: 6px 0;
+            border-bottom: 1px dotted #f4c38a;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            float: left;
+            color: #4a5568;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        .info-value {
+            float: right;
+            color: #1a202c;
+            font-weight: bold;
+            font-size: 11px;
+        }
+
+        /* Contenu principal */
+        .content {
+            padding: 25px;
+        }
+
+        .section-title {
+            background-color: #d97706;
+            color: white;
+            padding: 10px 15px;
+            font-size: 13px;
+            font-weight: bold;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-left: 5px solid #b45309;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            font-size: 11px;
+            border: 1px solid #f4c38a;
+        }
+
+        thead {
+            background: #fde7d3;
+        }
+
+        th {
+            padding: 10px 8px;
+            text-align: left;
+            font-weight: bold;
+            color: #d97706;
+            border-bottom: 2px solid #d97706;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        th.right, td.right {
+            text-align: right;
+        }
+
+        tbody tr {
+            border-bottom: 1px solid #f4c38a;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #fff7ed;
+        }
+
+        tbody tr:hover {
+            background: #fde7d3;
+        }
+
+        td {
+            padding: 8px;
+            color: #2d3748;
+        }
+
+        .subtotal-row {
+            background: #fcd9b6 !important;
+            font-weight: bold;
+            border-top: 2px solid #d97706 !important;
+            border-bottom: 2px solid #d97706 !important;
+        }
+
+        .subtotal-row td {
+            padding: 10px 8px;
+            color: #92400e;
+            font-size: 12px;
+        }
+
+        /* Résumé final */
+        .summary {
+            background-color: #d97706;
+            color: white;
+            padding: 20px 25px;
+            margin-top: 25px;
+            border: 3px solid #b45309;
+        }
+
+        .summary-grid {
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .summary-item {
+            float: left;
+            width: 48%;
+            text-align: center;
+            padding: 12px 1%;
+            background: rgba(255,255,255,0.18);
+            border: 1px solid rgba(255,255,255,0.3);
+            margin-right: 2%;
+            margin-bottom: 10px;
+        }
+
+        .summary-item:nth-child(2n) {
+            margin-right: 0;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            font-weight: bold;
+        }
+
+        .summary-value {
+            font-size: 20px;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .net-pay {
+            width: 98%;
+            background: rgba(255,255,255,0.25);
+            padding: 18px;
+            float: left;
+            border: 2px solid white;
+            margin-right: 0;
+        }
+
+        .net-pay .summary-label {
+            font-size: 13px;
+            margin-bottom: 8px;
+        }
+
+        .net-pay .summary-value {
+            font-size: 32px;
+            margin-top: 5px;
+        }
+
+        /* Pied de page */
+        .footer {
+            padding: 18px 25px;
+            background: #fff7ed;
+            border-top: 3px solid #d97706;
+            font-size: 10px;
+            color: #4a5568;
+            text-align: center;
+        }
+
+        .footer strong {
+            color: #d97706;
+            font-size: 11px;
+        }
+
+        /* Montants */
+        .amount {
+            font-weight: bold;
+            color: #1a202c;
+        }
+
+        .negative {
+            color: #dc2626;
+            font-weight: bold;
+        }
+
+        /* Séparateur */
+        .separator {
+            height: 2px;
+            background: linear-gradient(to right, #d97706, #fbbf24, #d97706);
+            margin: 15px 0;
+        }
+
+        /* Clear float */
+        .clear {
+            clear: both;
+        }
+
+        /* Print styles */
+        @media print {
+
+            /* Réglages généraux */
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            /* Ajustement de la fiche */
+            .payslip {
+                border: 1px solid #000;
+                max-width: 100%;
+            }
+
+            /* Marges de la page */
+            @page {
+                margin: 5mm;
+            }
+
+            /* Numéro de page */
+            body:after {
+                content: "Page " counter(page) " / 2";
+                position: fixed;
+                bottom: 0;
+                right: 20px;
+                font-size: 12px;
+                color: #92400e;
+            }
+
+
+        }
+
+    </style>
+</head>
+<body>
+<div class="payslip">
+    <!-- En-tête -->
+    <div class="header">
+        <div class="header-content">
+            <div class="company-info">
+                <h1>ENTREPRISE CY SOLUTIONS</h1>
+                <p>8 Avenue du Parc<br />95000 Cergy<br />SIRET: 123 456 789 00012<br />Code NAF: 6201Z - Programmation informatique</p>
+            </div>
+            <div class="payslip-title">
+                <h2>BULLETIN DE PAIE</h2>
+                <p id="period">{{monthName}} {{year}}</p>
+                <p id="paymentDate">Payé le {{generationDate}}</p>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- Informations salarié et contrat -->
+    <div class="info-section">
+        <div class="info-box">
+            <h3>INFORMATIONS SALARIÉ</h3>
+            <div class="info-row">
+                <span class="info-label">Nom complet</span>
+                <span class="info-value">{{employeeName}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Matricule</span>
+                <span class="info-value">{{registrationNumber}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Département</span>
+                <span class="info-value">{{department}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Poste</span>
+                <span class="info-value">{{position}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Grade</span>
+                <span class="info-value">{{grade}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Email</span>
+                <span class="info-value">{{email}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Téléphone</span>
+                <span class="info-value">{{phone}}</span>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>CONTRAT &amp; PÉRIODE</h3>
+            <div class="info-row">
+                <span class="info-label">Type de contrat</span>
+                <span class="info-value">{{contractType}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Convention collective</span>
+                <span class="info-value">Syntec</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Mois de paie</span>
+                <span class="info-value">{{monthName}} {{year}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Année</span>
+                <span class="info-value">{{year}}</span>
+            </div>
+            <div class="info-row">
+                <span class="info-label">Date de génération</span>
+                <span class="info-value">{{generationDate}}</span>
+            </div>
+        </div>
+        <div class="clear"></div>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="content">
+        <!-- Rémunération -->
+        <div class="section-title">RÉMUNÉRATION BRUTE</div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 70%;">Libellé</th>
+                <th class="right" style="width: 30%;">Montant</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><strong>Salaire de base</strong></td>
+                <td class="right amount">{{baseSalary}} €</td>
+            </tr>
+            <tr>
+                <td><strong>Primes et bonus</strong></td>
+                <td class="right amount">{{bonuses}} €</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td><strong>TOTAL BRUT</strong></td>
+                <td class="right"><strong>{{grossPay}} €</strong></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="separator"></div>
+
+        <!-- Déductions -->
+        <div class="section-title">COTISATIONS ET DÉDUCTIONS</div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 70%;">Libellé</th>
+                <th class="right" style="width: 30%;">Montant</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Cotisations sociales salariales</td>
+                <td class="right negative">- {{socialContributions}} €</td>
+            </tr>
+            <tr>
+                <td>CSG / CRDS</td>
+                <td class="right negative">- {{getCsgCrdsAmount}} €</td>
+            </tr>
+            <tr>
+                <td>Autres déductions</td>
+                <td class="right negative">- {{custom_deductions}} €</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td><strong>TOTAL DÉDUCTIONS</strong></td>
+                <td class="right negative"><strong>- {{deductions}} €</strong></td>
+            </tr>
+            </tbody>
+        </table>
+
+        <div class="separator"></div>
+
+        <!-- Calcul final -->
+        <div class="section-title">CALCUL DU NET À PAYER</div>
+        <table>
+            <thead>
+            <tr>
+                <th style="width: 70%;">Opération</th>
+                <th class="right" style="width: 30%;">Montant</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td><strong>Salaire brut (base + primes)</strong></td>
+                <td class="right amount">{{grossPay}} €</td>
+            </tr>
+            <tr>
+                <td><strong>Total des déductions</strong></td>
+                <td class="right negative">- {{deductions}} €</td>
+            </tr>
+            <tr class="subtotal-row">
+                <td><strong>NET À PAYER</strong></td>
+                <td class="right"><strong>{{netPay}} €</strong></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Résumé final -->
+    <div class="summary">
+        <div class="summary-grid">
+            <div class="summary-item">
+                <div class="summary-label">Salaire Brut</div>
+                <div class="summary-value">{{grossPay}} €</div>
+            </div>
+            <div class="summary-item">
+                <div class="summary-label">Total Déductions</div>
+                <div class="summary-value">- {{deductions}} €</div>
+            </div>
+            <div class="summary-item net-pay">
+                <div class="summary-label">💵 NET À PAYER</div>
+                <div class="summary-value">{{netPay}} €</div>
+            </div>
+            <div class="clear"></div>
+        </div>
+    </div>
+
+    <!-- Pied de page -->
+    <div class="footer">
+        <p><strong>⚠️ BULLETIN À CONSERVER SANS LIMITATION DE DURÉE</strong></p>
+        <p>Document confidentiel généré automatiquement le {{generationDate}}</p>
+        <p>En cas de questions, contactez le service RH : rh@cysolutions.fr | Tél: 01 23 45 67 89</p>
+    </div>
+</div>
+</body>
+</html>
