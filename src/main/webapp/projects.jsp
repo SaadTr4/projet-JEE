@@ -282,22 +282,38 @@
                             <% if (projects != null) {
                                 for (Project p : projects) { %>
                             <tr style="border-bottom:1px solid rgba(255,255,255,.2); text-align: center;">
+                                <!-- ID du projet -->
                                 <td style="padding:10px;"><%= p.getId() %></td>
-                                <td><%= p.getName() %></td>
+
+                                <!-- Nom du projet avec lien (couleur modifiée en blanc) -->
+                                 <td style="padding:10px;">
+                                            <a href="projectDetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
+                                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                                <%= p.getName() %>
+                                            </a>
+                                        </td>
+                                <!-- Chef de projet -->
                                 <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
+
+                                <!-- Statut du projet -->
                                 <td><%= p.getStatus().getDisplayName() %></td>
+
+                                <!-- Nombre d'employés affectés -->
                                 <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
+
                                 <% if (showActions) { %>
                                 <td>
+                                    <!-- Bouton de modification du projet -->
                                     <button type="button" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(59,130,246,.35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;"
                                             onclick='toggleProjectModal({
-                                                    id:<%= p.getId() %>,
+                                                    id:<%= p.getId() %> ,
                                                     name:"<%= StringEscapeUtils.escapeEcmaScript(p.getName()) %>",
                                                     managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
                                                     status:"<%= p.getStatus() %>",
                                                     description:"<%= p.getDescription() != null ? StringEscapeUtils.escapeEcmaScript(p.getDescription()) : "" %>"
                                                     })'>Modifier</button>
 
+                                    <!-- Formulaire pour supprimer le projet -->
                                     <form method="post" action="projects" style="display:inline;">
                                         <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
                                         <input type="hidden" name="id" value="<%= p.getId() %>">
@@ -308,6 +324,7 @@
                             </tr>
                             <% } } %>
                         </tbody>
+
                     </table>
 
                 </div>
