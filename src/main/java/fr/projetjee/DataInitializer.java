@@ -110,7 +110,7 @@ public class DataInitializer {
             haitam.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(haitam);
 
-            User medhi = new User("EMP005","nom","Medhi","medhi.nom@entreprise.fr");
+            User medhi = new User("EMP005","Abdelmalek","Mehdi","medhi.nom@entreprise.fr");
             medhi.setGrade(Grade.JUNIOR);
             medhi.setRole(Role.EMPLOYE);
             medhi.setDepartment(finance);
