@@ -2,5 +2,32 @@
 <web-app xmlns="https://jakarta.ee/xml/ns/jakartaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/web-app_5_0.xsd"
-         version="5.0"> 
+         version="5.0">
+
+    <!-- ============================================ -->
+    <!-- BACKEND API - Servlet UserServlet           -->
+    <!-- ============================================ -->
+
+    <!-- Servlet UserServlet -->
+   <!--- <servlet>
+        <servlet-name>UserServlet</servlet-name>
+        <servlet-class>fr.projetjee.servlets.UserServlet</servlet-class>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>UserServlet</servlet-name>
+        <url-pattern>/api/users/*</url-pattern>
+    </servlet-mapping>-->
+
+    <!-- Filtre CORS -->
+    <filter>
+        <filter-name>CorsFilter</filter-name>
+        <filter-class>fr.projetjee.servlets.CorsFilter</filter-class>
+    </filter>
+
+    <filter-mapping>
+        <filter-name>CorsFilter</filter-name>
+        <url-pattern>/api/*</url-pattern>
+    </filter-mapping>
 </web-app>

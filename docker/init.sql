@@ -2,6 +2,7 @@
 CREATE TABLE department (
     id SERIAL PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
+    code VARCHAR(20) UNIQUE NOT NULL,
     description TEXT
 );
 
@@ -12,48 +13,58 @@ CREATE TABLE position (
       description TEXT
 );
 
--- Table Project
-CREATE TABLE project (
-     id SERIAL PRIMARY KEY,
-     name VARCHAR(100) NOT NULL,
-     description TEXT,
-     status VARCHAR(20) DEFAULT 'In progress'
-);
-
 -- Table User
 CREATE TABLE user_account (
-      employee_number VARCHAR(20) PRIMARY KEY,
+      id SERIAL PRIMARY KEY,
+      registration_number VARCHAR(20) UNIQUE NOT NULL,
       last_name VARCHAR(50) NOT NULL,
       first_name VARCHAR(50) NOT NULL,
       email VARCHAR(100) UNIQUE NOT NULL,
       phone VARCHAR(20),
+      password VARCHAR(255) NOT NULL,
       image BYTEA,
       address VARCHAR(255),
       grade VARCHAR(20),
       role VARCHAR(20),
+      contract_type VARCHAR(20) NOT NULL,
+      base_salary DECIMAL(10,2) DEFAULT 0.00,
       department_id INT,
       position_id INT,
       FOREIGN KEY (department_id) REFERENCES department(id),
       FOREIGN KEY (position_id) REFERENCES position(id)
 );
 
--- N-N Relationship Table User-Project
+-- Table Project
+CREATE TABLE project (
+     id SERIAL PRIMARY KEY,
+     name VARCHAR(100) NOT NULL,
+     description TEXT,
+     project_manager_id INT,
+     status VARCHAR(20) DEFAULT 'IN_PROGRESS',
+     FOREIGN KEY (project_manager_id) REFERENCES user_account(id)
+);
+
+-- N-N Relationship Table User-Project, can't use "user" as table name because it's a reserved word in SQL
 CREATE TABLE user_project (
-      employee_number VARCHAR(20),
-      project_id INT,
-      PRIMARY KEY (employee_number, project_id),
-      FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE,
+      user_id INT NOT NULL,
+      project_id INT NOT NULL,
+      PRIMARY KEY (user_id, project_id),
+      FOREIGN KEY (user_id) REFERENCES user_account(id) ON DELETE CASCADE,
       FOREIGN KEY (project_id) REFERENCES project(id) ON DELETE CASCADE
 );
 
 -- Table Payslip
 CREATE TABLE payslip (
      id SERIAL PRIMARY KEY,
-     employee_number VARCHAR(20),
-     date DATE NOT NULL,
-     base_salary DECIMAL(10,2),
+     registration_number VARCHAR(20),
+     year INT NOT NULL,
+     month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
+     base_salary DECIMAL(10,2), -- freeze base_salary to avoid historical data issues
      bonuses DECIMAL(10,2),
-     deductions DECIMAL(10,2),
+     deductions DECIMAL(10,2), -- deductions = social contributions + taxes + custom_deductions
+     custom_deductions DECIMAL(10,2),
      net_pay DECIMAL(10,2),
-     FOREIGN KEY (employee_number) REFERENCES user_account(employee_number) ON DELETE CASCADE
+     generation_date DATE NOT NULL DEFAULT CURRENT_DATE,
+     FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,
+     CONSTRAINT unique_payslip_per_period UNIQUE (registration_number, year, month)
 );

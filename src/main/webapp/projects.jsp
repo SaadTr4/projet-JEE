@@ -1,9 +1,38 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="java.util.*, fr.projetjee.models.Project" %>
+<%@ page import="java.util.*, fr.projetjee.model.Project" %>
+<%@ page import="fr.projetjee.model.User" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
+<%@ page import="fr.projetjee.enums.Role" %>
+
 
 <%
-    String username = "Admin";
     List<Project> projects = (List<Project>) request.getAttribute("projects");
+    List<User> chefs = (List<User>) request.getAttribute("chefs");
+    List<Project> allProjects = (List<Project>) request.getAttribute("allProjects");
+
+    User currentUser = (User) session.getAttribute("currentUser");
+    String username = currentUser != null ? currentUser.getFirstName() + " " + currentUser.getLastName() : "Invité";
+    boolean showFilter = false;
+    boolean showAddButton = false;
+    boolean showActions = false;
+
+    if (currentUser != null) {
+        String deptCode = currentUser.getDepartment() != null ? currentUser.getDepartment().getCode() : "";
+
+        if (currentUser.getRole() == Role.ADMINISTRATEUR || currentUser.getRole() == Role.CHEF_DEPARTEMENT) {
+            showFilter = true;
+            showAddButton = true;
+            showActions = true;
+        } else if (currentUser.getRole() == Role.EMPLOYE && "RH".equalsIgnoreCase(deptCode)) {
+            showFilter = true;
+            showAddButton = true;
+            showActions = true;
+        } else if (currentUser.getRole() == Role.CHEF_PROJET) {
+            showActions = true;
+        }
+        // Other roles have no special permissions (classic employee or no connection)
+    }
+%>
 %>
 
 <!DOCTYPE html>
@@ -15,6 +44,11 @@
 </head>
 <body>
 <div class="bg"></div>
+<datalist id="chefsList">
+    <% if (chefs != null) { for (User chef : chefs) { %>
+    <option value="<%= chef.getMatricule() %>"><%= chef.getFullName() %></option>
+    <% } } %>
+</datalist>
 
 <div class="app-shell">
     <!-- SIDEBAR -->
@@ -24,7 +58,7 @@
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
       <span>Tableau de bord</span>
     </a>
-    <a class="side-link" href="employees.jsp">
+    <a class="side-link" href="user">
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
       <span>Employés</span>
     </a>
@@ -36,7 +70,7 @@
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
       <span>Départements</span>
     </a>
-    <a class="side-link" href="payslips.jsp">
+    <a class="side-link" href="payslips">
       <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
       <span>Fiches de paie</span>
     </a>
@@ -63,8 +97,48 @@
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
                         </div>
                     </div>
-                    <button class="welcome-logout" onclick="openModal()">+ Ajouter</button>
+                    <% if (showAddButton) { %>
+                    <button class="welcome-logout" onclick="toggleAddModal(true)">+ Ajouter</button>
+                    <% } %>
                 </div>
+
+                <% if (showFilter) { %>
+                <form method="post" action="projects" style="margin-bottom:16px; display:flex; gap:10px; flex-wrap:wrap; align-items:center;">
+                    <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+
+                    <!-- Nom du projet -->
+                    <input name="name"
+                           list="projectsList"
+                           placeholder="Nom du projet"
+                           value="<%= request.getAttribute("filter_name") %>"
+                           oninput="checkProjectValid(this)">
+
+                    <datalist id="projectsList">
+                        <% if(projects !=null) {for (Project p : allProjects) { %>
+                        <option value="<%= p.getName() %>"></option>
+                        <% } } %>
+                    </datalist>
+
+                    <!-- Chef de projet -->
+                    <input name="manager"
+                           list="chefsList"
+                           placeholder="Chef de projet"
+                           value="<%= request.getAttribute("filter_manager") %>"
+                           oninput="checkManagerValid(this)" data-required="false">
+
+                    <!-- Statut -->
+                    <select name="status">
+                        <option value="">Tous</option>
+                        <option value="IN_PROGRESS" <%= "IN_PROGRESS".equals(request.getAttribute("filter_status")) ? "selected" : "" %>>En cours</option>
+                        <option value="COMPLETED" <%= "COMPLETED".equals(request.getAttribute("filter_status")) ? "selected" : "" %>>Terminé</option>
+                        <option value="CANCELLED" <%= "CANCELLED".equals(request.getAttribute("filter_status")) ? "selected" : "" %>>Annulé</option>
+                        <option value="PLANNED" <%= "PLANNED".equals(request.getAttribute("filter_status")) ? "selected" : "" %>>Planifié</option>
+                    </select>
+
+                    <button type="submit" class="welcome-logout" name="action" value="filter">Filtrer</button>
+                    <button type="submit" class="welcome-logout" name="action" value="reset">Réinitialiser</button>
+                </form>
+                <% } %>
 
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
                     <table style="width:100%; border-collapse:collapse; color:#fff;">
@@ -75,7 +149,7 @@
                                 <th>Chef de projet</th>
                                 <th>Statut</th>
                                 <th>Employés affectés</th>
-                                <th>Actions</th>
+                                <% if (showActions) { %><th>Actions</th> <% } %>
                             </tr>
                         </thead>
                         <tbody>
@@ -83,14 +157,29 @@
                                for (Project p : projects) { %>
                             <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
                                 <td style="padding:10px;"><%= p.getId() %></td>
-                                <td><%= p.getNom() %></td>
-                                <td><%= p.getChefProjet() %></td>
-                                <td><%= p.getStatut() %></td>
-                                <td><%= String.join(", ", p.getEmployesAffectes()) %></td>
-                                <td>
-                                    <a href="EditProjectServlet?id=<%= p.getId() %>" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">Modifier</a>
-                                    <a href="DeleteProjectServlet?id=<%= p.getId() %>" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</a>
+                                <td><%= p.getName() %></td>
+                                <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
+                                <td><%= p.getStatus().getDisplayName() %></td>
+                                <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
+                                <% if (showActions) { %>
+                                <td><button type="button" class="welcome-logout"
+                                            onclick='toggleProjectModal({
+                                                    id:<%= p.getId() %>,
+                                                    name:"<%= StringEscapeUtils.escapeEcmaScript(p.getName()) %>",
+                                                    managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
+                                                    status:"<%= p.getStatus() %>",
+                                                    description:"<%= p.getDescription() != null ? StringEscapeUtils.escapeEcmaScript(p.getDescription()) : "" %>"
+                                                    })'>Modifier</button>
+
+                                    <form method="post" action="projects" style="display:inline;">
+                                        <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+                                        <input type="hidden" name="id" value="<%= p.getId() %>">
+                                        <button type="submit" name="action" value="delete"
+                                                class="welcome-logout"
+                                                style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</button>
+                                    </form>
                                 </td>
+                                <% } %>
                             </tr>
                         <% } } %>
                         </tbody>
@@ -104,23 +193,44 @@
 <div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Ajouter un projet</h3>
-        <form method="post" action="AddProjectServlet">
+        <form method="post" action="projects">
+            <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
             <input name="nom" class="input" placeholder="Nom du projet" required>
-            <input name="chefProjet" class="input" placeholder="Chef de projet" required>
+            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">
             <select name="statut" class="input" required>
-                <option value="En cours">En cours</option>
-                <option value="Terminé">Terminé</option>
-                <option value="Annulé">Annulé</option>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="COMPLETED">Terminé</option>
+                <option value="CANCELLED">Annulé</option>
+                <option value="PLANNED">Planifié</option>
             </select>
-            <button class="welcome-logout" style="margin-top:10px;">Enregistrer</button>
-            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="closeModal()">Annuler</button>
+            <button class="welcome-logout" style="margin-top:10px;"  name="action"  value="register">Enregistrer</button>
+            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="toggleAddModal(false)">Annuler</button>
         </form>
     </div>
 </div>
 
-<script>
-function openModal(){ document.getElementById('modalAdd').style.display='flex'; }
-function closeModal(){ document.getElementById('modalAdd').style.display='none'; }
-</script>
+<div id="modalUpdate" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
+    <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
+        <h3>Mettre à jour le projet</h3>
+        <form id="updateForm" method="post" action="projects">
+            <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+            <input type="hidden" name="id">
+            <input name="nom" class="input" placeholder="Nom du projet" required>
+            <input name="chefProjet" list="chefsList" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true">
+            <select name="statut" class="input" required>
+                <option value="IN_PROGRESS">En cours</option>
+                <option value="COMPLETED">Terminé</option>
+                <option value="CANCELLED">Annulé</option>
+                <option value="PLANNED">Planifié</option>
+            </select>
+            <textarea name="description" class="input" placeholder="Description (optionnel)" style="height:80px;"></textarea>
+            <button class="welcome-logout" style="margin-top:10px;"  name="action"  value="update">Mettre à jour</button>
+            <button type="button" class="welcome-logout" style="background:#ef4444; margin-top:10px;" onclick="toggleProjectModal(null)">Annuler</button>
+        </form>
+    </div>
+</div>
+
+
+<script src="assets/js/app.js"></script>
 </body>
 </html>
