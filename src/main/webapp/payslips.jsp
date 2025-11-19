@@ -1,11 +1,4 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<<<<<<< HEAD
-<%@ page import="java.util.*, fr.projetjee.models.Payslip" %>
-
-<%
-    String username = "Admin";
-    List<Payslip> payslips = (List<Payslip>) request.getAttribute("payslips");
-=======
 <%@ page import="java.util.*, fr.projetjee.model.Payslip" %>
 <%@ page import="fr.projetjee.model.User" %>
 <%@ page import="fr.projetjee.enums.Role" %>
@@ -22,7 +15,6 @@
     boolean canAccess = currentUser != null &&
             (currentUser.getRole() == Role.ADMINISTRATEUR ||
                     (currentUser.getRole() == Role.EMPLOYE && currentUser.getDepartment() != null && "RH".equalsIgnoreCase(currentUser.getDepartment().getCode())));
->>>>>>> auth_dev_adam
 %>
 
 <!DOCTYPE html>
@@ -37,31 +29,30 @@
 
 <div class="app-shell">
     <!-- SIDEBAR -->
-<aside class="sidebar">
-  <nav class="side-nav">
-    <a class="side-link" href="dashboard.jsp">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
-      <span>Tableau de bord</span>
-    </a>
-
-    <a class="side-link" href="user">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
-      <span>Employés</span>
-    </a>
-    <a class="side-link" href="projects">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
-      <span>Projets</span>
-    </a>
-    <a class="side-link" href="departments.jsp">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
-      <span>Départements</span>
-    </a>
-    <a class="side-link" href="payslips">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
-      <span>Fiches de paie</span>
-    </a>
-  </nav>
-</aside>
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a class="side-link" href="dashboard.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
+                <span>Tableau de bord</span>
+            </a>
+            <a class="side-link" href="user">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
+                <span>Employés</span>
+            </a>
+            <a class="side-link" href="projects">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
+                <span>Projets</span>
+            </a>
+            <a class="side-link" href="departments.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
+                <span>Départements</span>
+            </a>
+            <a class="side-link" href="payslips">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
+                <span>Fiches de paie</span>
+            </a>
+        </nav>
+    </aside>
 
 
     <div class="main">
@@ -83,7 +74,6 @@
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
                         </div>
                     </div>
-
                     <% if (canAccess) { %>
                     <button class="welcome-logout" onclick="toggleAddModal(true)">+ Générer</button>
                     <% } %>
@@ -144,63 +134,60 @@
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
                     <table style="width:100%; border-collapse:collapse; color:#fff;">
                         <thead style="background:rgba(255,255,255,.15);">
-                            <tr>
-                                <th>ID</th>
-
-                                <% if (canAccess) { %> <th>Employé</th> <% } %>
-                                <th>Salaire</th>
-                                <th>Année</th>
-                                <th>Mois</th>
->>>>>>> auth_dev_adam
-                                <th>Total (€)</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th>ID</th>
+                            <% if (canAccess) { %> <th>Employé</th> <% } %>
+                            <th>Salaire</th>
+                            <th>Année</th>
+                            <th>Mois</th>
+                            <th>Total (€)</th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
                         <tbody>
                         <% if (payslips != null) {
                             for (Payslip p : payslips) { %>
-                            <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
-                                <td><%= p.getId() %></td>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
+                            <td><%= p.getId() %></td>
+                            <% if (canAccess) { %> <td><%= p.getUser().getFullName() %></td> <% } %>
+                            <td><%= p.getBaseSalary() %></td>
+                            <td><%= p.getYear() %></td>
+                            <td><%= p.getMonth()%></td>
+                            <td><%= p.getNetPay() %></td>
 
-                                <% if (canAccess) { %> <td><%= p.getUser().getFullName() %></td> <% } %>
-                                <td><%= p.getBaseSalary() %></td>
-                                <td><%= p.getYear() %></td>
-                                <td><%= p.getMonth()%></td>
-                                <td><%= p.getNetPay() %></td>
+                            <td>
+                                <% if (canAccess) { %>
+                                <button class="welcome-logout" style="background:#3b82f6; padding:4px 8px;"
+                                        onclick='togglePayslipModal({
+                                                id: "<%= p.getId() %>",
+                                                baseSalary: "<%= p.getBaseSalary() %>",
+                                                bonuses: "<%= p.getBonuses() %>",
+                                                deductions: "<%= p.getDeductions() %>",
+                                                userFullName : "<%= p.getUser().getFullName() %>",
+                                                userMatricule : "<%= p.getUser().getMatricule() %>",
+                                                year: <%= p.getYear() %>,
+                                                month: <%= p.getMonth() %>
+                                                })'>Modifier
+                                </button>
+                                <% } %>
 
-                                <td>
-                                    <% if (canAccess) { %>
-                                    <button class="welcome-logout" style="background:#3b82f6; padding:4px 8px;"
-                                            onclick='togglePayslipModal({
-                                                    id: "<%= p.getId() %>",
-                                                    baseSalary: "<%= p.getBaseSalary() %>",
-                                                    bonuses: "<%= p.getBonuses() %>",
-                                                    deductions: "<%= p.getDeductions() %>",
-                                                    userFullName : "<%= p.getUser().getFullName() %>",
-                                                    userMatricule : "<%= p.getUser().getMatricule() %>",
-                                                    year: <%= p.getYear() %>,
-                                                    month: <%= p.getMonth() %>
-                                                    })'>Modifier
-                                    </button>
-                                    <% } %>
+                                <form method="post" action="payslips" style="display:inline;">
+                                    <input type="hidden" name="action" value="export">
+                                    <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+                                    <input type="hidden" name="id" value="<%= p.getId() %>">
+                                    <button class="welcome-logout" style="padding:4px 8px;">PDF</button>
+                                </form>
 
-                                    <form method="post" action="payslips" style="display:inline;">
-                                        <input type="hidden" name="action" value="export">
-                                        <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
-                                        <input type="hidden" name="id" value="<%= p.getId() %>">
-                                        <button class="welcome-logout" style="padding:4px 8px;">PDF</button>
-                                    </form>
-
-                                    <% if (canAccess) { %>
-                                    <form method="post" action="payslips" style="display:inline;">
-                                        <input type="hidden" name="action" value="delete">
-                                        <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
-                                        <input type="hidden" name="id" value="<%= p.getId() %>">
-                                        <button class="welcome-logout" style="background:#ef4444; padding:4px 8px;">Supprimer</button>
-                                    </form>
-                                    <% } %>
-                                </td>
-                            </tr>
+                                <% if (canAccess) { %>
+                                <form method="post" action="payslips" style="display:inline;">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+                                    <input type="hidden" name="id" value="<%= p.getId() %>">
+                                    <button class="welcome-logout" style="background:#ef4444; padding:4px 8px;">Supprimer</button>
+                                </form>
+                                <% } %>
+                            </td>
+                        </tr>
                         <% } } %>
                         </tbody>
                     </table>
@@ -214,7 +201,6 @@
 <div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
     <div style="background:rgba(255,255,255,.1); padding:20px; border-radius:14px; backdrop-filter:blur(10px); width:400px;">
         <h3>Générer une fiche de paie</h3>
-
         <form method="post" action="payslips">
             <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
             <label>Matricule employé :</label>
@@ -244,7 +230,6 @@
         </form>
     </div>
 </div>
-
 
 <!-- Modal Modification Fiche de Paie -->
 <div id="modalUpdate" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.6); z-index:999; justify-content:center; align-items:center;">
