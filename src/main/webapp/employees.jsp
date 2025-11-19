@@ -180,33 +180,33 @@
 
     <!-- SIDEBAR -->
     <aside class="sidebar">
-      <nav class="side-nav">
-        <a class="side-link" href="dashboard.jsp">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
-          <span>Tableau de bord</span>
-        </a>
+        <nav class="side-nav">
+            <a class="side-link" href="dashboard.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
+                <span>Tableau de bord</span>
+            </a>
 
-        <a class="side-link active" href="user">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
-          <span>Employés</span>
-        </a>
+            <a class="side-link active" href="user">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
+                <span>Employés</span>
+            </a>
 
-        <a class="side-link" href="projects">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
-          <span>Projets</span>
-        </a>
+            <a class="side-link" href="projects">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
+                <span>Projets</span>
+            </a>
 
-        <a class="side-link" href="departments.jsp">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
-          <span>Départements</span>
-        </a>
+            <a class="side-link" href="departments.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
+                <span>Départements</span>
+            </a>
 
 
-        <a class="side-link" href="payslips.jsp">
-          <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
-          <span>Fiches de paie</span>
-        </a>
-      </nav>
+            <a class="side-link" href="payslips">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
+                <span>Fiches de paie</span>
+            </a>
+        </nav>
     </aside>
 
     <div class="main">
@@ -234,13 +234,13 @@
                 </div>
 
                 <% if (error != null) { %>
-                    <div class="error-msg"> <%= error %></div>
+                <div class="error-msg"> <%= error %></div>
                 <% } %>
 
                 <!-- ==================== FORMULAIRE DE RECHERCHE ==================== -->
                 <div class="search-card">
                     <div class="search-title">
-                         Recherche multicritère
+                        Recherche multicritère
                     </div>
 
                     <form method="get" action="user">
@@ -262,12 +262,12 @@
                                 <select name="searchDepartment">
                                     <option value="all">Tous les départements</option>
                                     <% if (departments != null) {
-                                           for (Department d : departments) {
-                                               boolean selected = lastSearchDept != null && lastSearchDept.equals(String.valueOf(d.getId()));
+                                        for (Department d : departments) {
+                                            boolean selected = lastSearchDept != null && lastSearchDept.equals(String.valueOf(d.getId()));
                                     %>
-                                        <option value="<%= d.getId() %>" <%= selected ? "selected" : "" %>>
-                                            <%= d.getName() %>
-                                        </option>
+                                    <option value="<%= d.getId() %>" <%= selected ? "selected" : "" %>>
+                                        <%= d.getName() %>
+                                    </option>
                                     <% } } %>
                                 </select>
                             </div>
@@ -278,12 +278,12 @@
                                 <select name="searchPosition">
                                     <option value="all">Tous les postes</option>
                                     <% if (positions != null) {
-                                           for (Position p : positions) {
-                                               boolean selected = lastSearchPos != null && lastSearchPos.equals(String.valueOf(p.getId()));
+                                        for (Position p : positions) {
+                                            boolean selected = lastSearchPos != null && lastSearchPos.equals(String.valueOf(p.getId()));
                                     %>
-                                        <option value="<%= p.getId() %>" <%= selected ? "selected" : "" %>>
-                                            <%= p.getName() %>
-                                        </option>
+                                    <option value="<%= p.getId() %>" <%= selected ? "selected" : "" %>>
+                                        <%= p.getName() %>
+                                    </option>
                                     <% } } %>
                                 </select>
                             </div>
@@ -294,11 +294,11 @@
                                 <select name="searchRole">
                                     <option value="all">Tous les rôles</option>
                                     <% for (Role r : Role.values()) {
-                                           boolean selected = lastSearchRole != null && lastSearchRole.equals(r.name());
+                                        boolean selected = lastSearchRole != null && lastSearchRole.equals(r.name());
                                     %>
-                                        <option value="<%= r.name() %>" <%= selected ? "selected" : "" %>>
-                                            <%= r %>
-                                        </option>
+                                    <option value="<%= r.name() %>" <%= selected ? "selected" : "" %>>
+                                        <%= r %>
+                                    </option>
                                     <% } %>
                                 </select>
                             </div>
@@ -309,11 +309,11 @@
                                 <select name="searchGrade">
                                     <option value="all">Tous les grades</option>
                                     <% for (Grade g : Grade.values()) {
-                                           boolean selected = lastSearchGrade != null && lastSearchGrade.equals(g.name());
+                                        boolean selected = lastSearchGrade != null && lastSearchGrade.equals(g.name());
                                     %>
-                                        <option value="<%= g.name() %>" <%= selected ? "selected" : "" %>>
-                                            <%= g %>
-                                        </option>
+                                    <option value="<%= g.name() %>" <%= selected ? "selected" : "" %>>
+                                        <%= g %>
+                                    </option>
                                     <% } %>
                                 </select>
                             </div>
@@ -332,84 +332,84 @@
 
                 <!-- Résultat de recherche -->
                 <% if (searchActive != null && searchActive) { %>
-                    <div class="search-result-info">
-                        <span style="font-size:1.5rem;"></span>
-                        <div>
-                            <strong><%= searchCount %> résultat(s)</strong> trouvé(s) pour votre recherche
-                        </div>
+                <div class="search-result-info">
+                    <span style="font-size:1.5rem;"></span>
+                    <div>
+                        <strong><%= searchCount %> résultat(s)</strong> trouvé(s) pour votre recherche
                     </div>
+                </div>
                 <% } %>
 
                 <!-- ==================== TABLEAU DES EMPLOYÉS ==================== -->
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
                     <table style="width:100%; border-collapse:collapse; color:#fff;">
                         <thead style="background:rgba(255,255,255,.15);">
-                            <tr>
-                                <th style="padding:10px;">Photo</th>
-                                <th>Matricule</th>
-                                <th>Nom complet</th>
-                                <th>Email</th>
-                                <th>Rôle</th>
-                                <th>Grade</th>
-                                <th>Département</th>
-                                <th>Poste</th>
-                                <th>Actions</th>
-                            </tr>
+                        <tr>
+                            <th style="padding:10px;">Photo</th>
+                            <th>Matricule</th>
+                            <th>Nom complet</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Grade</th>
+                            <th>Département</th>
+                            <th>Poste</th>
+                            <th>Actions</th>
+                        </tr>
                         </thead>
 
                         <tbody>
                         <% if (users != null && users.size() > 0) {
-                               for (User u : users) { %>
+                            for (User u : users) { %>
 
-                            <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
-                                <td style="padding:10px; text-align:center;">
-                                    <% if (u.getImage() != null) { %>
-                                        <img src="user?action=image&id=<%= u.getId() %>"
-                                             class="profile-pic"
-                                             alt="Photo <%= u.getFullName() %>">
-                                    <% } else { %>
-                                        <div class="no-pic">👤</div>
-                                    <% } %>
-                                </td>
-                                <td style="padding:10px;"><%= u.getMatricule() != null ? u.getMatricule() : "-" %></td>
-                                <td><%= u.getFullName() %></td>
-                                <td><%= u.getEmail() %></td>
-                                <td><%= u.getRole() %></td>
-                                <td><%= u.getGrade() != null ? u.getGrade() : "-" %></td>
-                                <td><%= u.getDepartment() != null ? u.getDepartment().getName() : "-" %></td>
-                                <td><%= u.getPosition() != null ? u.getPosition().getName() : "-" %></td>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,.2);">
+                            <td style="padding:10px; text-align:center;">
+                                <% if (u.getImage() != null) { %>
+                                <img src="user?action=image&id=<%= u.getId() %>"
+                                     class="profile-pic"
+                                     alt="Photo <%= u.getFullName() %>">
+                                <% } else { %>
+                                <div class="no-pic">👤</div>
+                                <% } %>
+                            </td>
+                            <td style="padding:10px;"><%= u.getMatricule() != null ? u.getMatricule() : "-" %></td>
+                            <td><%= u.getFullName() %></td>
+                            <td><%= u.getEmail() %></td>
+                            <td><%= u.getRole() %></td>
+                            <td><%= u.getGrade() != null ? u.getGrade() : "-" %></td>
+                            <td><%= u.getDepartment() != null ? u.getDepartment().getName() : "-" %></td>
+                            <td><%= u.getPosition() != null ? u.getPosition().getName() : "-" %></td>
 
-                                <td style="padding:8px;">
-                                    <div style="display:flex; gap:10px;">
-                                        <button onclick="openEditModal(<%= u.getId() %>, '<%= u.getLastName() %>', '<%= u.getFirstName() %>', '<%= u.getEmail() %>', '<%= u.getPhone() != null ? u.getPhone() : "" %>', '<%= u.getAddress() != null ? u.getAddress() : "" %>', '<%= u.getRole().name() %>', '<%= u.getGrade() != null ? u.getGrade().name() : "" %>', <%= u.getDepartment() != null ? u.getDepartment().getId() : "null" %>, <%= u.getPosition() != null ? u.getPosition().getId() : "null" %>)"
-                                           class="welcome-logout"
-                                           style="padding:6px 10px; font-size:.85rem;">
-                                           Modifier
-                                        </button>
+                            <td style="padding:8px;">
+                                <div style="display:flex; gap:10px;">
+                                    <button onclick="openEditModal(<%= u.getId() %>, '<%= u.getLastName() %>', '<%= u.getFirstName() %>', '<%= u.getEmail() %>', '<%= u.getPhone() != null ? u.getPhone() : "" %>', '<%= u.getAddress() != null ? u.getAddress() : "" %>', '<%= u.getRole().name() %>', '<%= u.getGrade() != null ? u.getGrade().name() : "" %>', <%= u.getDepartment() != null ? u.getDepartment().getId() : "null" %>, <%= u.getPosition() != null ? u.getPosition().getId() : "null" %>)"
+                                            class="welcome-logout"
+                                            style="padding:6px 10px; font-size:.85rem;">
+                                        Modifier
+                                    </button>
 
-                                        <a href="user?action=delete&id=<%= u.getId() %>"
-                                           class="welcome-logout"
-                                           style="padding:6px 10px; font-size:.85rem; background:#ef4444;"
-                                           onclick="return confirm('Confirmer la suppression de <%= u.getFullName() %> ?')">
-                                           Supprimer
-                                        </a>
-                                    </div>
-                                </td>
-                            </tr>
+                                    <a href="user?action=delete&id=<%= u.getId() %>"
+                                       class="welcome-logout"
+                                       style="padding:6px 10px; font-size:.85rem; background:#ef4444;"
+                                       onclick="return confirm('Confirmer la suppression de <%= u.getFullName() %> ?')">
+                                        Supprimer
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
 
                         <% }
                         } else { %>
-                            <tr>
-                                <td colspan="9" style="padding:40px; text-align:center; color:rgba(255,255,255,0.6);">
-                                    <div style="font-size:3rem; margin-bottom:16px;">🔍</div>
-                                    <div style="font-size:1.1rem;">Aucun employé trouvé</div>
-                                    <% if (searchActive != null && searchActive) { %>
-                                        <a href="user" style="color:#667eea; margin-top:12px; display:inline-block;">
-                                            Afficher tous les employés
-                                        </a>
-                                    <% } %>
-                                </td>
-                            </tr>
+                        <tr>
+                            <td colspan="9" style="padding:40px; text-align:center; color:rgba(255,255,255,0.6);">
+                                <div style="font-size:3rem; margin-bottom:16px;">🔍</div>
+                                <div style="font-size:1.1rem;">Aucun employé trouvé</div>
+                                <% if (searchActive != null && searchActive) { %>
+                                <a href="user" style="color:#667eea; margin-top:12px; display:inline-block;">
+                                    Afficher tous les employés
+                                </a>
+                                <% } %>
+                            </td>
+                        </tr>
                         <% } %>
                         </tbody>
                     </table>
@@ -471,7 +471,7 @@
                     <select name="role" class="modal-input" required>
                         <option value="">-- Sélectionner un rôle --</option>
                         <% for (Role r : Role.values()) { %>
-                            <option value="<%= r.name() %>"><%= r %></option>
+                        <option value="<%= r.name() %>"><%= r %></option>
                         <% } %>
                     </select>
                 </div>
@@ -482,7 +482,7 @@
                     <select name="grade" class="modal-input">
                         <option value="">-- Sélectionner un grade --</option>
                         <% for (Grade g : Grade.values()) { %>
-                            <option value="<%= g.name() %>"><%= g %></option>
+                        <option value="<%= g.name() %>"><%= g %></option>
                         <% } %>
                     </select>
                 </div>
@@ -493,8 +493,8 @@
                     <select name="department" class="modal-input">
                         <option value="">-- Sélectionner un département --</option>
                         <% if (departments != null)
-                               for (Department d : departments) { %>
-                            <option value="<%= d.getId() %>"><%= d.getName() %></option>
+                            for (Department d : departments) { %>
+                        <option value="<%= d.getId() %>"><%= d.getName() %></option>
                         <% } %>
                     </select>
                 </div>
@@ -505,8 +505,8 @@
                     <select name="position" class="modal-input">
                         <option value="">-- Sélectionner un poste --</option>
                         <% if (positions != null)
-                               for (Position p : positions) { %>
-                            <option value="<%= p.getId() %>"><%= p.getName() %></option>
+                            for (Position p : positions) { %>
+                        <option value="<%= p.getId() %>"><%= p.getName() %></option>
                         <% } %>
                     </select>
                 </div>
@@ -575,7 +575,7 @@
                     <select name="role" id="edit_role" class="modal-input" required>
                         <option value="">-- Sélectionner un rôle --</option>
                         <% for (Role r : Role.values()) { %>
-                            <option value="<%= r.name() %>"><%= r %></option>
+                        <option value="<%= r.name() %>"><%= r %></option>
                         <% } %>
                     </select>
                 </div>
@@ -586,7 +586,7 @@
                     <select name="grade" id="edit_grade" class="modal-input">
                         <option value="">-- Sélectionner un grade --</option>
                         <% for (Grade g : Grade.values()) { %>
-                            <option value="<%= g.name() %>"><%= g %></option>
+                        <option value="<%= g.name() %>"><%= g %></option>
                         <% } %>
                     </select>
                 </div>
@@ -597,8 +597,8 @@
                     <select name="department" id="edit_department" class="modal-input">
                         <option value="">-- Sélectionner un département --</option>
                         <% if (departments != null)
-                               for (Department d : departments) { %>
-                            <option value="<%= d.getId() %>"><%= d.getName() %></option>
+                            for (Department d : departments) { %>
+                        <option value="<%= d.getId() %>"><%= d.getName() %></option>
                         <% } %>
                     </select>
                 </div>
@@ -609,8 +609,8 @@
                     <select name="position" id="edit_position" class="modal-input">
                         <option value="">-- Sélectionner un poste --</option>
                         <% if (positions != null)
-                               for (Position p : positions) { %>
-                            <option value="<%= p.getId() %>"><%= p.getName() %></option>
+                            for (Position p : positions) { %>
+                        <option value="<%= p.getId() %>"><%= p.getName() %></option>
                         <% } %>
                     </select>
                 </div>
@@ -628,37 +628,37 @@
 </div>
 
 <script>
-// ===== Modal AJOUT =====
-function openAddModal() {
-    document.getElementById('modalAdd').style.display = 'flex';
-}
+    // ===== Modal AJOUT =====
+    function openAddModal() {
+        document.getElementById('modalAdd').style.display = 'flex';
+    }
 
-function closeAddModal() {
-    document.getElementById('modalAdd').style.display = 'none';
-}
+    function closeAddModal() {
+        document.getElementById('modalAdd').style.display = 'none';
+    }
 
-// ===== Modal ÉDITION =====
-function openEditModal(id, nom, prenom, email, phone, address, role, grade, deptId, posId) {
-    document.getElementById('edit_id').value = id;
-    document.getElementById('edit_nom').value = nom;
-    document.getElementById('edit_prenom').value = prenom;
-    document.getElementById('edit_email').value = email;
-    document.getElementById('edit_phone').value = phone;
-    document.getElementById('edit_address').value = address;
-    document.getElementById('edit_role').value = role;
-    document.getElementById('edit_grade').value = grade || '';
-    document.getElementById('edit_department').value = deptId || '';
-    document.getElementById('edit_position').value = posId || '';
+    // ===== Modal ÉDITION =====
+    function openEditModal(id, nom, prenom, email, phone, address, role, grade, deptId, posId) {
+        document.getElementById('edit_id').value = id;
+        document.getElementById('edit_nom').value = nom;
+        document.getElementById('edit_prenom').value = prenom;
+        document.getElementById('edit_email').value = email;
+        document.getElementById('edit_phone').value = phone;
+        document.getElementById('edit_address').value = address;
+        document.getElementById('edit_role').value = role;
+        document.getElementById('edit_grade').value = grade || '';
+        document.getElementById('edit_department').value = deptId || '';
+        document.getElementById('edit_position').value = posId || '';
 
-    document.getElementById('modalEdit').style.display = 'flex';
-}
+        document.getElementById('modalEdit').style.display = 'flex';
+    }
 
-function closeEditModal() {
-    document.getElementById('modalEdit').style.display = 'none';
-}
+    function closeEditModal() {
+        document.getElementById('modalEdit').style.display = 'none';
+    }
 
-// Auto-ouvrir le modal d'édition si editMode est actif
-<% if (editMode != null && editMode && userEdit != null) { %>
+    // Auto-ouvrir le modal d'édition si editMode est actif
+    <% if (editMode != null && editMode && userEdit != null) { %>
     window.addEventListener('DOMContentLoaded', function() {
         openEditModal(
             <%= userEdit.getId() %>,
@@ -673,7 +673,7 @@ function closeEditModal() {
             <%= userEdit.getPosition() != null ? userEdit.getPosition().getId() : "null" %>
         );
     });
-<% } %>
+    <% } %>
 </script>
 
 </body>

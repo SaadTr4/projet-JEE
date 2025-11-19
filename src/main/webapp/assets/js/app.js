@@ -1,4 +1,29 @@
-function toggleAddModal(show) { const modal = document.getElementById('modalAdd'); modal.style.display = show ? 'flex' : 'none'; if (show) attachModalCloseListeners(modal); }
+function toggleAddModal(show) {
+document.getElementById("modalUpdate").style.display = "none";
+
+    const modal = document.getElementById("modalAdd");
+    modal.style.display = show ? "flex" : "none";
+}
+function closePayslipEdit() {
+    const modal = document.getElementById("modalUpdate");
+    modal.style.display = "none";
+}
+
+function closeModal() {
+    const modal = document.getElementById("modalAdd");
+    if (modal) modal.style.display = "none";
+}
+function closeUpdateModal() {
+    const modal = document.getElementById("modalUpdate");
+    if (modal) modal.style.display = "none";
+}
+
+function resetFilters() {
+    document.querySelector("input[name='user']").value = "";
+    document.querySelector("input[name='year']").value = "";
+    document.querySelector("select[name='month']").value = "";
+}
+
 
 function toggleProjectModal(project) {
     const modal = document.getElementById('modalUpdate');
@@ -21,6 +46,8 @@ function toggleProjectModal(project) {
 }
 
 function togglePayslipModal(payslip) {
+document.getElementById("modalAdd").style.display = "none";
+
     const modal = document.getElementById('modalUpdate');
     const form = document.getElementById('updateForm');
 

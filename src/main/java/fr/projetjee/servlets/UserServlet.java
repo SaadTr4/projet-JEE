@@ -334,7 +334,7 @@ public class UserServlet extends HttpServlet {
 
 
         // Sauvegarde
-            // Création
+        // Création
         User saved = userDAO.save(u);
         System.out.println("SAVED" + saved);
         if (saved != null) {
