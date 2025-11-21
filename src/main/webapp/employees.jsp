@@ -236,7 +236,7 @@
                 <span>Projets</span>
             </a>
 
-            <a class="side-link" href="departments.jsp">
+            <a class="side-link" href="departments">
                 <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
                 <span>Départements</span>
             </a>
