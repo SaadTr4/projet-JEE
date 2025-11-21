@@ -317,48 +317,48 @@
             <div style="margin-bottom:16px;">
                 <label for="employeeName" style="font-size:1rem; font-weight:500;">Employé :</label>
                 <input type="text" id="employeeName" class="input" disabled
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Matricule affiché mais non modifiable -->
             <div style="margin-bottom:16px;">
                 <label for="employeeMatricule" style="font-size:1rem; font-weight:500;">Matricule :</label>
                 <input type="text" id="employeeMatricule" class="input" disabled
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Année et mois affichés mais non modifiables -->
             <div style="margin-bottom:16px;">
                 <label for="yearDisplay" style="font-size:1rem; font-weight:500;">Année :</label>
                 <input type="text" id="yearDisplay" class="input" disabled
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%;max-width:95%; font-size: 1rem;">
             </div>
 
             <div style="margin-bottom:16px;">
                 <label for="monthDisplay" style="font-size:1rem; font-weight:500;">Mois :</label>
                 <input type="text" id="monthDisplay" class="input" disabled
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Salaire de base -->
             <div style="margin-bottom:16px;">
                 <label for="baseSalary" style="font-size:1rem; font-weight:500;">Salaire de base :</label>
                 <input type="number" name="baseSalary" id="baseSalary" class="input" step="0.01" disabled
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Prime -->
             <div style="margin-bottom:16px;">
                 <label for="bonuses" style="font-size:1rem; font-weight:500;">Prime :</label>
                 <input type="number" name="bonuses" id="bonuses" class="input" step="0.01" value="0" required
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Déduction -->
             <div style="margin-bottom:16px;">
                 <label for="deductions" style="font-size:1rem; font-weight:500;">Déduction :</label>
                 <input type="number" name="deductions" id="deductions" class="input" step="0.01" value="0" required
-                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; font-size: 1rem;">
+                       style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; width: 100%; max-width:95%; font-size: 1rem;">
             </div>
 
             <!-- Boutons -->
