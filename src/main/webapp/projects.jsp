@@ -33,6 +33,7 @@
         // Other roles have no special permissions (classic employee or no connection)
     }
 %>
+%>
 
 <!DOCTYPE html>
 <html lang="fr">
@@ -42,121 +43,121 @@
     <link href="assets/css/dashboard.css" rel="stylesheet">
     <style>
 
-    /* ----------------------------------------------------
-       STYLE MODALE GLASSMORPHISM (effet comme les inputs)
-    ----------------------------------------------------- */
+        /* ----------------------------------------------------
+           STYLE MODALE GLASSMORPHISM (effet comme les inputs)
+        ----------------------------------------------------- */
 
-    /* Fond flou derrière la modale */
-    .modal-container {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0,0,0,0.45);         /* léger fond foncé transparent */
-        backdrop-filter: blur(6px);          /* flou de l'arrière-plan */
-        -webkit-backdrop-filter: blur(6px);
-        z-index: 999;
-        justify-content: center;
-        align-items: center;
-    }
+        /* Fond flou derrière la modale */
+        .modal-container {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);         /* léger fond foncé transparent */
+            backdrop-filter: blur(6px);          /* flou de l'arrière-plan */
+            -webkit-backdrop-filter: blur(6px);
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+        }
 
-    /* Boîte modale glassmorphism */
-    .modal-box {
-        width: 520px;
-        padding: 30px;
-        border-radius: 22px;
+        /* Boîte modale glassmorphism */
+        .modal-box {
+            width: 520px;
+            padding: 30px;
+            border-radius: 22px;
 
-        background: rgba(255,255,255,0.15);  /* ⚡ même style que les inputs */
-        border: 1px solid rgba(255,255,255,0.28);
+            background: rgba(255,255,255,0.15);  /* ⚡ même style que les inputs */
+            border: 1px solid rgba(255,255,255,0.28);
 
-        backdrop-filter: blur(18px);         /* flou interne */
-        -webkit-backdrop-filter: blur(18px);
+            backdrop-filter: blur(18px);         /* flou interne */
+            -webkit-backdrop-filter: blur(18px);
 
-        box-shadow: 0 25px 45px rgba(0,0,0,0.35);
-        color: white;
-    }
+            box-shadow: 0 25px 45px rgba(0,0,0,0.35);
+            color: white;
+        }
 
-    /* Titre modale */
-    .modal-box h3 {
-        margin-top: 0;
-        margin-bottom: 18px;
-        font-size: 1.6rem;
-        font-weight: 700;
-    }
+        /* Titre modale */
+        .modal-box h3 {
+            margin-top: 0;
+            margin-bottom: 18px;
+            font-size: 1.6rem;
+            font-weight: 700;
+        }
 
-    /* Champs */
-    .modal-box input,
-    .modal-box textarea,
-    .modal-box select {
-        width: 100%;
-        background: rgba(255, 255, 255, 0.23);
-        color: #ffffff;
-        border: 1px solid rgba(255, 255, 255, 0.45);
-        padding: 12px;
-        border-radius: 12px;
-        margin-bottom: 14px;
-        font-size: 1.05rem;
-        backdrop-filter: blur(8px);
-    }
+        /* Champs */
+        .modal-box input,
+        .modal-box textarea,
+        .modal-box select {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.23);
+            color: #ffffff;
+            border: 1px solid rgba(255, 255, 255, 0.45);
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 14px;
+            font-size: 1.05rem;
+            backdrop-filter: blur(8px);
+        }
 
-    /* Placeholder */
-    .modal-box input::placeholder,
-    .modal-box textarea::placeholder {
-        color: rgba(240, 240, 240, 0.85);
-    }
+        /* Placeholder */
+        .modal-box input::placeholder,
+        .modal-box textarea::placeholder {
+            color: rgba(240, 240, 240, 0.85);
+        }
 
-    /* Options du select */
-    .modal-box select option {
-        background: rgba(20,20,20,0.9);
-        color: white;
-    }
-    /* ----- Style des champs du FILTRE de projets (Nom, Chef, Statut) ----- */
-    .filter-input,
-    .filter-select {
-        background: rgba(255, 255, 255, 0.25);
-        color: #fff;
-        border: 1px solid rgba(255, 255, 255, 0.35);
-        padding: 10px;
-        border-radius: 12px;
-        font-size: 1rem;
-        backdrop-filter: blur(10px);
-    }
+        /* Options du select */
+        .modal-box select option {
+            background: rgba(20,20,20,0.9);
+            color: white;
+        }
+        /* ----- Style des champs du FILTRE de projets (Nom, Chef, Statut) ----- */
+        .filter-input,
+        .filter-select {
+            background: rgba(255, 255, 255, 0.25);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.35);
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 1rem;
+            backdrop-filter: blur(10px);
+        }
 
-    .filter-input::placeholder {
-        color: rgba(255, 255, 255, 0.85);
-    }
+        .filter-input::placeholder {
+            color: rgba(255, 255, 255, 0.85);
+        }
 
-    .filter-select option {
-        background: rgba(40,40,40,0.95);
-        color: #fff;
-    }
+        .filter-select option {
+            background: rgba(40,40,40,0.95);
+            color: #fff;
+        }
 
 
-    /* Boutons */
-    .btn-save {
-        width: 100%;
-        padding: 12px;
-        margin-top: 10px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        background: linear-gradient(135deg, #3b82f6, #06b6d4);
-        color: white;
-    }
+        /* Boutons */
+        .btn-save {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #3b82f6, #06b6d4);
+            color: white;
+        }
 
-    .btn-cancel {
-        width: 100%;
-        padding: 12px;
-        margin-top: 12px;
-        font-size: 1.1rem;
-        font-weight: 600;
-        border: none;
-        border-radius: 12px;
-        cursor: pointer;
-        background: #ef4444;
-        color: white;
-    }
+        .btn-cancel {
+            width: 100%;
+            padding: 12px;
+            margin-top: 12px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #ef4444;
+            color: white;
+        }
 
 
     </style>
@@ -173,30 +174,30 @@
 
 <div class="app-shell">
     <!-- SIDEBAR -->
-<aside class="sidebar">
-  <nav class="side-nav">
-    <a class="side-link" href="dashboard.jsp">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
-      <span>Tableau de bord</span>
-    </a>
-    <a class="side-link" href="user">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
-      <span>Employés</span>
-    </a>
-    <a class="side-link active" href="projects">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
-      <span>Projets</span>
-    </a>
-    <a class="side-link" href="departments.jsp">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
-      <span>Départements</span>
-    </a>
-    <a class="side-link" href="payslips">
-      <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
-      <span>Fiches de paie</span>
-    </a>
-  </nav>
-</aside>
+    <aside class="sidebar">
+        <nav class="side-nav">
+            <a class="side-link" href="dashboard.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
+                <span>Tableau de bord</span>
+            </a>
+            <a class="side-link" href="user">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
+                <span>Employés</span>
+            </a>
+            <a class="side-link active" href="projects">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
+                <span>Projets</span>
+            </a>
+            <a class="side-link" href="departments">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
+                <span>Départements</span>
+            </a>
+            <a class="side-link" href="payslips">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M6 2h9l5 5v15a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm8 1.5V8h4.5ZM8 8h4v2H8Zm0 4h8v2H8Zm0 4h8v2H8Z"/></svg>
+                <span>Fiches de paie</span>
+            </a>
+        </nav>
+    </aside>
 
 
     <div class="main">
@@ -268,60 +269,60 @@
                 <div class="chart-card" style="overflow-x:auto; margin-top:16px;">
                     <table style="width:100%; border-collapse:collapse; color:#fff;">
                         <thead style="background:rgba(255,255,255,.15); text-align: center;">
-                            <tr>
-                                <th style="padding:10px;">ID</th>
-                                <th>Nom du projet</th>
-                                <th>Chef de projet</th>
-                                <th>Statut</th>
-                                <th>Employés affectés</th>
-                                <% if (showActions) { %><th>Actions</th> <% } %>
-                            </tr>
+                        <tr>
+                            <th style="padding:10px;">ID</th>
+                            <th>Nom du projet</th>
+                            <th>Chef de projet</th>
+                            <th>Statut</th>
+                            <th>Employés affectés</th>
+                            <% if (showActions) { %><th>Actions</th> <% } %>
+                        </tr>
                         </thead>
                         <tbody>
-                            <% if (projects != null) {
-                                for (Project p : projects) { %>
-                            <tr style="border-bottom:1px solid rgba(255,255,255,.2); text-align: center;">
-                                <!-- ID du projet -->
-                                <td style="padding:10px;"><%= p.getId() %></td>
+                        <% if (projects != null) {
+                            for (Project p : projects) { %>
+                        <tr style="border-bottom:1px solid rgba(255,255,255,.2); text-align: center;">
+                            <!-- ID du projet -->
+                            <td style="padding:10px;"><%= p.getId() %></td>
 
-                                <!-- Nom du projet avec lien (couleur modifiée en blanc) -->
-                                 <td style="padding:10px;">
-                                            <a href="projectDetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
-                                               onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
-                                                <%= p.getName() %>
-                                            </a>
-                                        </td>
-                                <!-- Chef de projet -->
-                                <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
+                            <!-- Nom du projet avec lien (couleur modifiée en blanc) -->
+                            <td style="padding:10px;">
+                                <a href="projectDetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
+                                   onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
+                                    <%= p.getName() %>
+                                </a>
+                            </td>
+                            <!-- Chef de projet -->
+                            <td><%= p.getProjectManager() != null ? p.getProjectManager().getFirstName() + " " + p.getProjectManager().getLastName() : "" %></td>
 
-                                <!-- Statut du projet -->
-                                <td><%= p.getStatus().getDisplayName() %></td>
+                            <!-- Statut du projet -->
+                            <td><%= p.getStatus().getDisplayName() %></td>
 
-                                <!-- Nombre d'employés affectés -->
-                                <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
+                            <!-- Nombre d'employés affectés -->
+                            <td><%= (p.getUsers() != null) ? p.getUsers().size() : 0 %></td>
 
-                                <% if (showActions) { %>
-                                <td>
-                                    <!-- Bouton de modification du projet -->
-                                    <button type="button" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(59,130,246,.35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;"
-                                            onclick='toggleProjectModal({
-                                                    id:<%= p.getId() %> ,
-                                                    name:"<%= StringEscapeUtils.escapeEcmaScript(p.getName()) %>",
-                                                    managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
-                                                    status:"<%= p.getStatus() %>",
-                                                    description:"<%= p.getDescription() != null ? StringEscapeUtils.escapeEcmaScript(p.getDescription()) : "" %>"
-                                                    })'>Modifier</button>
+                            <% if (showActions) { %>
+                            <td>
+                                <!-- Bouton de modification du projet -->
+                                <button type="button" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(59,130,246,.35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;"
+                                        onclick='toggleProjectModal({
+                                                id:<%= p.getId() %> ,
+                                                name:"<%= StringEscapeUtils.escapeEcmaScript(p.getName()) %>",
+                                                managerMatricule:"<%= p.getProjectManager() != null ? StringEscapeUtils.escapeEcmaScript(p.getProjectManager().getMatricule()) : "" %>",
+                                                status:"<%= p.getStatus() %>",
+                                                description:"<%= p.getDescription() != null ? StringEscapeUtils.escapeEcmaScript(p.getDescription()) : "" %>"
+                                                })'>Modifier</button>
 
-                                    <!-- Formulaire pour supprimer le projet -->
-                                    <form method="post" action="projects" style="display:inline;">
-                                        <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
-                                        <input type="hidden" name="id" value="<%= p.getId() %>">
-                                        <button type="submit" name="action" value="delete" style="background: #ef4444; color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(239, 68, 68, .35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;">Supprimer</button>
-                                    </form>
-                                </td>
-                                <% } %>
-                            </tr>
-                            <% } } %>
+                                <!-- Formulaire pour supprimer le projet -->
+                                <form method="post" action="projects" style="display:inline;">
+                                    <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
+                                    <input type="hidden" name="id" value="<%= p.getId() %>">
+                                    <button type="submit" name="action" value="delete" style="background: #ef4444; color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(239, 68, 68, .35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;">Supprimer</button>
+                                </form>
+                            </td>
+                            <% } %>
+                        </tr>
+                        <% } } %>
                         </tbody>
 
                     </table>
@@ -334,7 +335,7 @@
 
 <div id="modalAdd" class="modal-container">
     <div class="modal-box">
-<h3 style="color: #fff;">Ajouter un projet</h3>
+        <h3 style="color: #fff;">Ajouter un projet</h3>
         <form method="post" action="projects">
             <input type="hidden" name="csrfToken" value="<%= request.getAttribute("csrfToken") %>">
 
@@ -345,7 +346,7 @@
 
             <!-- Chef de projet -->
             <label for="chefProjet" style="color: white; font-weight: bold; margin-bottom: 5px;">Chef de projet</label>
-            <input id="chefProjet" name="chefProjet" class="input" placeholder="Chef de projet" required
+            <input id="chefProjet" name="chefProjet" list="chefsList" class="input" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true"
                    style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; font-size: 1rem; backdrop-filter: blur(8px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); width: 100%; margin-bottom: 10px;">
 
             <!-- Description -->
@@ -372,8 +373,8 @@
 </div>
 
 
-    <div id="modalUpdate" class="modal-container">
-        <div class="modal-box">
+<div id="modalUpdate" class="modal-container">
+    <div class="modal-box">
 
         <h3 style="color: #fff;">Mettre à jour le projet</h3>
         <form id="updateForm" method="post" action="projects">
@@ -387,7 +388,7 @@
 
             <!-- Label et champ "Chef de projet" -->
             <label for="chefProjet" style="color: white; font-weight: bold; margin-bottom: 5px;">Chef de projet</label>
-            <input  name="chefProjet" class="input" placeholder="Chef de projet" required
+            <input  name="chefProjet" list="chefsList" class="input" placeholder="Chef de projet" required oninput="checkManagerValid(this)" data-required="true"
                    style="background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255, 255, 255, 0.3); border-radius: 10px; padding: 10px; font-size: 1rem; backdrop-filter: blur(8px); box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); width: 100%; margin-bottom: 10px;">
 
             <!-- Label et champ "Description" -->

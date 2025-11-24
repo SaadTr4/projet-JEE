@@ -406,29 +406,30 @@ public class DepartmentServlet extends HttpServlet {
      * @return List of departments
      */
     private List<Department> loadDepartmentsForUser(User user, String nameFilter, String codeFilter) {
-        // Access denied if no READ_DEPARTMENT permission
-        if (!RolePermissions.hasPermission(user.getRole(), Action.READ_DEPARTMENT)) {
-            return Collections.emptyList();
-        }
 
         // Special handling for employees in RH department
         boolean isRHDepartment = user.getDepartment() != null &&
                 "RH".equalsIgnoreCase(user.getDepartment().getCode());
+
+        // Access denied if no READ_DEPARTMENT permission
+        if (!isRHDepartment && !RolePermissions.hasPermission(user.getRole(), Action.READ_DEPARTMENT)) {
+            return Collections.emptyList();
+        }
 
         switch (user.getRole()) {
             case ADMINISTRATEUR, CHEF_DEPARTEMENT -> {
                 // Complete access
                 return getFilteredOrAllDepartments(nameFilter, codeFilter);
             }
-            case EMPLOYE, CHEF_PROJET -> {
+            case EMPLOYE -> {
                 // Complete access for RH department employees
                 if (isRHDepartment) {
                     return getFilteredOrAllDepartments(nameFilter, codeFilter);
                 }
                 // Regular employees can only see their own department
-                if (user.getDepartment() != null) {
+                /* if (user.getDepartment() != null) {
                     return List.of(user.getDepartment());
-                }
+                }*/
                 return Collections.emptyList();
             }
             default -> {

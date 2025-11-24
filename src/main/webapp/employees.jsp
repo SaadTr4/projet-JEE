@@ -359,8 +359,8 @@
                             <td style="padding:10px;"><%= u.getMatricule() != null ? u.getMatricule() : "-" %></td>
                             <td><%= u.getFullName() %></td>
                             <td><%= u.getEmail() %></td>
-                            <td><%= u.getRole() %></td>
-                            <td><%= u.getGrade() != null ? u.getGrade() : "-" %></td>
+                            <td><%= u.getRole().getDisplayName() %></td>
+                            <td><%= u.getGrade().getDisplayName() != null ? u.getGrade().getDisplayName() : "-" %></td>
                             <td><%= u.getDepartment() != null ? u.getDepartment().getName() : "-" %></td>
                             <td><%= u.getPosition() != null ? u.getPosition().getName() : "-" %></td>
                             <% if (showEditButton || showDeleteButton) { %>
@@ -452,6 +452,7 @@
     </div>
 </div>
 <% } %>
+
 
 <script>
     function openAddModal() { document.getElementById('modalAdd').style.display = 'flex'; }
