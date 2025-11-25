@@ -86,7 +86,6 @@
                 <td><%= d.getName() %></td>
                 <td>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">Modifier</a>
-                  <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">👥 Membres</a>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</a>
                 </td>
               </tr>
