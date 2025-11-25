@@ -184,6 +184,10 @@
                 <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
                 <span>Employés</span>
             </a>
+            <a class="side-link" href="poste.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3v18M4 9l4-4 4 4m0 0l4-4 4 4" /></svg>
+                <span>Poste</span>
+            </a>
             <a class="side-link active" href="projects">
                 <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
                 <span>Projets</span>
@@ -287,7 +291,7 @@
 
                             <!-- Nom du projet avec lien (couleur modifiée en blanc) -->
                             <td style="padding:10px;">
-                                <a href="projectDetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
+                                <a href="projectdetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
                                    onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                     <%= p.getName() %>
                                 </a>

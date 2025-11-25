@@ -1,0 +1,137 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+/* Style global du corps de la page avec image de fond */
+html, body{
+  height: 100%;
+  margin: 0;
+  font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: #fff;
+  background: #0b1020;
+}
+.bg{
+  position: fixed; inset: 0; z-index: 0;
+  background: url('../images/creation-d-entreprise-comment-faire-les-differentes-etapes.jpg') center/cover no-repeat;
+}
+.bg::after{
+  content: ""; position: absolute; inset: 0;
+  background: rgba(0,0,0,.55);
+  backdrop-filter: blur(4px);
+}
+
+/* Conteneur principal pour les détails du projet */
+.project-details {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+    max-width: 80%;
+    margin: 30px auto;
+    text-align: center;
+}
+
+/* Titre du projet */
+.project-details h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+    font-weight: bold;
+}
+
+/* Description du projet */
+.project-description {
+    margin-bottom: 20px;
+    font-size: 1.1rem;
+}
+
+/* Détails du chef de projet et du statut */
+.project-manager, .project-status {
+    margin-bottom: 15px;
+    font-size: 1rem;
+}
+
+/* Section du chef de projet avec image */
+.project-manager-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.profile-pic {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid white;
+}
+
+/* Table des employés affectés */
+.project-table {
+    width: 100%;
+    margin-top: 20px;
+    border-collapse: collapse;
+    color: white;
+}
+
+.project-table th, .project-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.project-table th {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* Bouton Assigner un employé */
+.btn-assign {
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.btn-assign:hover {
+    background-color: #0ea5e9;
+}
+
+.btn-assign:focus {
+    outline: none;
+}
+
+/* Bouton Retour à la liste des projets */
+.btn-back {
+    background: #6b7280;
+    color: white;
+    padding: 14px 16px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.btn-back:hover {
+    background-color: #4b5563;
+}
+
+.btn-back:focus {
+    outline: none;
+}
+
+/* Responsivité : Adapter les éléments sur de petits écrans */
+@media (max-width: 768px) {
+    .project-details {
+        width: 90%;
+    }
+
+    .project-table th, .project-table td {
+        font-size: 0.9rem;
+    }
+}
