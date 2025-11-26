@@ -26,6 +26,8 @@ CREATE TABLE user_account (
       address VARCHAR(255),
       grade VARCHAR(20),
       role VARCHAR(20),
+      contract_type VARCHAR(20) NOT NULL,
+      base_salary DECIMAL(10,2) DEFAULT 0.00,
       department_id INT,
       position_id INT,
       FOREIGN KEY (department_id) REFERENCES department(id),
@@ -57,9 +59,10 @@ CREATE TABLE payslip (
      registration_number VARCHAR(20),
      year INT NOT NULL,
      month INT NOT NULL CHECK (month BETWEEN 1 AND 12),
-     base_salary DECIMAL(10,2),
+     base_salary DECIMAL(10,2), -- freeze base_salary to avoid historical data issues
      bonuses DECIMAL(10,2),
-     deductions DECIMAL(10,2),
+     deductions DECIMAL(10,2), -- deductions = social contributions + taxes + custom_deductions
+     custom_deductions DECIMAL(10,2),
      net_pay DECIMAL(10,2),
      generation_date DATE NOT NULL DEFAULT CURRENT_DATE,
      FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,

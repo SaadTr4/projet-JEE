@@ -6,7 +6,9 @@ import jakarta.persistence.*;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.text.DecimalFormatSymbols;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @Table(name = "payslip")
@@ -35,6 +37,9 @@ public class Payslip implements Serializable {
     @Column(name = "deductions", precision = 10, scale = 2)
     private BigDecimal deductions;
 
+    @Column(name = "custom_deductions", precision = 10, scale = 2)
+    private BigDecimal custom_deductions;
+
     @Column(name = "net_pay", precision = 10, scale = 2)
     private BigDecimal netPay;
 
@@ -46,14 +51,15 @@ public class Payslip implements Serializable {
     // Constructors
     // ===============================
     public Payslip() {}
-    public Payslip(Integer year, Integer month, BigDecimal baseSalary, BigDecimal bonuses, BigDecimal deductions, User user) {
+    public Payslip(Integer year, Integer month, BigDecimal bonuses, BigDecimal custom_deductions, User user) {
         this.year = year;
         this.month = month;
-        this.baseSalary = baseSalary;
+        this.baseSalary = user.getBaseSalary() != null ? user.getBaseSalary() : BigDecimal.ZERO;
         this.bonuses = bonuses != null ? bonuses : BigDecimal.ZERO;
-        this.deductions = deductions != null ? deductions : BigDecimal.ZERO;
+        this.custom_deductions = custom_deductions != null ? custom_deductions : BigDecimal.ZERO;
         this.user = user;
         this.generationDate = LocalDate.now();
+        this.calculateDeductions();
         this.calculateNetPay();
     }
 
@@ -72,24 +78,71 @@ public class Payslip implements Serializable {
 
     public BigDecimal getBaseSalary() { return baseSalary; }
     public void setBaseSalary(BigDecimal baseSalary) { this.baseSalary = baseSalary; }
+    public BigDecimal getSocialContributions() { return baseSalary.multiply(new BigDecimal("0.135")); }
+    public BigDecimal getCsgCrdsAmount() { return baseSalary.multiply(new BigDecimal("0.097")); }
+    public BigDecimal getGrossPay() { return baseSalary.add(bonuses != null ? bonuses : BigDecimal.ZERO); }
     public BigDecimal getBonuses() { return bonuses; }
     public void setBonuses(BigDecimal bonuses) { this.bonuses = bonuses; }
     public BigDecimal getDeductions() { return deductions; }
     public void setDeductions(BigDecimal deductions) { this.deductions = deductions; }
+
+    public BigDecimal getCustom_deductions() { return custom_deductions; }
+    public void setCustom_deductions(BigDecimal custom_deductions) { this.custom_deductions = custom_deductions; }
     public BigDecimal getNetPay() { return netPay; }
     public void setNetPay(BigDecimal netPay) { this.netPay = netPay; }
     public User getUser() { return user; }
     public void setUser(User user) { this.user = user; }
 
+    /**
+     * Formate la date de génération
+     */
+    public String getFormattedGenerationDate() {
+        return formatDate(this.generationDate);
+    }
+
     // ==============================
     // Utility Methods
     // ==============================
+
+    public void calculateDeductions() {
+        // social contributions + custom deductions + csg/crds
+        this.deductions = getSocialContributions()
+                .add(custom_deductions != null ? custom_deductions : BigDecimal.ZERO)
+                .add(getCsgCrdsAmount())
+        ;
+    }
     public void calculateNetPay() {
         this.netPay = baseSalary
                 .add(bonuses != null ? bonuses : BigDecimal.ZERO)
                 .subtract(deductions != null ? deductions : BigDecimal.ZERO);
     }
 
+    /**
+     * Formate la date de génération en "dd/MM/yyyy"
+     */
+    public String formatDate(LocalDate date) {
+        if (date == null) return "";
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        return date.format(formatter);
+    }
+    public String getFormattedCurrency(BigDecimal amount) {
+        if (amount == null) return "0,00";
+        DecimalFormatSymbols symbols = new DecimalFormatSymbols(java.util.Locale.FRANCE);
+        symbols.setDecimalSeparator(',');
+        symbols.setGroupingSeparator(' ');
+        java.text.DecimalFormat df = new java.text.DecimalFormat("#,##0.00", symbols);
+        return df.format(amount);
+    }
+
+    /**
+     * Retourne le nom du mois en français
+     */
+    public String getMonthName() {
+        if (this.month == null || this.month < 1 || this.month > 12) return "";
+        String[] months = {"Janvier","Février","Mars","Avril","Mai","Juin",
+                "Juillet","Août","Septembre","Octobre","Novembre","Décembre"};
+        return months[this.month - 1];
+    }
     public void addBonus(BigDecimal amount) {
         if (amount != null) {
             this.bonuses = this.bonuses.add(amount);

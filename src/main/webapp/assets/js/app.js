@@ -1,4 +1,29 @@
-function toggleAddModal(show) { const modal = document.getElementById('modalAdd'); modal.style.display = show ? 'flex' : 'none'; if (show) attachModalCloseListeners(modal); }
+function toggleAddModal(show) {
+document.getElementById("modalUpdate").style.display = "none";
+
+    const modal = document.getElementById("modalAdd");
+    modal.style.display = show ? "flex" : "none";
+}
+function closePayslipEdit() {
+    const modal = document.getElementById("modalUpdate");
+    modal.style.display = "none";
+}
+
+function closeModal() {
+    const modal = document.getElementById("modalAdd");
+    if (modal) modal.style.display = "none";
+}
+function closeUpdateModal() {
+    const modal = document.getElementById("modalUpdate");
+    if (modal) modal.style.display = "none";
+}
+
+function resetFilters() {
+    document.querySelector("input[name='user']").value = "";
+    document.querySelector("input[name='year']").value = "";
+    document.querySelector("select[name='month']").value = "";
+}
+
 
 function toggleProjectModal(project) {
     const modal = document.getElementById('modalUpdate');
@@ -21,13 +46,14 @@ function toggleProjectModal(project) {
 }
 
 function togglePayslipModal(payslip) {
+document.getElementById("modalAdd").style.display = "none";
+
     const modal = document.getElementById('modalUpdate');
     const form = document.getElementById('updateForm');
 
     if (payslip) {
         // Remplir le formulaire avec les données du payslip
         form.id.value = payslip.id;
-        form.baseSalary.value = payslip.baseSalary;
         form.bonuses.value = payslip.bonuses;
         form.deductions.value = payslip.deductions;
 
@@ -35,6 +61,7 @@ function togglePayslipModal(payslip) {
         document.getElementById('employeeName').value = payslip.userFullName;
         document.getElementById('employeeMatricule').value = payslip.userMatricule;
         document.getElementById('yearDisplay').value = payslip.year;
+        document.getElementById('baseSalary').value = payslip.baseSalary;
 
         // Afficher le mois par nom
         const months = ["Janvier","Février","Mars","Avril","Mai","Juin","Juillet","Août","Septembre","Octobre","Novembre","Décembre"];

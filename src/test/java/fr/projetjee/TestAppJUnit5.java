@@ -1,6 +1,7 @@
 package fr.projetjee;
 
 import fr.projetjee.dao.*;
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.enums.Status;
@@ -48,52 +49,58 @@ public class TestAppJUnit5 {
         positionDAO.save(pos2);
 
         // ==== UTILISATEURS ====
-        user1 = new User("EMP001_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr");
+        user1 = new User("EMP001_TEST", "DupontTest", "Jean", "jean.dupontTest@entreprise.fr", ContractType.APPRENTICESHIP);
         user1.setPassword("test123");
         user1.setAddress("123 Rue de la Paix, 75002 Paris");
         user1.setPhone("0601020304");
         user1.setGrade(Grade.SENIOR);
         user1.setRole(Role.CHEF_PROJET);
+        user1.setBaseSalary(new BigDecimal("4000.00"));
         userDAO.save(user1);
 
-        user2 = new User("EMP002_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr");
+        user2 = new User("EMP002_TEST", "MartinTest", "Sophie", "sophie.martinTest@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
         user2.setPassword("test123");
         user2.setAddress("456 Avenue des Champs, 75008 Paris");
         user2.setPhone("0602030405");
         user2.setGrade(Grade.JUNIOR);
         user2.setRole(Role.EMPLOYE);
+        user2.setBaseSalary(new BigDecimal("3000.00"));
         userDAO.save(user2);
 
-        user3 = new User("EMP003_TEST", "BernardTest", "Luc", "luc.bernardTest@entreprise.fr");
+        user3 = new User("EMP003_TEST", "BernardTest", "Luc", "luc.bernardTest@entreprise.fr", ContractType.FIXED_TERM_FULL_TIME);
         user3.setPassword("test123");
         user3.setAddress("789 Boulevard Haussmann, 75009 Paris");
         user3.setPhone("0603040506");
         user3.setGrade(Grade.EXPERT);
         user3.setRole(Role.CHEF_PROJET);
+        user3.setBaseSalary(new BigDecimal("3800.00"));
         userDAO.save(user3);
 
-        user4 = new User("EMP004_TEST", "LefevreTest", "Marie", "marie.lefevreTest@entreprise.fr");
+        user4 = new User("EMP004_TEST", "LefevreTest", "Marie", "marie.lefevreTest@entreprise.fr", ContractType.TEMPORARY_AGENCY);
         user4.setPassword("test123");
         user4.setAddress("321 Rue de Rivoli, 75004 Paris");
         user4.setPhone("0604050607");
         user4.setGrade(Grade.SENIOR);
         user4.setRole(Role.CHEF_DEPARTEMENT);
+        user4.setBaseSalary(new BigDecimal("4000.00"));
         userDAO.save(user4);
 
-        user5 = new User("EMP005_TEST", "MoreauTest", "Pierre", "pierre.moreauTest@entreprise.fr");
+        user5 = new User("EMP005_TEST", "MoreauTest", "Pierre", "pierre.moreauTest@entreprise.fr", ContractType.FREELANCE_CONTRACTOR);
         user5.setPassword("test123");
         user5.setAddress("654 Avenue Victor Hugo, 75016 Paris");
         user5.setPhone("0605060708");
         user5.setGrade(Grade.JUNIOR);
         user5.setRole(Role.EMPLOYE);
+        user5.setBaseSalary(new BigDecimal("3200.00"));
         userDAO.save(user5);
 
-        user6 = new User("EMP006_TEST", "PetitTest", "Claire", "claire.petitTest@entreprise.fr");
+        user6 = new User("EMP006_TEST", "PetitTest", "Claire", "claire.petitTest@entreprise.fr", ContractType.FIXED_TERM_PART_TIME);
         user6.setPassword("test123");
         user6.setAddress("987 Boulevard Saint-Michel, 75005 Paris");
         user6.setPhone("0606070809");
         user6.setGrade(Grade.EXPERT);
         user6.setRole(Role.CHEF_DEPARTEMENT);
+        user6.setBaseSalary(new BigDecimal("4500.00"));
         userDAO.save(user6);
 
         // ==== PROJETS ====
@@ -110,11 +117,11 @@ public class TestAppJUnit5 {
         projectDAO.save(project5);
 
         // ==== FICHES DE PAIE ====
-        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("4500.00"), new BigDecimal("500.00"), new BigDecimal("1000.00"), user1));
-        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("2500.00"), new BigDecimal("200.00"), new BigDecimal("600.00"), user2));
-        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("5500.00"), new BigDecimal("1000.00"), new BigDecimal("1400.00"), user3));
-        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("4000.00"), new BigDecimal("300.00"), new BigDecimal("900.00"), user4));
-        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("2300.00"), new BigDecimal("150.00"), new BigDecimal("550.00"), user5));
+        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("500.00"), new BigDecimal("1000.00"), user1));
+        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("200.00"), new BigDecimal("600.00"), user2));
+        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("1000.00"), new BigDecimal("1400.00"), user3));
+        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("300.00"), new BigDecimal("900.00"), user4));
+        payslipDAO.save(new Payslip(2024, 10, new BigDecimal("150.00"), new BigDecimal("550.00"), user5));
     }
 
     @Test

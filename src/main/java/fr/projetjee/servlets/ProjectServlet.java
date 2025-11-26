@@ -140,7 +140,7 @@ public class ProjectServlet extends HttpServlet {
         String requestToken = request.getParameter("csrfToken");
 
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("index.jsp");
             return;
         }
 

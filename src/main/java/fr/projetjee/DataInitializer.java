@@ -1,6 +1,7 @@
 package fr.projetjee;
 
 import fr.projetjee.dao.*;
+import fr.projetjee.enums.ContractType;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.enums.Status;
@@ -78,51 +79,63 @@ public class DataInitializer {
             // ==========================
             // UTILISATEURS
             // ==========================
-            User jean_claude = new User("EMP001", "Ilboudo", "Jean-Claude", "jean_claude.ilboudo@entreprise.fr");
+            User jean_claude = new User("EMP001", "Ilboudo", "Jean-Claude", "jean_claude.ilboudo@entreprise.fr", ContractType.APPRENTICESHIP);
             jean_claude.setGrade(Grade.SENIOR);
             jean_claude.setRole(Role.CHEF_PROJET);
             jean_claude.setDepartment(informatique);
             jean_claude.setPosition(chefProjet);
             jean_claude.setPassword(PasswordUtil.hashPassword("motdepasse123"));
+            jean_claude.setBaseSalary(new BigDecimal("4000.00"));
+            jean_claude.setPhone("0612345678");
             userDAO.save(jean_claude);
 
-            User saad = new User("EMP002", "Tarmidi", "Saad", "saad.tarmidi@entreprise.fr");
+            User saad = new User("EMP002", "Tarmidi", "Saad", "saad.tarmidi@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
             saad.setGrade(Grade.JUNIOR);
             saad.setRole(Role.EMPLOYE);
             saad.setDepartment(rh);
             saad.setPosition(devBackend);
+            saad.setBaseSalary(new BigDecimal("3000.00"));
+            saad.setPhone("0698765432");
             saad.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(saad);
 
-            User adam = new User("EMP003", "Swiczka", "Adam", "adam.swiczka@entreprise.fr");
+            User adam = new User("EMP003", "Swiczka", "Adam", "adam.swiczka@entreprise.fr", ContractType.FIXED_TERM_FULL_TIME);
             adam.setGrade(Grade.EXPERT);
             adam.setRole(Role.CHEF_DEPARTEMENT);
             adam.setDepartment(finance);
             adam.setPosition(chefDepartement);
+            adam.setBaseSalary(new BigDecimal("5000000.00"));
+            adam.setPhone("0678901234");
             adam.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(adam);
 
-            User haitam = new User("EMP004", "Hania", "Haitam", "haitam.hania@entreprise.fr");
+            User haitam = new User("EMP004", "Hania", "Haitam", "haitam.hania@entreprise.fr", ContractType.PERMANENT_FULL_TIME);
             haitam.setGrade(Grade.SENIOR);
             haitam.setRole(Role.ADMINISTRATEUR);
             haitam.setDepartment(informatique);
             haitam.setPosition(administrateurSysteme);
+            haitam.setBaseSalary(new BigDecimal("4500.00"));
+            haitam.setPhone("0654321098");
             haitam.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(haitam);
 
-            User medhi = new User("EMP005","Abdelmalek","Mehdi","medhi.nom@entreprise.fr");
+            User medhi = new User("EMP005","nom","Medhi","medhi.nom@entreprise.fr", ContractType.PERMANENT_PART_TIME);
             medhi.setGrade(Grade.JUNIOR);
             medhi.setRole(Role.EMPLOYE);
             medhi.setDepartment(finance);
             medhi.setPosition(devFrontend);
+            medhi.setBaseSalary(new BigDecimal("2800.00"));
+            medhi.setPhone("0643210987");
             medhi.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(medhi);
 
-            User chefSup = new User("EMP006","Anonyme", "CDP", "cdp@entreprise.fr");
+            User chefSup = new User("EMP006","Anonyme", "CDP", "cdp@entreprise.fr", ContractType.TEMPORARY_AGENCY);
             chefSup.setGrade(Grade.EXPERT);
             chefSup.setRole(Role.CHEF_PROJET);
             chefSup.setDepartment(finance);
             chefSup.setPosition(chefProjet);
+            chefSup.setBaseSalary(new BigDecimal("6000.00"));
+            chefSup.setPhone("0600000000");
             chefSup.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(chefSup);
 
@@ -153,12 +166,12 @@ public class DataInitializer {
             // ==========================
             // FICHES DE PAIE
             // ==========================
-            payslipDAO.save(new Payslip(2023, 11, new BigDecimal("4500.00"), new BigDecimal("500.00"), new BigDecimal("1000.00"), jean_claude));
-            payslipDAO.save(new Payslip(2024, 10, new BigDecimal("2500.00"), new BigDecimal("200.00"), new BigDecimal("600.00"), saad));
-            payslipDAO.save(new Payslip(2024, 10, new BigDecimal("5500.00"), new BigDecimal("1000.00"), new BigDecimal("1400.00"), adam));
-            payslipDAO.save(new Payslip(2023, 12, new BigDecimal("4000.00"), new BigDecimal("300.00"), new BigDecimal("800.00"), haitam));
-            payslipDAO.save(new Payslip(2024, 9, new BigDecimal("2700.00"), new BigDecimal("250.00"), new BigDecimal("650.00"), medhi));
-            payslipDAO.save(new Payslip(2024, 8, new BigDecimal("2500.00"), new BigDecimal("150.00"), new BigDecimal("350.00"), medhi));
+            payslipDAO.save(new Payslip(2023, 11, new BigDecimal("500.00"), new BigDecimal("1000.00"), jean_claude));
+            payslipDAO.save(new Payslip(2024, 10, new BigDecimal("200.00"), new BigDecimal("600.00"), saad));
+            payslipDAO.save(new Payslip(2024, 10, new BigDecimal("1000.00"), new BigDecimal("1400.00"), adam));
+            payslipDAO.save(new Payslip(2023, 12, new BigDecimal("300.00"), new BigDecimal("800.00"), haitam));
+            payslipDAO.save(new Payslip(2024, 9, new BigDecimal("250.00"), new BigDecimal("650.00"), medhi));
+            payslipDAO.save(new Payslip(2024, 8, new BigDecimal("150.00"), new BigDecimal("350.00"), medhi));
 
 
             System.out.println("✅ Fiches de paie créées.\n");

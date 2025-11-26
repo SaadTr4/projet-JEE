@@ -34,15 +34,19 @@
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M11 3 2 9v12h7v-7h6v7h7V9z"/></svg>
         <span>Tableau de bord</span>
       </a>
-      <a class="side-link" href="employees.jsp">
+      <a class="side-link" href="user">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
         <span>Employés</span>
+      </a>
+      <a class="side-link" href="poste.jsp">
+         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3v18M4 9l4-4 4 4m0 0l4-4 4 4" /></svg>
+         <span>Postes</span>
       </a>
       <a class="side-link" href="projects">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
         <span>Projets</span>
       </a>
-      <a class="side-link" href="departments.jsp">
+      <a class="side-link" href="departments">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 13h8V3H3Zm10 8h8V3h-8ZM3 21h8v-6H3Z"/></svg>
         <span>Départements</span>
       </a>
@@ -87,7 +91,6 @@
         <!-- Bienvenue -->
         <div class="welcome-card">
           <div class="welcome-left">
-            <span class="wave">👋</span>
             <div>
               <h2 class="welcome-title">Bienvenue, <%= username %></h2>
               <p class="welcome-sub">Voici le résumé de l’activité de votre entreprise</p>
