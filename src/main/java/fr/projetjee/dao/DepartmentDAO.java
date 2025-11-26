@@ -1,5 +1,6 @@
 package fr.projetjee.dao;
 
+import fr.projetjee.enums.Role;
 import fr.projetjee.model.Department;
 import fr.projetjee.model.User;
 import fr.projetjee.util.HibernateUtil;
@@ -61,6 +62,18 @@ public class DepartmentDAO extends GenericDAO<Department, Integer> {
         } catch (Exception e) {
             System.err.println("[ERROR][DAO] Erreur compter utilisateurs par département: " + e.getMessage());
             return 0;
+        }
+    }
+    public Optional<User> findDepartmentHead(Integer departmentId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            Query<User> query = session.createQuery(
+                    "FROM User u WHERE u.department.id = :deptId AND u.role = :role", User.class);
+            query.setParameter("deptId", departmentId);
+            query.setParameter("role", Role.CHEF_DEPARTEMENT);
+            return Optional.ofNullable(query.uniqueResult());
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] Erreur trouver chef de département: " + e.getMessage());
+            return Optional.empty();
         }
     }
 
