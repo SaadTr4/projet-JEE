@@ -8,9 +8,11 @@ import org.hibernate.Session;
 import org.hibernate.Transaction;
 import org.hibernate.query.Query;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 public class UserDAO extends GenericDAO<User, Integer> {
 
@@ -108,6 +110,28 @@ public class UserDAO extends GenericDAO<User, Integer> {
         }
     }
 
+    public List<User> findAllExcludingAdminAndRH() {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            List<User> users = session.createQuery(
+                            "SELECT DISTINCT u FROM User u " +
+                                    "LEFT JOIN FETCH u.department d " +
+                                    "LEFT JOIN FETCH u.position pos " +
+                                    "WHERE u.role != :adminRole " +
+                                    "AND (d.code IS NULL OR d.code != :rhCode)",
+                            User.class
+                    )
+                    .setParameter("adminRole", Role.ADMINISTRATEUR)
+                    .setParameter("rhCode", "RH")
+                    .list();
+
+            System.out.println("findAllExcludingAdminAndRH() - Trouvé " + users.size() + " employés");
+            return users;
+        } catch (Exception e) {
+            System.err.println("Erreur findAllExcludingAdminAndRH: " + e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     // ==================== RECHERCHES PAR RÔLE/GRADE ====================
 
     public List<User> findByRole(Role role) {
@@ -186,6 +210,25 @@ public class UserDAO extends GenericDAO<User, Integer> {
         } catch (Exception e) {
             System.err.println("[ERROR][DAO] findByProject: " + e.getMessage());
             return new ArrayList<>();
+        }
+    }
+
+    public Optional<User> findHeadByDepartmentId(Integer departmentId) {
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            // On suppose que le rôle "CHEF_DEPARTEMENT" correspond à l'énum Role.CHEF_DEPARTEMENT
+            Query<User> query = session.createQuery(
+                    "FROM User u WHERE u.department.id = :deptId AND u.role = :role", User.class);
+            query.setParameter("deptId", departmentId);
+            query.setParameter("role", Role.CHEF_DEPARTEMENT);
+
+            // uniqueResult() retourne soit l'utilisateur, soit null
+            User chef = query.uniqueResult();
+            return Optional.ofNullable(chef);
+
+        } catch (Exception e) {
+            System.err.println("[ERROR][DAO] findHeadByDepartmentId: " + e.getMessage());
+            e.printStackTrace();
+            return Optional.empty();
         }
     }
 
@@ -300,11 +343,31 @@ public class UserDAO extends GenericDAO<User, Integer> {
     // ==================== UTILITAIRES ====================
 
     public String generateMatricule() {
-        long count = count() + 1;
-        String matricule = String.format("EMP%03d", count);  //
-        System.out.println("🏷 Matricule généré: " + matricule);
-        return matricule;
+        Session session = HibernateUtil.getSessionFactory().openSession();
+
+        try {
+            // 1. Récupération de la séquence PostgreSQL
+            Long seq = ((Number) session
+                    .createNativeQuery("SELECT nextval('emp_seq')")
+                    .getSingleResult()).longValue();
+
+            // 2. Génère deux lettres aléatoires
+            Random random = new Random();
+            char letter1 = (char) ('A' + random.nextInt(26));
+            char letter2 = (char) ('A' + random.nextInt(26));
+
+            // 3. Génère un nombre aléatoire entre 1 et 99
+            int number = random.nextInt(99) + 1;
+
+            // 4. Assemble matricule
+            return String.format("EMP%d%c%02d%c", seq, letter1, number, letter2);
+
+        } finally {
+            session.close();
+        }
     }
+
+
 
     // ==================== SURCHARGE SAVE/UPDATE POUR CORRIGER BUG SESSION ====================
 

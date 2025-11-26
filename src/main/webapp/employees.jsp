@@ -1,5 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ page import="java.util.*, fr.projetjee.model.User, fr.projetjee.enums.*, fr.projetjee.model.Department, fr.projetjee.model.Position" %>
+<%@ page import="fr.projetjee.security.RolePermissions" %>
+<%@ page import="org.apache.commons.text.StringEscapeUtils" %>
 
 <%
     User currentUser = (User) session.getAttribute("currentUser");
@@ -8,8 +10,6 @@
     List<User> users = (List<User>) request.getAttribute("users");
     List<Department> departments = (List<Department>) request.getAttribute("departments");
     List<Position> positions = (List<Position>) request.getAttribute("positions");
-    User userEdit = (User) request.getAttribute("userEdit");
-    Boolean editMode = (Boolean) request.getAttribute("editMode");
     String error = (String) request.getAttribute("error");
 
     Boolean searchActive = (Boolean) request.getAttribute("searchActive");
@@ -20,27 +20,18 @@
     String lastSearchGrade = (String) request.getAttribute("lastSearchGrade");
     String lastSearchText = (String) request.getAttribute("lastSearchText");
 
-    boolean showFilter = false;
+    boolean showFilter = true;
     boolean showAddButton = false;
     boolean showEditButton = false;
     boolean showDeleteButton = false;
 
     if (currentUser != null) {
-        String deptCode = currentUser.getDepartment() != null ? currentUser.getDepartment().getCode() : "";
-        boolean isRH = currentUser.getRole() == Role.EMPLOYE && "RH".equalsIgnoreCase(deptCode);
-
-        if (currentUser.getRole() == Role.ADMINISTRATEUR || isRH) {
-            showFilter = true;
+        if (RolePermissions.isAdmin(currentUser) || RolePermissions.isDepartmentHeadRH(currentUser)) {
             showAddButton = true;
             showEditButton = true;
             showDeleteButton = true;
-        } else if (currentUser.getRole() == Role.CHEF_DEPARTEMENT) {
-            showFilter = true;
-            showAddButton = true;
+        } else if (RolePermissions.isEmployeRH(currentUser) || RolePermissions.isDepartmentHead(currentUser)) {
             showEditButton = true;
-            showDeleteButton = true;
-        } else if (currentUser.getRole() == Role.CHEF_PROJET || currentUser.getRole() == Role.EMPLOYE) {
-            showFilter = true;
         }
     }
 %>
@@ -60,6 +51,20 @@
             border:1px solid rgba(255,255,255,.3);
             background:rgba(255,255,255,.05);
             color:#fff;
+        }
+        /* Styles pour les champs désactivés dans les modals */
+        .modal-input[readonly],
+        .modal-input:disabled {
+            background: rgba(255, 255, 255, 0.02); /* plus clair que le fond normal */
+            color: rgba(255, 255, 255, 0.5);      /* texte grisé mais lisible */
+            border-color: rgba(255, 255, 255, 0.1); /* bordure plus discrète */
+            cursor: not-allowed;
+            opacity: 0.8; /* léger effet d'opacité */
+        }
+
+        /* Optionnel : style pour les selects désactivés */
+        .modal-input:disabled option {
+            color: rgba(255, 255, 255, 0.5);
         }
         .form-col-2 {
             display: grid;
@@ -360,20 +365,43 @@
                             <td><%= u.getFullName() %></td>
                             <td><%= u.getEmail() %></td>
                             <td><%= u.getRole().getDisplayName() %></td>
-                            <td><%= u.getGrade().getDisplayName() != null ? u.getGrade().getDisplayName() : "-" %></td>
+                            <td><%= u.getGrade() != null ? u.getGrade().getDisplayName() : "-" %></td>
                             <td><%= u.getDepartment() != null ? u.getDepartment().getName() : "-" %></td>
                             <td><%= u.getPosition() != null ? u.getPosition().getName() : "-" %></td>
                             <% if (showEditButton || showDeleteButton) { %>
                             <td style="padding:8px;">
                                 <div style="display:flex; gap:10px;">
-                                    <% if (showEditButton) { %>
-                                    <button onclick="openEditModal(<%= u.getId() %>, '<%= u.getLastName().replace("'", "\\'") %>', '<%= u.getFirstName().replace("'", "\\'") %>', '<%= u.getEmail() %>', '<%= u.getPhone() != null ? u.getPhone().replace("'", "\\'") : "" %>', '<%= u.getAddress() != null ? u.getAddress().replace("'", "\\'") : "" %>', '<%= u.getRole().name() %>', '<%= u.getGrade() != null ? u.getGrade().name() : "" %>', <%= u.getDepartment() != null ? u.getDepartment().getId() : "null" %>, <%= u.getPosition() != null ? u.getPosition().getId() : "null" %>)" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">✏️ Modifier</button>
+                                    <% if (showEditButton && RolePermissions.canViewPrivateInfo(currentUser, u)) { %>
+                                    <button
+                                            onclick='toggleUserEditModal({
+                                                    id: <%= u.getId() %>,
+                                                    lastName: "<%= StringEscapeUtils.escapeEcmaScript(u.getLastName()) %>",
+                                                    firstName: "<%= StringEscapeUtils.escapeEcmaScript(u.getFirstName()) %>",
+                                                    email: "<%= StringEscapeUtils.escapeEcmaScript(u.getEmail()) %>",
+                                                    phone: "<%= u.getPhone() != null ? StringEscapeUtils.escapeEcmaScript(u.getPhone()) : "" %>",
+                                                    address: "<%= u.getAddress() != null ? StringEscapeUtils.escapeEcmaScript(u.getAddress()) : "" %>",
+                                                    role: "<%= u.getRole().name() %>",
+                                                    grade: "<%= u.getGrade() != null ? u.getGrade().name() : "" %>",
+                                                    departmentId: <%= u.getDepartment() != null ? u.getDepartment().getId() : "null" %>,
+                                                    positionId: <%= u.getPosition() != null ? u.getPosition().getId() : "null" %>,
+                                                    contractType: "<%= u.getContractType() != null ? u.getContractType().name() : "" %>",
+                                                    baseSalary: <%= u.getBaseSalary() != null ? u.getBaseSalary() : 0 %>,
+                                                    canEditPrivate: <%= RolePermissions.canUpdatePrivateInfo(currentUser, u) %>,
+                                                    canEditPublic : <%= RolePermissions.canUpdatePublicInfo(currentUser, u) %>,
+                                                    canEditSalary: <%= RolePermissions.canUpdateSalary(currentUser, u) %>,
+                                                    isSelf: <%= u.getId().equals(currentUser.getId()) %>
+                                                    })'
+                                            class="welcome-logout"
+                                            style="padding:6px 10px; font-size:.85rem;">
+                                        Modifier
+                                    </button>
+
                                     <% } %>
-                                    <% if (showDeleteButton) { %>
+                                    <% if (showDeleteButton && (RolePermissions.canDeleteUserWithTarget(currentUser,u)) ){ %>
                                     <form method="post" action="user" style="display:inline; margin:0;" onsubmit="return confirm('Confirmer la suppression de <%= u.getFullName().replace("'", "\\'") %> ?')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<%= u.getId() %>">
-                                        <button type="submit" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444; border:none; cursor:pointer;">🗑️ Supprimer</button>
+                                        <button type="submit" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444; border:none; cursor:pointer;">Supprimer</button>
                                     </form>
                                     <% } %>
                                 </div>
@@ -412,10 +440,12 @@
                 <div><label>Téléphone</label><input name="phone" class="modal-input" placeholder="+33 6 12 34 56 78"></div>
                 <div class="form-col-1"><label>Adresse</label><input name="address" class="modal-input" placeholder="Adresse complète"></div>
                 <div class="form-col-1"><label>Photo de profil (optionnel)</label><input type="file" name="image" accept="image/*" class="modal-input"><small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">Formats acceptés : JPG, PNG (5MB max)</small></div>
-                <div><label>Rôle *</label><select name="role" class="modal-input" required><option value="">-- Sélectionner un rôle --</option><% for (Role r : Role.values()) { %><option value="<%= r.name() %>"><%= r %></option><% } %></select></div>
-                <div><label>Grade</label><select name="grade" class="modal-input"><option value="">-- Sélectionner un grade --</option><% for (Grade g : Grade.values()) { %><option value="<%= g.name() %>"><%= g %></option><% } %></select></div>
+                <div><label>Rôle *</label><select name="role" class="modal-input" required><option value="">-- Sélectionner un rôle --</option><% for (Role r : Role.values()) { %><option value="<%= r.name() %>"><%= r.getDisplayName() %></option><% } %></select></div>
+                <div><label>Grade</label><select name="grade" class="modal-input"><option value="">-- Sélectionner un grade --</option><% for (Grade g : Grade.values()) { %><option value="<%= g.name() %>"><%= g.getDisplayName() %></option><% } %></select></div>
                 <div><label>Département</label><select name="department" class="modal-input"><option value="">-- Sélectionner un département --</option><% if (departments != null) for (Department d : departments) { %><option value="<%= d.getId() %>"><%= d.getName() %></option><% } %></select></div>
                 <div><label>Poste</label><select name="position" class="modal-input"><option value="">-- Sélectionner un poste --</option><% if (positions != null) for (Position p : positions) { %><option value="<%= p.getId() %>"><%= p.getName() %></option><% } %></select></div>
+                <div><label>Type de contrat</label><select name="typeContrat" class="modal-input"><% for (ContractType ct : ContractType.values()) { %><option value="<%= ct.name() %>"><%= ct.getDisplayName() %></option><% } %></select></div>
+                <div><label>Salaire</label><input type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00"></div>
             </div>
             <div style="display:flex; gap:12px; margin-top:20px;">
                 <button type="submit" class="welcome-logout" style="flex:1;"> Enregistrer</button>
@@ -429,53 +459,97 @@
 <% if (showEditButton) { %>
 <div id="modalEdit" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:999; justify-content:center; align-items:center; overflow-y:auto; padding:20px;">
     <div style="background:rgba(30,30,40,.95); padding:24px; border-radius:12px; backdrop-filter:blur(10px); width:680px; max-width:95%; border:1px solid rgba(255,255,255,.1);">
-        <h3 style="margin-bottom:20px; color:#fff;"> Modifier un employé</h3>
+        <h3 style="margin-bottom:20px; color:#fff;">Modifier un employé</h3>
         <form method="post" action="user" enctype="multipart/form-data">
-            <input type="hidden" name="id" id="edit_id">
+            <input type="hidden" id="edit_id" name="id">
             <div class="form-col-2">
-                <div><label>Nom *</label><input name="nom" id="edit_nom" class="modal-input" required></div>
-                <div><label>Prénom *</label><input name="prenom" id="edit_prenom" class="modal-input" required></div>
-                <div><label>Email *</label><input name="email" id="edit_email" type="email" class="modal-input" required></div>
-                <div><label>Téléphone</label><input name="phone" id="edit_phone" class="modal-input"></div>
-                <div class="form-col-1"><label>Adresse</label><input name="address" id="edit_address" class="modal-input"></div>
-                <div class="form-col-1"><label>Changer la photo de profil (optionnel)</label><input type="file" name="image" accept="image/*" class="modal-input"><small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">Laisser vide pour conserver l'image actuelle</small></div>
-                <div><label>Rôle *</label><select name="role" id="edit_role" class="modal-input" required><option value="">-- Sélectionner un rôle --</option><% for (Role r : Role.values()) { %><option value="<%= r.name() %>"><%= r %></option><% } %></select></div>
-                <div><label>Grade</label><select name="grade" id="edit_grade" class="modal-input"><option value="">-- Sélectionner un grade --</option><% for (Grade g : Grade.values()) { %><option value="<%= g.name() %>"><%= g %></option><% } %></select></div>
-                <div><label>Département</label><select name="department" id="edit_department" class="modal-input"><option value="">-- Sélectionner un département --</option><% if (departments != null) for (Department d : departments) { %><option value="<%= d.getId() %>"><%= d.getName() %></option><% } %></select></div>
-                <div><label>Poste</label><select name="position" id="edit_position" class="modal-input"><option value="">-- Sélectionner un poste --</option><% if (positions != null) for (Position p : positions) { %><option value="<%= p.getId() %>"><%= p.getName() %></option><% } %></select></div>
+                <div>
+                    <label>Nom *</label>
+                    <input id="edit_nom" name="nom" class="modal-input" required>
+                </div>
+                <div>
+                    <label>Prénom *</label>
+                    <input  id="edit_prenom" name="prenom" class="modal-input" required>
+                </div>
+                <div>
+                    <label>Email *</label>
+                    <input id="edit_email" name="email" type="email" class="modal-input" required>
+                </div>
+                <div>
+                    <label>Téléphone</label>
+                    <input id="edit_phone" name="phone" class="modal-input">
+                </div>
+                <div class="form-col-1">
+                    <label>Adresse</label>
+                    <input id="edit_address" name="address" class="modal-input">
+                </div>
+                <div class="form-col-1">
+                    <label>Changer la photo de profil (optionnel)</label>
+                    <input type="file" name="image" accept="image/*" class="modal-input">
+                    <small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">
+                        Laisser vide pour conserver l'image actuelle
+                    </small>
+                </div>
+                <div>
+                    <label>Rôle *</label>
+                    <select id="edit_role" name="role" class="modal-input" required>
+                        <option value="">-- Sélectionner un rôle --</option>
+                        <% for (Role r : Role.values()) { %>
+                        <option value="<%= r.name() %>"><%= r.getDisplayName() %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label>Grade</label>
+                    <select id="edit_grade" name="grade" class="modal-input">
+                        <option value="">-- Sélectionner un grade --</option>
+                        <% for (Grade g : Grade.values()) { %>
+                        <option value="<%= g.name() %>"><%= g.getDisplayName() %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label>Département</label>
+                    <select id="edit_department" name="department" class="modal-input">
+                        <option value="">-- Sélectionner un département --</option>
+                        <% if (departments != null) for (Department d : departments) { %>
+                        <option value="<%= d.getId() %>"><%= d.getName() %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label>Poste</label>
+                    <select id="edit_position" name="position" class="modal-input">
+                        <option value="">-- Sélectionner un poste --</option>
+                        <% if (positions != null) for (Position p : positions) { %>
+                        <option value="<%= p.getId() %>"><%= p.getName() %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label>Type de contrat</label>
+                    <select id="edit_typeContrat" name="typeContrat" class="modal-input">
+                        <% for (ContractType ct : ContractType.values()) { %>
+                        <option value="<%= ct.name() %>"><%= ct.getDisplayName() %></option>
+                        <% } %>
+                    </select>
+                </div>
+                <div>
+                    <label>Salaire</label>
+                    <input id="edit_salaire" type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00">
+                </div>
             </div>
             <div style="display:flex; gap:12px; margin-top:20px;">
-                <button type="submit" class="welcome-logout" style="flex:1;">💾 Mettre à jour</button>
-                <button type="button" class="welcome-logout" style="flex:1; background:#6b7280;" onclick="closeEditModal()">❌ Annuler</button>
+                <button type="submit" class="welcome-logout" style="flex:1;">Mettre à jour</button>
+                <a href="user" class="welcome-logout" style="flex:1; background:#6b7280; text-decoration:none; text-align:center;">
+                    ❌ Annuler
+                </a>
             </div>
         </form>
     </div>
 </div>
 <% } %>
 
-
-<script>
-    function openAddModal() { document.getElementById('modalAdd').style.display = 'flex'; }
-    function closeAddModal() { document.getElementById('modalAdd').style.display = 'none'; }
-    function openEditModal(id, nom, prenom, email, phone, address, role, grade, deptId, posId) {
-        document.getElementById('edit_id').value = id;
-        document.getElementById('edit_nom').value = nom;
-        document.getElementById('edit_prenom').value = prenom;
-        document.getElementById('edit_email').value = email;
-        document.getElementById('edit_phone').value = phone;
-        document.getElementById('edit_address').value = address;
-        document.getElementById('edit_role').value = role;
-        document.getElementById('edit_grade').value = grade || '';
-        document.getElementById('edit_department').value = deptId || '';
-        document.getElementById('edit_position').value = posId || '';
-        document.getElementById('modalEdit').style.display = 'flex';
-    }
-    function closeEditModal() { document.getElementById('modalEdit').style.display = 'none'; }
-    <% if (editMode != null && editMode && userEdit != null && showEditButton) { %>
-    window.addEventListener('DOMContentLoaded', function() {
-        openEditModal(<%= userEdit.getId() %>, '<%= userEdit.getLastName().replace("'", "\\'") %>', '<%= userEdit.getFirstName().replace("'", "\\'") %>', '<%= userEdit.getEmail() %>', '<%= userEdit.getPhone() != null ? userEdit.getPhone().replace("'", "\\'") : "" %>', '<%= userEdit.getAddress() != null ? userEdit.getAddress().replace("'", "\\'") : "" %>', '<%= userEdit.getRole().name() %>', '<%= userEdit.getGrade() != null ? userEdit.getGrade().name() : "" %>', <%= userEdit.getDepartment() != null ? userEdit.getDepartment().getId() : "null" %>, <%= userEdit.getPosition() != null ? userEdit.getPosition().getId() : "null" %>);
-    });
-    <% } %>
-</script>
+<script src="assets/js/app.js"></script>
 </body>
 </html>

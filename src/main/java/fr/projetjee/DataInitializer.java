@@ -73,7 +73,7 @@ public class DataInitializer {
             Position chefProjet = positionDAO.save(new Position("Chef de Projet", "Pilotage et coordination de projet"));
             Position chefDepartement = positionDAO.save(new Position("Chef de Département", "Responsable d’un département"));
             Position administrateurSysteme = positionDAO.save(new Position("Administrateur Système", "Gestion des infrastructures IT"));
-
+            Position responsableRH = positionDAO.save(new Position("Responsable RH", "Gestion des ressources humaines"));
             System.out.println("✅ Départements et postes créés.\n");
 
             // ==========================
@@ -129,7 +129,7 @@ public class DataInitializer {
             medhi.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(medhi);
 
-            User chefSup = new User("EMP006","Anonyme", "CDP", "cdp@entreprise.fr", ContractType.TEMPORARY_AGENCY);
+            User chefSup = new User("EMP006","Anonyme1", "CDP", "cdp@entreprise.fr", ContractType.TEMPORARY_AGENCY);
             chefSup.setGrade(Grade.EXPERT);
             chefSup.setRole(Role.CHEF_PROJET);
             chefSup.setDepartment(finance);
@@ -138,6 +138,16 @@ public class DataInitializer {
             chefSup.setPhone("0600000000");
             chefSup.setPassword(PasswordUtil.hashPassword("motdepasse123"));
             userDAO.save(chefSup);
+
+            User chefRH = new User("EMP007","Anonyme2", "RespoRH", "respoRh@entreprise.fr", ContractType.TEMPORARY_AGENCY);
+            chefRH.setGrade(Grade.SENIOR);
+            chefRH.setRole(Role.CHEF_DEPARTEMENT);
+            chefRH.setDepartment(rh);
+            chefRH.setPosition(responsableRH);
+            chefRH.setBaseSalary(new BigDecimal("15000.00"));
+            chefRH.setPhone("0624194672");
+            chefRH.setPassword(PasswordUtil.hashPassword("motdepasse123"));
+            userDAO.save(chefRH);
 
             System.out.println("✅ Utilisateurs créés et assignés.\n");
 

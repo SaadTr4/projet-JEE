@@ -68,3 +68,6 @@ CREATE TABLE payslip (
      FOREIGN KEY (registration_number) REFERENCES user_account(registration_number) ON DELETE CASCADE,
      CONSTRAINT unique_payslip_per_period UNIQUE (registration_number, year, month)
 );
+
+-- Sequence for generating unique employee matricules
+CREATE SEQUENCE emp_seq START 1;
