@@ -217,6 +217,10 @@
                 <span>Employés</span>
             </a>
             <% } %>
+            <a class="side-link" href="poste.jsp">
+                <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3v18M4 9l4-4 4 4m0 0l4-4 4 4" /></svg>
+                <span>Postes</span>
+            </a>
 
             <a class="side-link <%= request.getRequestURI().contains("projects") ? "active" : "" %>" href="projects">
                 <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
@@ -248,7 +252,7 @@
             <div class="dashboard-container">
                 <div class="welcome-card">
                     <div class="welcome-left">
-                        <span class="wave">👋</span>
+                        <span class="wave"></span>
                         <div>
                             <h2 class="welcome-title">Liste des employés</h2>
                             <p class="welcome-sub">Connecté en tant que <%= username %></p>
@@ -260,12 +264,12 @@
                 </div>
 
                 <% if (error != null) { %>
-                <div class="error-msg">⚠️ <%= error %></div>
+                <div class="error-msg"><%= error %></div>
                 <% } %>
 
                 <% if (showFilter) { %>
                 <div class="search-card">
-                    <div class="search-title">🔍 Recherche multicritère</div>
+                    <div class="search-title">Recherche multicritère</div>
                     <form method="get" action="user">
                         <input type="hidden" name="action" value="search">
                         <div class="search-grid">
@@ -321,8 +325,8 @@
                             </div>
                         </div>
                         <div class="search-actions">
-                            <button type="submit" class="btn-search btn-search-primary">🔍 Rechercher</button>
-                            <a href="user" class="btn-search btn-search-secondary" style="text-decoration:none;">↻ Réinitialiser</a>
+                            <button type="submit" class="btn-search btn-search-primary" style="background: linear-gradient(135deg, #3b82f6, #06b6d4); color: #fff; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s;">Rechercher</button>
+                            <a href="user" class="btn-search btn-search-secondary" style="background: rgba(255,255,255,.1); color: #fff; padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.3s; text-decoration: none;">Réinitialiser</a>
                         </div>
                     </form>
                 </div>
@@ -330,7 +334,7 @@
 
                 <% if (searchActive != null && searchActive) { %>
                 <div class="search-result-info">
-                    <span style="font-size:1.5rem;">📊</span>
+                    <span style="font-size:1.5rem;"></span>
                     <div><strong><%= searchCount %> résultat(s)</strong> trouvé(s) pour votre recherche</div>
                 </div>
                 <% } %>
@@ -392,7 +396,7 @@
                                                     isSelf: <%= u.getId().equals(currentUser.getId()) %>
                                                     })'
                                             class="welcome-logout"
-                                            style="padding:6px 10px; font-size:.85rem;">
+                                            style="background: linear-gradient(135deg, #3b82f6, #06b6d4); color: white; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(59,130,246,.35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;">
                                         Modifier
                                     </button>
 
@@ -401,7 +405,8 @@
                                     <form method="post" action="user" style="display:inline; margin:0;" onsubmit="return confirm('Confirmer la suppression de <%= u.getFullName().replace("'", "\\'") %> ?')">
                                         <input type="hidden" name="action" value="delete">
                                         <input type="hidden" name="id" value="<%= u.getId() %>">
-                                        <button type="submit" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444; border:none; cursor:pointer;">Supprimer</button>
+                                        <button type="submit" class="welcome-logout" style="background: #ef4444; color: #fff; font-weight: 600; border-radius: 10px; padding: 6px 10px; font-size: 0.9rem; box-shadow: 0 8px 22px rgba(239, 68, 68, .35); border: none; cursor: pointer; transition: filter 0.2s ease-in-out;"
+                                        >Supprimer</button>
                                     </form>
                                     <% } %>
                                 </div>
@@ -430,26 +435,26 @@
 
 <% if (showAddButton) { %>
 <div id="modalAdd" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:999; justify-content:center; align-items:center; overflow-y:auto; padding:20px;">
-    <div style="background:rgba(30,30,40,.95); padding:24px; border-radius:12px; backdrop-filter:blur(10px); width:680px; max-width:95%; border:1px solid rgba(255,255,255,.1);">
-        <h3 style="margin-bottom:20px; color:#fff;">➕ Ajouter un employé</h3>
+    <div style="background:rgba(255,255,255,.15); padding:24px; border-radius:12px; backdrop-filter:blur(10px); width:680px; max-width:95%; border:1px solid rgba(255,255,255,.1);">
+        <h3 style="margin-bottom:20px; color:#fff;">Ajouter un employé</h3>
         <form method="post" action="user" enctype="multipart/form-data">
             <div class="form-col-2">
-                <div><label>Nom *</label><input name="nom" class="modal-input" placeholder="Nom de famille" required></div>
-                <div><label>Prénom *</label><input name="prenom" class="modal-input" placeholder="Prénom" required></div>
-                <div><label>Email *</label><input name="email" type="email" class="modal-input" placeholder="exemple@mail.com" required></div>
-                <div><label>Téléphone</label><input name="phone" class="modal-input" placeholder="+33 6 12 34 56 78"></div>
-                <div class="form-col-1"><label>Adresse</label><input name="address" class="modal-input" placeholder="Adresse complète"></div>
-                <div class="form-col-1"><label>Photo de profil (optionnel)</label><input type="file" name="image" accept="image/*" class="modal-input"><small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">Formats acceptés : JPG, PNG (5MB max)</small></div>
-                <div><label>Rôle *</label><select name="role" class="modal-input" required><option value="">-- Sélectionner un rôle --</option><% for (Role r : Role.values()) { %><option value="<%= r.name() %>"><%= r.getDisplayName() %></option><% } %></select></div>
-                <div><label>Grade</label><select name="grade" class="modal-input"><option value="">-- Sélectionner un grade --</option><% for (Grade g : Grade.values()) { %><option value="<%= g.name() %>"><%= g.getDisplayName() %></option><% } %></select></div>
-                <div><label>Département</label><select name="department" class="modal-input"><option value="">-- Sélectionner un département --</option><% if (departments != null) for (Department d : departments) { %><option value="<%= d.getId() %>"><%= d.getName() %></option><% } %></select></div>
-                <div><label>Poste</label><select name="position" class="modal-input"><option value="">-- Sélectionner un poste --</option><% if (positions != null) for (Position p : positions) { %><option value="<%= p.getId() %>"><%= p.getName() %></option><% } %></select></div>
-                <div><label>Type de contrat</label><select name="typeContrat" class="modal-input"><% for (ContractType ct : ContractType.values()) { %><option value="<%= ct.name() %>"><%= ct.getDisplayName() %></option><% } %></select></div>
-                <div><label>Salaire</label><input type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00"></div>
+                <div><label style="color:white; font-size:0.9rem;">Nom *</label><input name="nom" class="modal-input" placeholder="Nom de famille" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
+                <div><label style="color:white; font-size:0.9rem;">Prénom *</label><input name="prenom" class="modal-input" placeholder="Prénom" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
+                <div><label style="color:white; font-size:0.9rem;">Email *</label><input name="email" type="email" class="modal-input" placeholder="exemple@mail.com" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
+                <div><label style="color:white; font-size:0.9rem;">Téléphone</label><input name="phone" class="modal-input" placeholder="+33 6 12 34 56 78" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
+                <div class="form-col-1"><label  style="color:white; font-size:0.9rem;">Adresse</label><input name="address" class="modal-input" placeholder="Adresse complète" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
+                <div class="form-col-1"><label  style="color:white; font-size:0.9rem;">Photo de profil (optionnel)</label><input type="file" name="image" accept="image/*" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">Formats acceptés : JPG, PNG (5MB max)</small></div>
+                <div><label  style="color:white; font-size:0.9rem;">Rôle *</label><select name="role" class="modal-input" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><option value="">-- Sélectionner un rôle --</option><% for (Role r : Role.values()) { %><option value="<%= r.name() %>"><%= r.getDisplayName() %></option><% } %></select></div>
+                <div><label  style="color:white; font-size:0.9rem;">Grade</label><select name="grade" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><option value="">-- Sélectionner un grade --</option><% for (Grade g : Grade.values()) { %><option value="<%= g.name() %>"><%= g.getDisplayName() %></option><% } %></select></div>
+                <div><label style="color:white; font-size:0.9rem;">Département</label><select name="department" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><option value="">-- Sélectionner un département --</option><% if (departments != null) for (Department d : departments) { %><option value="<%= d.getId() %>"><%= d.getName() %></option><% } %></select></div>
+                <div><label style="color:white; font-size:0.9rem;">Poste</label><select name="position" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><option value="">-- Sélectionner un poste --</option><% if (positions != null) for (Position p : positions) { %><option value="<%= p.getId() %>"><%= p.getName() %></option><% } %></select></div>
+                <div><label style="color:white; font-size:0.9rem;">Type de contrat</label><select name="typeContrat" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"><% for (ContractType ct : ContractType.values()) { %><option value="<%= ct.name() %>"><%= ct.getDisplayName() %></option><% } %></select></div>
+                <div><label style="color:white; font-size:0.9rem;">Salaire</label><input type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;"></div>
             </div>
             <div style="display:flex; gap:12px; margin-top:20px;">
-                <button type="submit" class="welcome-logout" style="flex:1;"> Enregistrer</button>
-                <button type="button" class="welcome-logout" style="flex:1; background:#6b7280;" onclick="closeAddModal()">❌ Annuler</button>
+                <button type="submit" class="welcome-logout" style="flex:1; background:linear-gradient(135deg, #3b82f6, #06b6d4); color:white; padding:14px 16px; font-size:1rem; border:none; border-radius:8px; cursor:pointer;">Enregistrer</button>
+                <button type="button" class="welcome-logout" style="flex:1; background:#ef4444; color:white; padding:14px 16px; font-size:1rem; border:none; border-radius:8px; cursor:pointer;" onclick="closeAddModal()">Annuler</button>
             </div>
         </form>
     </div>
@@ -458,41 +463,41 @@
 
 <% if (showEditButton) { %>
 <div id="modalEdit" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.7); z-index:999; justify-content:center; align-items:center; overflow-y:auto; padding:20px;">
-    <div style="background:rgba(30,30,40,.95); padding:24px; border-radius:12px; backdrop-filter:blur(10px); width:680px; max-width:95%; border:1px solid rgba(255,255,255,.1);">
+    <div  style="background:rgba(255,255,255,.15);padding:24px; border-radius:12px; backdrop-filter:blur(10px); width:680px; max-width:95%; border:1px solid rgba(255,255,255,.1);">
         <h3 style="margin-bottom:20px; color:#fff;">Modifier un employé</h3>
         <form method="post" action="user" enctype="multipart/form-data">
             <input type="hidden" id="edit_id" name="id">
             <div class="form-col-2">
                 <div>
-                    <label>Nom *</label>
-                    <input id="edit_nom" name="nom" class="modal-input" required>
+                    <label style="color:white; font-size:0.9rem;">Nom *</label>
+                    <input id="edit_nom" name="nom" class="modal-input" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                 </div>
                 <div>
-                    <label>Prénom *</label>
-                    <input  id="edit_prenom" name="prenom" class="modal-input" required>
+                    <label style="color:white; font-size:0.9rem;">Prénom *</label>
+                    <input  id="edit_prenom" name="prenom" class="modal-input" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                 </div>
                 <div>
-                    <label>Email *</label>
-                    <input id="edit_email" name="email" type="email" class="modal-input" required>
+                    <label style="color:white; font-size:0.9rem;">Email *</label>
+                    <input id="edit_email" name="email" type="email" class="modal-input" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                 </div>
                 <div>
-                    <label>Téléphone</label>
-                    <input id="edit_phone" name="phone" class="modal-input">
+                    <label style="color:white; font-size:0.9rem;">Téléphone</label>
+                    <input id="edit_phone" name="phone" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                 </div>
                 <div class="form-col-1">
-                    <label>Adresse</label>
-                    <input id="edit_address" name="address" class="modal-input">
+                    <label style="color:white; font-size:0.9rem;">Adresse</label>
+                    <input id="edit_address" name="address" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                 </div>
                 <div class="form-col-1">
-                    <label>Changer la photo de profil (optionnel)</label>
+                    <label style="color:white; font-size:0.9rem;">Changer la photo de profil (optionnel)</label>
                     <input type="file" name="image" accept="image/*" class="modal-input">
                     <small style="color:rgba(255,255,255,0.6); display:block; margin-top:4px;">
                         Laisser vide pour conserver l'image actuelle
                     </small>
                 </div>
                 <div>
-                    <label>Rôle *</label>
-                    <select id="edit_role" name="role" class="modal-input" required>
+                    <label style="color:white; font-size:0.9rem;">Rôle *</label>
+                    <select id="edit_role" name="role" class="modal-input" required style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                         <option value="">-- Sélectionner un rôle --</option>
                         <% for (Role r : Role.values()) { %>
                         <option value="<%= r.name() %>"><%= r.getDisplayName() %></option>
@@ -500,8 +505,8 @@
                     </select>
                 </div>
                 <div>
-                    <label>Grade</label>
-                    <select id="edit_grade" name="grade" class="modal-input">
+                    <label style="color:white; font-size:0.9rem;">Grade</label>
+                    <select id="edit_grade" name="grade" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                         <option value="">-- Sélectionner un grade --</option>
                         <% for (Grade g : Grade.values()) { %>
                         <option value="<%= g.name() %>"><%= g.getDisplayName() %></option>
@@ -510,7 +515,7 @@
                 </div>
                 <div>
                     <label>Département</label>
-                    <select id="edit_department" name="department" class="modal-input">
+                    <select id="edit_department" name="department" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                         <option value="">-- Sélectionner un département --</option>
                         <% if (departments != null) for (Department d : departments) { %>
                         <option value="<%= d.getId() %>"><%= d.getName() %></option>
@@ -518,8 +523,8 @@
                     </select>
                 </div>
                 <div>
-                    <label>Poste</label>
-                    <select id="edit_position" name="position" class="modal-input">
+                    <label style="color:white; font-size:0.9rem;">Poste</label>
+                    <select id="edit_position" name="position" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                         <option value="">-- Sélectionner un poste --</option>
                         <% if (positions != null) for (Position p : positions) { %>
                         <option value="<%= p.getId() %>"><%= p.getName() %></option>
@@ -527,22 +532,22 @@
                     </select>
                 </div>
                 <div>
-                    <label>Type de contrat</label>
-                    <select id="edit_typeContrat" name="typeContrat" class="modal-input">
+                    <label style="color:white; font-size:0.9rem;">Type de contrat</label>
+                    <select id="edit_typeContrat" name="typeContrat" class="modal-input" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;">
                         <% for (ContractType ct : ContractType.values()) { %>
                         <option value="<%= ct.name() %>"><%= ct.getDisplayName() %></option>
                         <% } %>
                     </select>
                 </div>
                 <div>
-                    <label>Salaire</label>
-                    <input id="edit_salaire" type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00">
+                    <label style="color:white; font-size:0.9rem;">Salaire</label>
+                    <input id="edit_salaire" type="number" name="salaire" class="modal-input" step="0.01" placeholder="Ex: 2500.00" style="width:100%; max-width:95%; padding:14px; margin-top:8px; border-radius:8px; border:1px solid rgba(255,255,255,.3); background:rgba(255,255,255,.1); color:#fff;" >
                 </div>
             </div>
             <div style="display:flex; gap:12px; margin-top:20px;">
-                <button type="submit" class="welcome-logout" style="flex:1;">Mettre à jour</button>
-                <a href="user" class="welcome-logout" style="flex:1; background:#6b7280; text-decoration:none; text-align:center;">
-                    ❌ Annuler
+                <button type="submit" class="welcome-logout" style="flex:1; background:linear-gradient(135deg, #3b82f6, #06b6d4); color:white; padding:14px 16px; font-size:1rem; border:none; border-radius:8px; cursor:pointer;">Mettre à jour</button>
+                <a href="user" class="welcome-logout" style="flex:1; background:#ef4444; color:white; padding:14px 16px; font-size:1rem; border:none; border-radius:8px; cursor:pointer;">
+                    Annuler
                 </a>
             </div>
         </form>

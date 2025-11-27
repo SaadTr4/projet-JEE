@@ -29,6 +29,10 @@
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm-7 9a7 7 0 0 1 14 0Z"/></svg>
         <span>Employés</span>
       </a>
+      <a class="side-link" href="poste.jsp">
+        <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M12 3v18M4 9l4-4 4 4m0 0l4-4 4 4" /></svg>
+        <span>Postes</span>
+      </a>
       <a class="side-link" href="projects">
         <svg viewBox="0 0 24 24" width="18" height="18"><path fill="currentColor" d="M3 3h18v4H3Zm0 7h18v4H3Zm0 7h18v4H3Z"/></svg>
         <span>Projets</span>
@@ -82,7 +86,6 @@
                 <td><%= d.getName() %></td>
                 <td>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">Modifier</a>
-                  <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem;">👥 Membres</a>
                   <a href="#" class="welcome-logout" style="padding:6px 10px; font-size:.85rem; background:#ef4444;">Supprimer</a>
                 </td>
               </tr>
