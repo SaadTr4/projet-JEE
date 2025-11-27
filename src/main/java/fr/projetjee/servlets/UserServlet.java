@@ -9,22 +9,22 @@ import fr.projetjee.model.Position;
 import fr.projetjee.enums.Grade;
 import fr.projetjee.enums.Role;
 import fr.projetjee.enums.ContractType;
+import fr.projetjee.enums.Action;
+import fr.projetjee.security.RolePermissions;
 
-
+import fr.projetjee.util.PasswordUtil;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Servlet user avec support complet upload image + modal edit/add + RECHERCHE MULTICRITÈRE
- */
 @WebServlet("/user")
-@MultipartConfig(maxFileSize = 5 * 1024 * 1024) // 5MB max
+@MultipartConfig(maxFileSize = 5 * 1024 * 1024)
 public class UserServlet extends HttpServlet {
 
     private UserDAO userDAO;
@@ -36,56 +36,53 @@ public class UserServlet extends HttpServlet {
         userDAO = new UserDAO();
         departmentDAO = new DepartmentDAO();
         positionDAO = new PositionDAO();
-        System.out.println("✔ UserServlet initialisé");
+        System.out.println("[INFO][SERVLET] UserServlet initialisé");
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         String action = request.getParameter("action");
-        System.out.println("Appel de doGet, action=" + action);
 
-        if (action == null) action = "list";
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
 
+        if (currentUser == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        if (!RolePermissions.canAccessUserList(currentUser)) {
+            session.setAttribute("errorMessage", "Accès refusé : Vous n'avez pas les permissions d'accéder à cette page.");
+            System.out.println("[SECURITY][SERVLET] Accès refusé pour l'employé : " + currentUser.getFullName());
+            session.setAttribute("errorType", "danger");
+            response.sendRedirect("dashboard.jsp");
+            return;
+        }
         System.out.println("Action demandée : " + action);
-
+        if (action == null) action = "list";
         switch (action) {
-            case "edit":
-                handleEdit(request, response);
-                break;
-
-            case "delete":
-                handleDelete(request, response);
-                break;
-
             case "image":
                 serveImage(request, response);
                 break;
-
             case "search":
                 handleSearch(request, response);
                 break;
-
             default:
                 listUsers(request, response);
                 break;
         }
     }
 
-    /**
-     * Gère la recherche multicritère
-     */
     private void handleSearch(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
-        // Récupérer les paramètres de recherche
         String deptIdStr = request.getParameter("searchDepartment");
         String posIdStr = request.getParameter("searchPosition");
         String roleStr = request.getParameter("searchRole");
         String gradeStr = request.getParameter("searchGrade");
         String searchText = request.getParameter("searchText");
 
-        // Conversion des paramètres
         Integer deptId = null;
         Integer posId = null;
         Role role = null;
@@ -115,21 +112,21 @@ public class UserServlet extends HttpServlet {
             }
         } catch (Exception ignored) {}
 
-        // Effectuer la recherche
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
         List<User> users = userDAO.search(deptId, posId, null, role, grade, searchText);
-
+        // remove admin and rh on search if current user is not allowed to view all users
+        if (!RolePermissions.canViewAllUsers(currentUser)) {
+            users.removeIf(u -> u.getRole() == Role.ADMINISTRATEUR || RolePermissions.isRH(u));
+        }
         request.setAttribute("users", users);
         request.setAttribute("searchActive", true);
         request.setAttribute("searchCount", users.size());
-
-        // Conserver les valeurs de recherche pour les afficher dans le formulaire
         request.setAttribute("lastSearchDept", deptIdStr);
         request.setAttribute("lastSearchPos", posIdStr);
         request.setAttribute("lastSearchRole", roleStr);
         request.setAttribute("lastSearchGrade", gradeStr);
         request.setAttribute("lastSearchText", searchText);
-
-        // Charger les listes pour les selects
         request.setAttribute("departments", departmentDAO.findAll());
         request.setAttribute("positions", positionDAO.findAll());
 
@@ -138,40 +135,14 @@ public class UserServlet extends HttpServlet {
         request.getRequestDispatcher("employees.jsp").forward(request, response);
     }
 
-    /**
-     * Gère l'affichage du formulaire d'édition
-     */
-    private void handleEdit(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            int id = Integer.parseInt(request.getParameter("id"));
-            Optional<User> userOpt = userDAO.findById(id);
-
-            if (userOpt.isPresent()) {
-                request.setAttribute("userEdit", userOpt.get());
-                request.setAttribute("editMode", true);
-            } else {
-                request.setAttribute("error", "Utilisateur introuvable");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "ID invalide");
-        }
-
-        listUsers(request, response);
-    }
-
-    /**
-     * Suppression d'un utilisateur
-     */
     private void handleDelete(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
             int id = Integer.parseInt(request.getParameter("id"));
             if (userDAO.deleteById(id)) {
-                System.out.println(" Utilisateur supprimé : ID=" + id);
+                System.out.println("Utilisateur supprimé : ID=" + id);
             } else {
-                System.err.println(" Échec suppression ID=" + id);
+                System.err.println("Échec suppression ID=" + id);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -179,9 +150,6 @@ public class UserServlet extends HttpServlet {
         response.sendRedirect("user");
     }
 
-    /**
-     * Servir l'image d'un utilisateur
-     */
     private void serveImage(HttpServletRequest request, HttpServletResponse response)
             throws IOException {
         try {
@@ -203,12 +171,13 @@ public class UserServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Affiche la liste des utilisateurs
-     */
     private void listUsers(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        List<User> users = userDAO.findAllWithFetch();
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
+        List<User> users;
+        if(RolePermissions.canViewAllUsers(currentUser)) { users = userDAO.findAllWithFetch();}
+        else { users = userDAO.findAllExcludingAdminAndRH();}
         request.setAttribute("users", users);
         request.setAttribute("departments", departmentDAO.findAll());
         request.setAttribute("positions", positionDAO.findAll());
@@ -220,9 +189,26 @@ public class UserServlet extends HttpServlet {
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
 
-        System.out.println("Appel de doPost");
+        HttpSession session = request.getSession();
+        User currentUser = (User) session.getAttribute("currentUser");
 
-        // Récupération des paramètres
+        if (currentUser == null) {
+            response.sendRedirect("login");
+            return;
+        }
+
+        String action = request.getParameter("action");
+        if ("delete".equals(action)) {
+            if (!RolePermissions.canDeleteUser(currentUser)) {
+                request.setAttribute("error", "Vous n'avez pas la permission de supprimer cet employé.");
+                System.out.println("[SECURITY] Permission refusée DELETE_USER pour " + currentUser.getFullName());
+                listUsers(request, response);
+                return;
+            }
+            handleDelete(request, response);
+            return;
+        }
+
         String idStr = request.getParameter("id");
         String lastName = request.getParameter("nom");
         String firstName = request.getParameter("prenom");
@@ -233,8 +219,10 @@ public class UserServlet extends HttpServlet {
         String gradeStr = request.getParameter("grade");
         String deptStr = request.getParameter("department");
         String posStr = request.getParameter("position");
+        String contractTypeStr = request.getParameter("typeContrat");
+        String salaryStr = request.getParameter("salaire");
 
-        // Validation basique
+        System.out.println("Données reçues : id=" + idStr + ", nom=" + lastName + ", prénom=" + firstName + ", email=" + email + ", role=" + roleStr + ", department=" + deptStr + ", position=" + posStr + ", grade=" + gradeStr + ", typeContrat=" + contractTypeStr + ", salaire=" + salaryStr);
         if (lastName == null || lastName.isBlank() ||
                 firstName == null || firstName.isBlank() ||
                 email == null || email.isBlank()) {
@@ -243,17 +231,14 @@ public class UserServlet extends HttpServlet {
             return;
         }
 
-        // Vérification email unique
         Optional<User> byEmail = userDAO.findByEmail(email);
         if (idStr == null || idStr.isEmpty()) {
-            // Création : email doit être unique
             if (byEmail.isPresent()) {
                 request.setAttribute("error", "Cet email existe déjà");
                 listUsers(request, response);
                 return;
             }
         } else {
-            // Mise à jour : vérifier que l'email n'appartient pas à un autre user
             if (byEmail.isPresent() && !byEmail.get().getId().equals(Integer.parseInt(idStr))) {
                 request.setAttribute("error", "Cet email appartient déjà à un autre utilisateur");
                 listUsers(request, response);
@@ -261,61 +246,111 @@ public class UserServlet extends HttpServlet {
             }
         }
 
-        // Construction de l'objet User
         User u;
         if (idStr != null && !idStr.isEmpty()) {
-            // Mode édition : récupérer l'utilisateur existant
+            // ===== MODE ÉDITION =====
             int id = Integer.parseInt(idStr);
             u = userDAO.findById(id).orElse(new User());
             u.setId(id);
+            //  NE PAS MODIFIER LE MOT DE PASSE lors de l'édition
         } else {
-            // Mode création
+            // ===== MODE CRÉATION =====
             u = new User();
-            // Génération automatique du matricule
             u.setMatricule(userDAO.generateMatricule());
+            //  HACHER LE MOT DE PASSE
+            u.setPassword(PasswordUtil.hashPassword("motdepasse123"));
+            //System.out.println(" Nouvel employé créé avec mot de passe haché");
         }
 
-        // Remplir les champs
-        u.setLastName(lastName);
-        u.setFirstName(firstName);
-        u.setEmail(email);
-        u.setPhone(phone);
-        u.setAddress(address);
-        u.setContractType(ContractType.PERMANENT_FULL_TIME); // Par défaut
+        User targetUser = u; // u is the user being created/edited
+        boolean canUpdatePrivate = RolePermissions.canUpdatePrivateInfo(currentUser, targetUser);
+        boolean canUpdatePublic = RolePermissions.canUpdatePublicInfo(currentUser, targetUser);
+        boolean canUpdateSalary = RolePermissions.canUpdateSalary(currentUser, targetUser);
+        if(canUpdatePrivate) {
+            u.setLastName(lastName);
+            u.setFirstName(firstName);
+            u.setEmail(email);
+            u.setPhone(phone);
+            u.setAddress(address);
+            u.setContractType(ContractType.PERMANENT_FULL_TIME);
 
-        // Role & Grade (avec gestion d'erreur)
-        try {
-            u.setRole(Role.valueOf(roleStr));
-        } catch (Exception e) {
-            u.setRole(Role.EMPLOYE);
-        }
-
-        try {
-            if (gradeStr != null && !gradeStr.isBlank()) {
-                u.setGrade(Grade.valueOf(gradeStr));
+            Role requestedRole;
+            try {
+                requestedRole = Role.valueOf(roleStr);
+                String roleError = RolePermissions.validateRoleAssignment(
+                        currentUser, targetUser, requestedRole, deptStr, userDAO, departmentDAO
+                );
+                if (roleError != null) {
+                    request.setAttribute("error", roleError);
+                    listUsers(request, response);
+                    return;
+                }
+                u.setRole(requestedRole);
+            } catch (Exception e) {
+                u.setRole(Role.EMPLOYE);
             }
-        } catch (Exception ignored) {}
 
-        // Relations Department / Position
-        try {
             if (deptStr != null && !deptStr.isBlank()) {
-                Integer deptId = Integer.parseInt(deptStr);
-                departmentDAO.findById(deptId).ifPresent(u::setDepartment);
+                try {
+                    Integer deptId = Integer.parseInt(deptStr);
+                    String deptError = RolePermissions.validateDepartmentAssignment(currentUser, deptId, departmentDAO);
+                    if (deptError != null) {
+                        request.setAttribute("error", deptError);
+                        listUsers(request, response);
+                        return;
+                    }
+                    departmentDAO.findById(deptId).ifPresent(u::setDepartment);
+                }catch (Exception ignored) {}
             }
-        } catch (Exception ignored) {}
-
-        try {
-            if (posStr != null && !posStr.isBlank()) {
-                Integer posId = Integer.parseInt(posStr);
-                positionDAO.findById(posId).ifPresent(u::setPosition);
+            if (contractTypeStr != null && !contractTypeStr.trim().isEmpty()) {
+                try {
+                    u.setContractType(ContractType.valueOf(contractTypeStr));
+                } catch (IllegalArgumentException e) {
+                    u.setContractType(ContractType.PERMANENT_FULL_TIME); // valeur par défaut
+                }
             }
-        } catch (Exception ignored) {}
+            else {
+                u.setContractType(ContractType.PERMANENT_FULL_TIME);
+            }
+        }
 
-        // Gestion de l'image (optionnelle)
+        if(canUpdatePublic) {
+            if (gradeStr == null || gradeStr.trim().isEmpty()) {
+                u.setGrade(null);
+            } else {
+                try {
+                    u.setGrade(Grade.valueOf(gradeStr.trim()));
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Grade invalide : '" + gradeStr + "'");
+                    u.setGrade(null);
+                }
+            }
+
+            try {
+                if (posStr != null && !posStr.isBlank()) {
+                    Integer posId = Integer.parseInt(posStr);
+                    positionDAO.findById(posId).ifPresent(u::setPosition);
+                }
+            } catch (Exception ignored) {
+            }
+        }
+        if (canUpdateSalary) {
+            try {
+                if (salaryStr != null && !salaryStr.isBlank()) {
+                    BigDecimal salary = new BigDecimal(salaryStr);
+                    // Vérifie que le salaire est entre 0 et 1 000 000 000 inclus
+                    if (salary.compareTo(BigDecimal.ZERO) < 0 || salary.compareTo(new BigDecimal("1000000000")) > 0) {
+                        throw new IllegalArgumentException("Salaire hors limites");
+                    }
+                    u.setBaseSalary(salary);
+                }
+            } catch (Exception ignored) {
+                // Si erreur, le salaire reste à zéro (valeur par défaut du constructeur)
+            }
+        }
         try {
             Part imagePart = request.getPart("image");
             if (imagePart != null && imagePart.getSize() > 0) {
-                // Vérifier le type MIME
                 String contentType = imagePart.getContentType();
                 if (contentType != null && contentType.startsWith("image/")) {
                     try (InputStream is = imagePart.getInputStream()) {
@@ -323,27 +358,45 @@ public class UserServlet extends HttpServlet {
                         u.setImage(imageBytes);
                         System.out.println("✅ Image uploadée : " + imageBytes.length + " bytes");
                     }
-                } else {
-                    System.out.println("⚠️ Fichier non-image ignoré");
                 }
             }
         } catch (Exception e) {
-            System.err.println(" Erreur upload image : " + e.getMessage());
-            e.printStackTrace();
+            System.err.println("❌ Erreur upload image : " + e.getMessage());
         }
 
+        User saved;
+        if (idStr != null && !idStr.isEmpty()) {
+            if (!canUpdatePrivate && !canUpdatePublic) {
+                request.setAttribute("error", "Vous n'avez pas la permission de modifier cet employé.");
+                System.out.println("[SECURITY][SERVLET] Permission refusée UPDATE_USER pour " + currentUser.getFullName());
+                listUsers(request, response);
+                return;
+            }
 
-        // Sauvegarde
-        // Création
-        User saved = userDAO.save(u);
-        System.out.println("SAVED" + saved);
-        if (saved != null) {
-            System.out.println(" Nouvel employé créé : " + saved.getFullName() + " (" + saved.getMatricule() + ")");
+            saved = userDAO.update(u);
+            if (saved != null) {
+                System.out.println("✅ Employé mis à jour : " + saved.getFullName());
+            } else {
+                request.setAttribute("error", "Erreur lors de la mise à jour");
+                listUsers(request, response);
+                return;
+            }
         } else {
-            request.setAttribute("error", "Erreur lors de la création");
-            System.out.println("[ERROR][DAO] Erreur ");
-            listUsers(request, response);
-            return;
+            if (!RolePermissions.canCreateUser(currentUser) && !RolePermissions.hasPermission(currentUser.getRole(), Action.CREATE_USER)) {
+                request.setAttribute("error", "Vous n'avez pas la permission de créer un employé.");
+                System.out.println("[SECURITY][SERVLET] Permission refusée CREATE_USER pour " + currentUser.getFullName());
+                listUsers(request, response);
+                return;
+            }
+
+            saved = userDAO.save(u);
+            if (saved != null) {
+                System.out.println("✅ Nouvel employé créé : " + saved.getFullName() + " (" + saved.getMatricule() + ")");
+            } else {
+                request.setAttribute("error", "Erreur lors de la création");
+                listUsers(request, response);
+                return;
+            }
         }
 
         response.sendRedirect("user");

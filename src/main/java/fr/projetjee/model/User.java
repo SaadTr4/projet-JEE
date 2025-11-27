@@ -100,7 +100,9 @@ public class User implements Serializable {
     // CONSTRUCTEURS
     // ========================================
     
-    public User() {}
+    public User() {
+        this.baseSalary = BigDecimal.ZERO;
+    }
     
     public User(String matricule, String lastName, String firstName, String email, ContractType contractType) {
         this.matricule = matricule;
@@ -108,6 +110,7 @@ public class User implements Serializable {
         this.firstName = firstName;
         this.email = email;
         this.contractType = contractType;
+        this.baseSalary = BigDecimal.ZERO;
     }
     
     // ========================================

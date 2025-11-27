@@ -256,5 +256,44 @@
   });
 </script>
 
+
+<%
+    String popupError = (String) session.getAttribute("errorMessage");
+    if (popupError != null) {
+        session.removeAttribute("errorMessage");
+        session.removeAttribute("errorType");
+%>
+<!-- POPUP D'ERREUR -->
+<div id="errorPopup" style="display: flex; position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); z-index: 9999; justify-content: center; align-items: center; animation: fadeIn 0.3s ease-out;">
+    <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); padding: 32px; border-radius: 20px; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); animation: scaleIn 0.3s ease-out;">
+        <div style="text-align: center; margin-bottom: 24px;">
+            <div style="width: 80px; height: 80px; margin: 0 auto 20px; background: linear-gradient(135deg, #ef4444, #dc2626); border-radius: 50%; display: flex; align-items: center; justify-content: center;">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="white">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                </svg>
+            </div>
+            <h3 style="color: white; font-size: 1.8rem; margin-bottom: 12px; font-weight: 700;">Accès refusé</h3>
+            <p style="color: rgba(255,255,255,0.8); font-size: 1.1rem; line-height: 1.6;">
+                <%= popupError %>
+            </p>
+        </div>
+        <button onclick="document.getElementById('errorPopup').style.display='none'" style="width: 100%; background: linear-gradient(135deg, #3b82f6, #2563eb); color: white; border: none; padding: 14px; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; transition: all 0.2s;">
+            J'ai compris
+        </button>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+    @keyframes scaleIn {
+        from { transform: scale(0.9); opacity: 0; }
+        to { transform: scale(1); opacity: 1; }
+    }
+</style>
+<% } %>
+
 </body>
 </html>

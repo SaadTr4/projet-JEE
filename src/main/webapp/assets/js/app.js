@@ -74,6 +74,92 @@ document.getElementById("modalAdd").style.display = "none";
         modal.style.display = 'none';
     }
 }
+
+function toggleUserEditModal(user) {
+    const modal = document.getElementById('modalEdit');
+    if (!modal) return;
+
+    const form = modal.querySelector('form');
+    if (!form) return;
+
+    if (!user) {
+        modal.style.display = 'none';
+        return;
+    }
+
+    // Remplir les champs du formulaire
+    form.querySelector("#edit_id").value = user.id || '';
+    form.querySelector("#edit_nom").value = user.lastName || '';
+    form.querySelector("#edit_prenom").value = user.firstName || '';
+    form.querySelector("#edit_email").value = user.email || '';
+    form.querySelector("#edit_phone").value = user.phone || '';
+    form.querySelector("#edit_address").value = user.address || '';
+    form.querySelector("#edit_role").value = user.role || '';
+    form.querySelector("#edit_grade").value = user.grade || '';
+    form.querySelector("#edit_department").value = user.departmentId || '';
+    form.querySelector("#edit_position").value = user.positionId || '';
+    form.querySelector("#edit_typeContrat").value = user.contractType || '';
+    form.querySelector("#edit_salaire").value = user.baseSalary || '';
+
+    // Permissions dynamiques
+    const canEditPrivate = !!user.canEditPrivate && !user.isSelf;
+    const canEditSalary = !!user.canEditSalary && !user.isSelf;
+    const canEditPublic = !!user.canEditPublic && !user.isSelf;
+
+    // Inputs texte → readonly
+    ["edit_nom", "edit_prenom", "edit_email", "edit_phone", "edit_address"].forEach(id => {
+        const input = form.querySelector(`#${id}`);
+        if (input) input.readOnly = !canEditPrivate;
+    });
+
+    // Sélecteurs → disabled + champ caché
+    const selects = [
+        {id: "edit_role", canEdit: canEditPrivate},
+        {id: "edit_grade", canEdit: canEditPublic},
+        {id: "edit_department", canEdit: canEditPrivate},
+        {id: "edit_position", canEdit: canEditPublic},
+        {id: "edit_typeContrat", canEdit: canEditPrivate}
+    ];
+
+    selects.forEach(s => {
+        const sel = form.querySelector(`#${s.id}`);
+        if (!sel) return;
+
+        sel.disabled = !s.canEdit;
+
+        // Créer ou mettre à jour le champ caché correspondant
+        let hidden = form.querySelector(`#hidden_${s.id}`);
+        if (!hidden) {
+            hidden = document.createElement("input");
+            hidden.type = "hidden";
+            hidden.id = `hidden_${s.id}`;
+            hidden.name = sel.name;
+            form.appendChild(hidden);
+        }
+        hidden.value = sel.value;
+    });
+
+    // Salaire → readonly
+    const salaryInput = form.querySelector("#edit_salaire");
+    if (salaryInput) salaryInput.readOnly = !canEditSalary;
+
+    // Afficher le modal
+    modal.style.display = 'flex';
+
+    attachModalCloseListeners(modal);
+}
+
+
+
+function closeUserEditModal() {
+    const modal = document.getElementById('modalEdit');
+    modal.style.display = 'none';
+}
+
+
+function closeEditModal() {
+    document.getElementById('modalEdit').style.display = 'none';
+}
 function attachModalCloseListeners(modal) {
     modal.onclick = function(event) {
         if (event.target === modal) {
@@ -140,3 +226,5 @@ function checkEmployeeValid(input) {
         input.setCustomValidity("");
     }
 }
+function openAddModal() { document.getElementById('modalAdd').style.display = 'flex'; }
+function closeAddModal() { document.getElementById('modalAdd').style.display = 'none'; }
