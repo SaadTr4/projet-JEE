@@ -286,12 +286,21 @@
                         <% if (projects != null) {
                             for (Project p : projects) { %>
                         <tr style="border-bottom:1px solid rgba(255,255,255,.2); text-align: center;">
+                            <%
+                                Map<String, Integer> tokens = (Map<String, Integer>) request.getAttribute("projectTokens");
+                                String token = "";
+                                for (Map.Entry<String,Integer> entry : tokens.entrySet()) {
+                                    if (entry.getValue().equals(p.getId())) {
+                                        token = entry.getKey();
+                                    }
+                                }
+                            %>
                             <!-- ID du projet -->
                             <td style="padding:10px;"><%= p.getId() %></td>
 
                             <!-- Nom du projet avec lien (couleur modifiée en blanc) -->
                             <td style="padding:10px;">
-                                <a href="projectdetails.jsp?id=<%= p.getId() %>" style="color: white; text-decoration: none;"
+                                <a href="project-detail/<%= token %>" style="color:white; text-decoration:none"
                                    onmouseover="this.style.textDecoration='underline'" onmouseout="this.style.textDecoration='none'">
                                     <%= p.getName() %>
                                 </a>

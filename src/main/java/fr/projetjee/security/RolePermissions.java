@@ -1,10 +1,12 @@
 package fr.projetjee.security;
 
 import fr.projetjee.dao.DepartmentDAO;
+import fr.projetjee.dao.ProjectDAO;
 import fr.projetjee.dao.UserDAO;
 import fr.projetjee.enums.Action;
 import fr.projetjee.enums.Role;
 import fr.projetjee.model.Department;
+import fr.projetjee.model.Project;
 import fr.projetjee.model.User;
 
 import java.util.*;
@@ -280,4 +282,86 @@ public class RolePermissions {
 
         return null; // Validation réussie
     }
+
+    /**
+     * Vérifie si un utilisateur peut accéder aux détails d'un projet.
+     */
+    public static boolean userCanAccessProject(User user, Project project) {
+
+        Role role = user.getRole();
+
+        boolean isRH = RolePermissions.isRH(user);
+
+        // Admin / RH / Chef de département → accès total
+        if (RolePermissions.isAdmin(user) ||
+                RolePermissions.isRH(user) ||
+                role == Role.CHEF_DEPARTEMENT) {
+            return true;
+        }
+
+        // Chef de projet : accès si c'est SON projet
+        if (role == Role.CHEF_PROJET) {
+            return project.getProjectManager().getId().equals(user.getId());
+        }
+
+        // Employé et chef projet normal → accès seulement si assigné
+        boolean assigned = project.getUsers()
+                .stream()
+                .anyMatch(u -> u.getId().equals(user.getId()));
+        return assigned;
+    }
+
+    /**
+     * Vérifie si un employé peut être assigné à un projet (pas RH, pas Admin)
+     */
+    public static boolean canBeAssignedToProject(User user) {
+        if (user == null) return false;
+
+        // Exclure les administrateurs
+        if (isAdmin(user)) return false;
+
+        // Exclure les employés RH
+        if (isRH(user)) return false;
+
+        return true;
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut gérer les membres d'un projet (assigner/retirer)
+     */
+    public static boolean canManageProjectMembers(User currentUser, Project project) {
+        if (currentUser == null || project == null) return false;
+
+        // Admin : toujours autorisé
+        if (isAdmin(currentUser)) return true;
+
+        // Employé RH : toujours autorisé
+        if (isEmployeRH(currentUser)) return true;
+
+        // Chef de département : toujours autorisé
+        if (isDepartmentHead(currentUser)) return true;
+
+        // Chef de projet : seulement si c'est SON projet
+        if (currentUser.getRole() == Role.CHEF_PROJET) {
+            return project.getProjectManager() != null &&
+                    project.getProjectManager().getId().equals(currentUser.getId());
+        }
+
+        return false;
+    }
+
+    /**
+     * Vérifie si l'utilisateur peut voir la colonne matricule dans les détails projet
+     */
+    public static boolean canViewMatriculeColumn(User user) {
+        if (user == null) return false;
+
+        // Employé classique ne peut pas voir les matricules
+        if (user.getRole() == Role.EMPLOYE && !isRH(user)) {
+            return false;
+        }
+
+        return true;
+    }
+
 }

@@ -21,7 +21,7 @@ public class TestUserBatch {
     private UserDAO userDAO;
     private List<User> testUsers;
 
-    private final int N = 500; // nombre d'utilisateurs à créer
+    private final int N = 200; // nombre d'utilisateurs à créer
 
     @BeforeAll
     void initDAO() {

@@ -9,11 +9,16 @@ import jakarta.servlet.http.*;
 import jakarta.servlet.annotation.*;
 import java.io.IOException;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.security.SecureRandom;
 import java.math.BigInteger;
+import java.util.Map;
+
 import fr.projetjee.model.*;
 import fr.projetjee.dao.*;
+
+import static fr.projetjee.security.RolePermissions.userCanAccessProject;
 
 
 /**
@@ -83,16 +88,19 @@ public class ProjectServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        System.out.println("[INFO][Servlet] Requête GET reçue pour /projects");
         HttpSession session = request.getSession();
         User user = (User) session.getAttribute("currentUser");
         String csrfToken = (String) session.getAttribute("csrfToken");
 
         // Security check: redirect if no user in session
         if (user == null) {
-            response.sendRedirect("login.jsp");
+            response.sendRedirect("index.jsp");
             return;
         }
+        Map<String, Integer> projectTokens = session.getAttribute("projectTokens") instanceof Map ? (Map<String, Integer>) session.getAttribute("projectTokens") : null;
 
+        System.out.println("[INFO][Servlet] Chargement de la liste des projets pour l'utilisateur : " + user.getFullName());
         // Retrieve filters from session
         String nameFilter = (String) session.getAttribute("filter_name");
         String managerFilter = (String) session.getAttribute("filter_manager");
@@ -104,6 +112,15 @@ public class ProjectServlet extends HttpServlet {
         // For datalist in JSP
         List<Project> allProjects = projectDAO.findAll();
 
+        if(projectTokens == null) {
+            System.out.println("[INFO][Servlet] projectTokens est null dans la session pour l'utilisateur : " + user.getFullName());
+            getOrCreateProjectTokens(session, projects);
+            projectTokens = (Map<String, Integer>) session.getAttribute("projectTokens");
+        }
+        System.out.println("[INFO][Servlet] Nombre de projets accessibles à l'utilisateur : " + projectTokens);
+        System.out.println("[INFO][Servlet] Avec get attribute session : " + session.getAttribute("projectTokens"));
+
+        request.setAttribute("projectTokens", projectTokens);
         request.setAttribute("allProjects", allProjects);
         request.setAttribute("projects", projects);
         request.setAttribute("chefs", userDAO.findByRole(Role.CHEF_PROJET));
@@ -462,6 +479,48 @@ public class ProjectServlet extends HttpServlet {
                 ? projectDAO.findProjectsWithFilters(nameFilter, managerFilter, statusFilter)
                 : projectDAO.findAll();
     }
+
+    private void getOrCreateProjectTokens(HttpSession session, List<Project> projects) {
+        System.out.println("[INFO][Servlet] Génération des tokens de projet pour la session.");
+
+        // Récupérer l'objet depuis la session
+        Object obj = session.getAttribute("projectTokens");
+        Map<String, Integer> tokens;
+        if (obj instanceof Map) {
+            tokens = (Map<String, Integer>) obj;
+        } else {
+            tokens = new HashMap<>();
+        }
+
+        // Créer un mapping inverse pour détecter rapidement les duplicatas (projet -> token)
+        Map<Integer, String> projectToToken = new HashMap<>();
+        for (Map.Entry<String, Integer> entry : tokens.entrySet()) {
+            projectToToken.put(entry.getValue(), entry.getKey());
+        }
+
+        System.out.println("[INFO][Servlet] Nombre de tokens existants dans la session : " + tokens.size());
+        SecureRandom random = new SecureRandom();
+
+        for (Project p : projects) {
+            if (!projectToToken.containsKey(p.getId())) {
+                // Générer un token unique pour ce projet
+                String token;
+                do {
+                    token = new BigInteger(130, random).toString(32);
+                } while (tokens.containsKey(token)); // sécurité pour éviter collision improbable
+
+                tokens.put(token, p.getId());
+                projectToToken.put(p.getId(), token);
+                System.out.println("[INFO][Servlet] Nouveau token généré pour le projet ID " + p.getId());
+            } else {
+                System.out.println("[INFO][Servlet] Token existant pour le projet ID " + p.getId());
+            }
+        }
+
+        System.out.println("[INFO][Servlet] Total des tokens de projet dans la session après mise à jour : " + tokens.size());
+        session.setAttribute("projectTokens", tokens);
+    }
+
 
     /**
      * Maps a string action parameter to an Action enum.

@@ -124,7 +124,25 @@ html, body{
 .btn-back:focus {
     outline: none;
 }
-
+.modal-container {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 1000;
+}
+.modal-box {
+    background-color: #222;
+    padding: 20px;
+    border-radius: 8px;
+    width: 400px;
+    color: white;
+}
 /* Responsivité : Adapter les éléments sur de petits écrans */
 @media (max-width: 768px) {
     .project-details {
@@ -134,4 +152,114 @@ html, body{
     .project-table th, .project-table td {
         font-size: 0.9rem;
     }
+}
+
+/* Boutons d'action dans le tableau */
+.btn-danger {
+    background: linear-gradient(135deg, #ef4444, #dc2626);
+    color: white;
+    font-weight: 600;
+    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 0.9rem;
+    box-shadow: 0 8px 22px rgba(239, 68, 68, .35);
+    border: none;
+    cursor: pointer;
+    transition: filter 0.2s ease-in-out;
+}
+
+.btn-danger:hover {
+    filter: brightness(1.1);
+}
+
+/* Style de la modale glassmorphism */
+.modal-container {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 999;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-box {
+    width: 520px;
+    padding: 30px;
+    border-radius: 22px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.28);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+    box-shadow: 0 25px 45px rgba(0,0,0,0.35);
+    color: white;
+}
+
+.modal-title {
+    margin-top: 0;
+    margin-bottom: 18px;
+    font-size: 1.6rem;
+    font-weight: 700;
+}
+
+/* Champ select de la modale */
+.modal-select {
+    width: 100%;
+    background: rgba(255, 255, 255, 0.23);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.45);
+    padding: 12px;
+    border-radius: 12px;
+    margin-bottom: 14px;
+    font-size: 1.05rem;
+    backdrop-filter: blur(8px);
+}
+
+.modal-select option {
+    background: rgba(20,20,20,0.9);
+    color: white;
+}
+
+/* Boutons de la modale */
+.modal-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 10px;
+}
+
+.btn-modal-save {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: white;
+    transition: filter 0.2s ease-in-out;
+}
+
+.btn-modal-save:hover {
+    filter: brightness(1.1);
+}
+
+.btn-modal-cancel {
+    width: 100%;
+    padding: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    background: #ef4444;
+    color: white;
+    transition: filter 0.2s ease-in-out;
+}
+
+.btn-modal-cancel:hover {
+    filter: brightness(1.1);
 }

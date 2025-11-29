@@ -228,3 +228,162 @@ function checkEmployeeValid(input) {
 }
 function openAddModal() { document.getElementById('modalAdd').style.display = 'flex'; }
 function closeAddModal() { document.getElementById('modalAdd').style.display = 'none'; }
+
+
+
+/* Project detail */
+// Variables globales pour la gestion des employés multiples
+let addedEmployees = [];
+const validEmployees = new Set();
+
+// Charger les matricules valides au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+    const datalist = document.getElementById('employeesList');
+    if (datalist) {
+        datalist.querySelectorAll('option').forEach(option => {
+            validEmployees.add(option.value);
+        });
+    }
+});
+
+function toggleMultipleMode() {
+    const isMultiple = document.getElementById('multipleMode').checked;
+    const singleZone = document.getElementById('singleEmployeeZone');
+    const multipleZone = document.getElementById('multipleEmployeesZone');
+    const singleInput = document.getElementById('singleEmployee');
+
+    if (isMultiple) {
+        singleZone.style.display = 'none';
+        multipleZone.style.display = 'block';
+        singleInput.removeAttribute('required');
+        singleInput.value = '';
+    } else {
+        singleZone.style.display = 'block';
+        multipleZone.style.display = 'none';
+        singleInput.setAttribute('required', 'required');
+        // Réinitialiser la liste
+        addedEmployees = [];
+        document.getElementById('employeeList').innerHTML = '';
+        document.getElementById('employeeInput').value = '';
+    }
+}
+
+function validateSingleEmployee(input) {
+    const errorSpan = document.getElementById('singleError');
+    const submitBtn = document.getElementById('submitBtn');
+
+    if (input.value && !validEmployees.has(input.value)) {
+        errorSpan.style.display = 'block';
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.5';
+        submitBtn.style.cursor = 'not-allowed';
+    } else {
+        errorSpan.style.display = 'none';
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = '1';
+        submitBtn.style.cursor = 'pointer';
+    }
+}
+
+function addEmployee() {
+    const input = document.getElementById('employeeInput');
+    const matricule = input.value.trim();
+    const errorSpan = document.getElementById('multipleError');
+
+    if (!matricule) {
+        return;
+    }
+
+    // Vérifier si l'employé existe
+    if (!validEmployees.has(matricule)) {
+        errorSpan.textContent = 'Employé invalide';
+        errorSpan.style.display = 'block';
+        return;
+    }
+
+    // Vérifier si déjà ajouté
+    if (addedEmployees.includes(matricule)) {
+        errorSpan.textContent = 'Employé déjà ajouté';
+        errorSpan.style.display = 'block';
+        return;
+    }
+
+    errorSpan.style.display = 'none';
+    addedEmployees.push(matricule);
+    updateEmployeeList();
+    input.value = '';
+    updateSubmitButton();
+}
+
+function removeEmployee(matricule) {
+    addedEmployees = addedEmployees.filter(m => m !== matricule);
+    updateEmployeeList();
+    updateSubmitButton();
+}
+
+function updateEmployeeList() {
+    const listDiv = document.getElementById('employeeList');
+    const hiddenInput = document.getElementById('multipleEmployeesInput');
+
+    if (addedEmployees.length === 0) {
+        listDiv.innerHTML = '<p style="color: rgba(255,255,255,0.6); text-align: center;">Aucun employé ajouté</p>';
+    } else {
+        listDiv.innerHTML = addedEmployees.map(matricule => {
+            const option = Array.from(document.querySelectorAll('#employeesList option'))
+                .find(opt => opt.value === matricule);
+            const name = option ? option.textContent : matricule;
+
+            return `
+                <div style="background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <span>${name} (${matricule})</span>
+                    <button type="button" 
+                            onclick="removeEmployee('${matricule}')"
+                            style="background: #ef4444; color: white; border: none; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 0.9rem;">
+                        ✕
+                    </button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    hiddenInput.value = addedEmployees.join(',');
+}
+
+function updateSubmitButton() {
+    const submitBtn = document.getElementById('submitBtn');
+    const isMultiple = document.getElementById('multipleMode').checked;
+
+    if (isMultiple) {
+        if (addedEmployees.length === 0) {
+            submitBtn.disabled = true;
+            submitBtn.style.opacity = '0.5';
+            submitBtn.style.cursor = 'not-allowed';
+        } else {
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+        }
+    }
+}
+
+function openAssignModal() {
+    const modal = document.getElementById('assignModal');
+    if (modal) {
+        modal.style.display = 'flex';
+        // Réinitialiser le formulaire
+        addedEmployees = [];
+        document.getElementById('multipleMode').checked = false;
+        toggleMultipleMode();
+    }
+}
+
+function closeAssignModal() {
+    const modal = document.getElementById('assignModal');
+    if (modal) {
+        modal.style.display = 'none';
+        document.getElementById('assignForm').reset();
+        addedEmployees = [];
+        document.getElementById('singleError').style.display = 'none';
+        document.getElementById('multipleError').style.display = 'none';
+    }
+}
